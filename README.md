@@ -1,32 +1,64 @@
 <p align="center">
-  <a href="https://alignui.com">
-    <img src="./logo.svg" height="96">
-    <h3 align="center">AlignUI Design System</h3>
-  </a>
-  <p align="center">The Design System You Need</p>
+  <img src="./logo.svg" height="96">
+  <h3 align="center">Care Support HR Platform</h3>
+  <p align="center">Comprehensive care team coordination and management system</p>
 </p>
-
-[Join the AlignUI Community](https://discord.gg/alignui)
 
 ## Introduction
 
-Synergy HR - AlignUI HR Management Template for Next.js.
+Care Support HR Platform is a modern Next.js application designed for coordinating care teams and managing care responsibilities. Built with TypeScript, Tailwind CSS, and a comprehensive component library, it provides a robust solution for care coordination, team management, and scheduling.
+
+### Key Features
+
+- **Team Management**: Add team members via invitation or manual entry
+- **Care Coordination**: Manage care responsibilities and roles
+- **Calendar Integration**: Schedule and track care events
+- **Permission System**: Role-based access control
+- **Responsive Design**: Modern UI with mobile support
+- **Multiple Auth Styles**: Flexible authentication options
+- **Settings Management**: Comprehensive configuration options
 
 ## Getting Started
 
-First, install dependencies:
+### Prerequisites
 
+- Node.js 18+ 
+- npm, yarn, or pnpm
+
+### Installation
+
+1. Clone the repository:
 ```bash
-pnpm i
+git clone https://github.com/kanoliban/care-support-hr-platform.git
+cd care-support-hr-platform
 ```
 
-Run the development server
-
+2. Install dependencies:
 ```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Run the development server:
+```bash
+npm run dev
+# or
+yarn dev
+# or
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Building for Production
+
+```bash
+npm run build
+npm start
+```
 
 ## Pages
 
@@ -56,12 +88,43 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - [Privacy & Security](http://localhost:3000/settings/privacy-security)
 - [Integrations](http://localhost:3000/settings/integrations)
 
-## Requests for new components
+## Technology Stack
 
-If you have a request for a new component or a feature, please submit a feature request on our [Roadmap](https://alignui.com/roadmap).
+- **Framework**: Next.js 14.2.5
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI primitives
+- **Icons**: Remix Icons
+- **State Management**: Jotai
+- **Charts**: Recharts
+- **Animations**: Framer Motion
+
+## Project Structure
+
+```
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication pages
+│   ├── (main)/            # Main application pages
+│   └── onboarding/        # Onboarding flow
+├── components/            # Reusable UI components
+├── lib/                   # Utility libraries and contexts
+├── hooks/                 # Custom React hooks
+├── types/                 # TypeScript type definitions
+└── utils/                 # Utility functions
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Support
 
-If you require assistance, we're here to help! For development-related support, please feel free to open an issue on the template repository or contact us directly at [dogukan@alignui.com](mailto:dogukan@alignui.com). For general inquiries, you can reach us at [hi@alignui.com](mailto:hi@alignui.com).
-
-Thank you for choosing AlignUI.
+For support and questions, please open an issue in this repository.
