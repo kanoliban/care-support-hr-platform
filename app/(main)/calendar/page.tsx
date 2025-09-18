@@ -1,0 +1,378 @@
+'use client';
+
+import * as React from 'react';
+import { RiCalendarLine } from '@remixicon/react';
+import { format, startOfWeek, endOfWeek } from 'date-fns';
+
+import * as Divider from '@/components/ui/divider';
+import { BigCalendar, type CalendarData } from '@/components/big-calendar';
+import { CreateRequestButton } from '@/components/create-request-button';
+import { ScheduleButton } from '@/components/schedule-button';
+import Header from '@/app/(main)/header';
+// import { useCareSupport } from '@/hooks/useCareSupport';
+
+import CalendarFilters from './filters';
+import CalendarTabs from './tabs';
+import { CareEventsProvider } from '@/hooks/useCareEvents';
+import { CareNotifications } from '@/components/care-notifications';
+import CareEventDialog from '@/components/care-event-dialog';
+
+const calendarData: CalendarData[] = [
+  // Rob's Family Care Schedule - Real Data
+  {
+    startDate: new Date('2024-11-04T09:00:00'),
+    endDate: new Date('2024-11-04T17:00:00'),
+    title: 'Jim Nelson - Primary Care (M-F 9am-5pm)',
+    completed: true,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-04T20:00:00'),
+    endDate: new Date('2024-11-05T08:00:00'),
+    title: 'Jennifer - Overnight Care (M,T 8pm-8am)',
+    completed: true,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jennifer',
+        image: '/images/avatar/illustration/arthur.png',
+        color: 'blue',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-05T09:00:00'),
+    endDate: new Date('2024-11-05T17:00:00'),
+    title: 'Jim Nelson - Primary Care (M-F 9am-5pm)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-05T20:00:00'),
+    endDate: new Date('2024-11-06T08:00:00'),
+    title: 'Jennifer - Overnight Care (M,T 8pm-8am)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jennifer',
+        image: '/images/avatar/illustration/arthur.png',
+        color: 'blue',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-06T09:00:00'),
+    endDate: new Date('2024-11-06T17:00:00'),
+    title: 'Jim Nelson - Primary Care (M-F 9am-5pm)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-06T20:00:00'),
+    endDate: new Date('2024-11-07T08:00:00'),
+    title: 'Sarah - Overnight Care (W,Th 8pm-8am)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Sarah',
+        image: '/images/avatar/illustration/sophia.png',
+        color: 'purple',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-07T09:00:00'),
+    endDate: new Date('2024-11-07T17:00:00'),
+    title: 'Jim Nelson - Primary Care (M-F 9am-5pm)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-07T20:00:00'),
+    endDate: new Date('2024-11-08T08:00:00'),
+    title: 'Sarah - Overnight Care (W,Th 8pm-8am)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Sarah',
+        image: '/images/avatar/illustration/sophia.png',
+        color: 'purple',
+      },
+    ],
+  },
+  {
+    startDate: new Date('2024-11-08T09:00:00'),
+    endDate: new Date('2024-11-08T17:00:00'),
+    title: 'Jim Nelson - Primary Care (M-F 9am-5pm)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+      {
+        alt: 'Jennifer Smith',
+        image: '/images/avatar/illustration/arthur.png',
+      },
+      {
+        alt: 'Elena Chen',
+        image: '/images/avatar/illustration/sophia.png',
+        color: 'purple',
+      },
+      {
+        alt: 'Sarah Martinez',
+        image: '/images/avatar/illustration/emma.png',
+        color: 'yellow',
+      },
+    ],
+    platform: 'Care Center',
+  },
+  {
+    startDate: new Date('2024-11-07T09:00:00'),
+    endDate: new Date('2024-11-07T10:00:00'),
+    title: 'Family Feedback Analysis',
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+      {
+        alt: 'Jennifer Smith',
+        image: '/images/avatar/illustration/arthur.png',
+      },
+      {
+        alt: 'Elena Chen',
+        image: '/images/avatar/illustration/sophia.png',
+        color: 'purple',
+      },
+      {
+        alt: 'Sarah Martinez',
+        image: '/images/avatar/illustration/emma.png',
+        color: 'yellow',
+      },
+    ],
+    platform: 'Family Meeting',
+  },
+  {
+    startDate: new Date('2024-11-07T11:30:00'),
+    endDate: new Date('2024-11-07T13:00:00'),
+    title: 'Medical Webinar: "Advanced Care Techniques for 2024"',
+    type: 'event',
+    link: 'www.carewebinar.com',
+  },
+  // disabled hour
+  {
+    startDate: new Date('2024-11-08T09:00:00'),
+    endDate: new Date('2024-11-08T14:00:00'),
+    disabled: true,
+  },
+  // {
+  //   startDate: new Date('2024-11-10T06:30:00'),
+  //   endDate: new Date('2024-11-10T08:30:00'),
+  //   title: 'A mysterious event',
+  //   type: 'event',
+  //   link: 'www.alignui.com',
+  // },
+];
+
+export default function PageCalendar() {
+  // const { currentProject } = useCareSupport();
+  const [currentDate, setCurrentDate] = React.useState(new Date());
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
+  
+  // Care Event Dialog state
+  const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [selectedTime, setSelectedTime] = React.useState(new Date());
+
+  // Generate dynamic calendar events (using static data for now)
+  const generateCalendarEvents = React.useCallback((): CalendarData[] => {
+    const events: CalendarData[] = [];
+    const today = new Date();
+    
+    // Add some additional care-related events with current dates
+    events.push(
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
+        title: 'Current Care Shift',
+        type: 'meeting',
+        completed: false,
+        people: [
+          {
+            alt: 'Jennifer Smith',
+            image: '/images/avatar/illustration/arthur.png',
+            color: 'blue',
+          },
+          {
+            alt: 'Elena Chen',
+            image: '/images/avatar/illustration/sophia.png',
+            color: 'purple',
+          },
+        ],
+        platform: 'Care Location',
+      },
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 10, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 11, 0),
+        title: 'Care Plan Review Meeting',
+        type: 'meeting',
+        completed: false,
+      },
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 14, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 15, 30),
+        title: 'Caregiver Training Session',
+        type: 'event',
+        location: 'Training Center',
+        completed: false,
+      }
+    );
+
+    return [...events, ...calendarData]; // Combine with existing static data
+  }, []);
+
+  React.useEffect(() => {
+    const events = generateCalendarEvents();
+    setFilteredEvents(events);
+  }, [generateCalendarEvents]);
+
+  const handleDateRangeChange = (startDate: Date, endDate: Date) => {
+    setCurrentDate(startDate);
+  };
+
+  const handleTodayClick = () => {
+    setCurrentDate(new Date());
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    // Filter events based on search query
+    const events = generateCalendarEvents();
+    const filtered = query 
+      ? events.filter(event => 
+          event.title?.toLowerCase().includes(query.toLowerCase()) ||
+          event.location?.toLowerCase().includes(query.toLowerCase()) ||
+          event.platform?.toLowerCase().includes(query.toLowerCase())
+        )
+      : events;
+    setFilteredEvents(filtered);
+  };
+
+  // Care Event Dialog handlers
+  const handleCreateRequestClick = () => {
+    setSelectedDate(new Date());
+    setSelectedTime(new Date());
+    setIsEventDialogOpen(true);
+  };
+
+  const handleCloseEventDialog = () => {
+    setIsEventDialogOpen(false);
+  };
+
+  const handleEventCreated = (eventId: string) => {
+    console.log('Care event created:', eventId);
+    // Refresh the calendar events
+    setFilteredEvents(generateCalendarEvents());
+  };
+
+  // Calculate dynamic description
+  const getTodayDescription = () => {
+    const todayEvents = filteredEvents.filter(event => 
+      event.startDate.toDateString() === new Date().toDateString()
+    );
+    const shifts = todayEvents.filter(e => e.type === 'meeting').length;
+    const appointments = todayEvents.filter(e => e.type === 'event').length;
+    return `You have ${shifts} care shifts and ${appointments} appointments today 🏥`;
+  };
+
+  return (
+    <CareEventsProvider>
+      <Header
+        icon={
+          <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
+            <RiCalendarLine className='size-6 text-text-sub-600' />
+          </div>
+        }
+        title="Today's Care Schedule"
+        description={getTodayDescription()}
+      >
+        <ScheduleButton className='w-full md:w-auto' />
+        <CreateRequestButton 
+          className='w-full md:w-auto' 
+          onClick={handleCreateRequestClick}
+        />
+      </Header>
+
+      <div className='hidden px-8 lg:block'>
+        <Divider.Root />
+      </div>
+
+      <div className='flex flex-1 flex-col px-4 pb-[18px] lg:px-8 lg:pb-6 lg:pt-4'>
+        <CalendarFilters 
+          onDateRangeChange={handleDateRangeChange}
+          onTodayClick={handleTodayClick}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+        />
+
+        <CalendarTabs className='mt-5 lg:mt-3' />
+
+        <BigCalendar
+          className='mt-4'
+          defaultStartDate={currentDate}
+          events={filteredEvents}
+          showAllHours={true}
+        />
+      </div>
+      
+      {/* Care Event Notifications */}
+      <CareNotifications />
+      
+      {/* Care Event Dialog */}
+      <CareEventDialog
+        isOpen={isEventDialogOpen}
+        onClose={handleCloseEventDialog}
+        selectedDate={selectedDate}
+        selectedTime={selectedTime}
+        onEventCreated={handleEventCreated}
+      />
+    </CareEventsProvider>
+  );
+}
