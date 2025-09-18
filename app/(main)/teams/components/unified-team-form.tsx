@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { RiUserAddLine, RiMailLine, RiUserLine } from '@remixicon/react';
-import { useAtom } from 'jotai';
 
 import { cn } from '@/utils/cn';
 import * as Button from '@/components/ui/button';
@@ -15,9 +14,6 @@ import * as Textarea from '@/components/ui/textarea';
 import * as Radio from '@/components/ui/radio';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { CareResponsibilitiesSelector } from './care-responsibilities-selector';
-
-// Form mode atom for state management
-const formModeAtom = React.createAtom<'invite' | 'manual'>('invite');
 
 export interface TeamMemberFormData {
   email: string;
@@ -58,7 +54,7 @@ export function UnifiedTeamForm({
   onCancel,
   currentProfile
 }: UnifiedTeamFormProps) {
-  const [mode, setMode] = useAtom(formModeAtom);
+  const [mode, setMode] = React.useState<'invite' | 'manual'>('invite');
 
   const handleModeChange = (newMode: 'invite' | 'manual') => {
     setMode(newMode);
