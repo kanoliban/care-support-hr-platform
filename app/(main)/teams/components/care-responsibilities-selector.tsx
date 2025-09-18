@@ -145,7 +145,7 @@ export function CareResponsibilitiesSelector({
           variant="neutral"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "w-full justify-start text-left border border-stroke-soft-200",
+            "w-full justify-start text-left border border-stroke-soft-200 bg-white text-text-strong-950 hover:bg-bg-soft-50",
             error && "border-red-500"
           )}
         >
