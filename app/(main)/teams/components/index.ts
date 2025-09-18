@@ -5,6 +5,7 @@ export { UnifiedTeamForm, type TeamMemberFormData } from './unified-team-form';
 export { ComprehensiveEditModal, type TeamMemberEditData } from './comprehensive-edit-modal';
 export { QuickEditModal, type QuickEditData } from './quick-edit-modal';
 export { PermissionsModal, type PermissionsData } from './permissions-modal';
+export { ManualAddWizard } from './manual-add-wizard';
 
 // Legacy components (to be deprecated)
 export { CareResponsibilitiesSelector } from './care-responsibilities-selector';

@@ -14,6 +14,7 @@ import * as Textarea from '@/components/ui/textarea';
 import * as Radio from '@/components/ui/radio';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { CareResponsibilitiesSelector } from './care-responsibilities-selector';
+import { ManualAddWizard } from './manual-add-wizard';
 
 export interface TeamMemberFormData {
   email: string;
@@ -55,9 +56,25 @@ export function UnifiedTeamForm({
   currentProfile
 }: UnifiedTeamFormProps) {
   const [mode, setMode] = React.useState<'invite' | 'manual'>('invite');
+  const [isManualWizardOpen, setIsManualWizardOpen] = React.useState(false);
 
   const handleModeChange = (newMode: 'invite' | 'manual') => {
     setMode(newMode);
+    if (newMode === 'manual') {
+      setIsManualWizardOpen(true);
+    }
+  };
+
+  const handleManualWizardSave = (wizardData: any) => {
+    // Update form data with wizard data
+    Object.keys(wizardData).forEach(key => {
+      onFormDataChange(key, wizardData[key]);
+    });
+    setIsManualWizardOpen(false);
+    // Trigger save
+    if (onSave) {
+      onSave();
+    }
   };
 
   return (
@@ -282,59 +299,18 @@ export function UnifiedTeamForm({
           />
         </div>
 
-        {/* Additional Fields for Manual Mode */}
+        {/* Manual Mode - Now handled by wizard */}
         {mode === 'manual' && (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label.Root htmlFor="schedule">
-                  Schedule <Label.Asterisk />
-                </Label.Root>
-                <Input.Root>
-                  <Input.Wrapper>
-                    <Input.Input
-                      id="schedule"
-                      value={formData.schedule}
-                      onChange={(e) => onFormDataChange('schedule', e.target.value)}
-                      placeholder="e.g., Mon-Fri 9am-5pm"
-                      className={errors.schedule ? 'border-red-500' : ''}
-                    />
-                  </Input.Wrapper>
-                </Input.Root>
-                {errors.schedule && (
-                  <div className="text-xs text-red-600">{errors.schedule}</div>
-                )}
+          <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
+            <div className="text-center space-y-3">
+              <div className="text-text-strong-950 font-medium">
+                Manual Entry Wizard
               </div>
-              
-              <div className="space-y-2">
-                <Label.Root htmlFor="availability">Availability Type</Label.Root>
-                <Select.Root
-                  value={formData.availabilityType}
-                  onValueChange={(value) => onFormDataChange('availabilityType', value)}
-                >
-                  <Select.Trigger>
-                    <Select.Value placeholder="Select availability" />
-                  </Select.Trigger>
-                  <Select.Content>
-                    <Select.Item value="flexible">Flexible</Select.Item>
-                    <Select.Item value="fixed">Fixed Schedule</Select.Item>
-                    <Select.Item value="on-call">On-Call</Select.Item>
-                  </Select.Content>
-                </Select.Root>
+              <div className="text-sm text-text-sub-600">
+                Click "Add Manually" above to open the detailed setup wizard with scheduling and recurrence options.
               </div>
             </div>
-
-            <div className="space-y-2">
-              <Label.Root htmlFor="care-notes">Care Notes</Label.Root>
-              <Textarea.Root
-                id="care-notes"
-                value={formData.careNotes}
-                onChange={(e) => onFormDataChange('careNotes', e.target.value)}
-                placeholder="Additional notes about this team member's care responsibilities..."
-                rows={3}
-              />
-            </div>
-          </>
+          </div>
         )}
 
         {/* Invitation Message for Invite Mode */}
@@ -371,6 +347,14 @@ export function UnifiedTeamForm({
           }
         </FancyButton.Root>
       </div>
+
+      {/* Manual Add Wizard */}
+      <ManualAddWizard
+        isOpen={isManualWizardOpen}
+        onClose={() => setIsManualWizardOpen(false)}
+        onSave={handleManualWizardSave}
+        currentProfile={currentProfile}
+      />
     </div>
   );
 }
