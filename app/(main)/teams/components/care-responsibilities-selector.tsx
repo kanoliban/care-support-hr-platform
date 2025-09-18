@@ -142,10 +142,10 @@ export function CareResponsibilitiesSelector({
       <div className="relative" ref={dropdownRef}>
         <Button.Root
           type="button"
-          variant="outline"
+          variant="neutral"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "w-full justify-start text-left",
+            "w-full justify-start text-left border border-stroke-soft-200",
             error && "border-red-500"
           )}
         >
@@ -165,7 +165,7 @@ export function CareResponsibilitiesSelector({
                       key={responsibility}
                       type="button"
                       onClick={() => handleAddResponsibility(responsibility)}
-                      className="w-full text-left px-3 py-2 text-sm text-text-strong-950 hover:bg-bg-soft-50 rounded-md transition-colors border border-transparent hover:border-stroke-soft-200"
+                      className="w-full text-left px-3 py-2 text-sm text-text-strong-950 bg-bg-soft-50 hover:bg-bg-soft-100 rounded-md transition-colors border border-stroke-soft-200 hover:border-stroke-soft-300"
                     >
                       {responsibility}
                     </button>
@@ -178,7 +178,7 @@ export function CareResponsibilitiesSelector({
                 <button
                   type="button"
                   onClick={handleAddCustom}
-                  className="w-full text-left px-3 py-2 text-sm text-primary-600 hover:bg-primary-50 rounded-md transition-colors border border-transparent hover:border-primary-200"
+                  className="w-full text-left px-3 py-2 text-sm text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-md transition-colors border border-primary-200 hover:border-primary-300"
                 >
                   + Add custom responsibility
                 </button>
