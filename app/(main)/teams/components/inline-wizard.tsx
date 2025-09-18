@@ -564,9 +564,6 @@ export function InlineWizard({ mode, onSave, onCancel, currentProfile, isSaving 
       <div className="px-6 py-4 border-b border-stroke-soft-200">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-text-strong-950">
-              {mode === 'invite' ? 'Send Invitation' : 'Add Team Member Manually'}
-            </h3>
             <p className="text-sm text-text-sub-600">
               Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
             </p>
