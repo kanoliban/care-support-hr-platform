@@ -14,7 +14,7 @@ import * as Textarea from '@/components/ui/textarea';
 import * as Radio from '@/components/ui/radio';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { CareResponsibilitiesSelector } from './care-responsibilities-selector';
-import { ManualAddWizard } from './manual-add-wizard';
+import { InlineWizard } from './inline-wizard';
 
 export interface TeamMemberFormData {
   email: string;
@@ -55,26 +55,30 @@ export function UnifiedTeamForm({
   onCancel,
   currentProfile
 }: UnifiedTeamFormProps) {
-  const [mode, setMode] = React.useState<'invite' | 'manual'>('invite');
-  const [isManualWizardOpen, setIsManualWizardOpen] = React.useState(false);
+  const [mode, setMode] = React.useState<'invite' | 'manual' | null>(null);
+  const [isWizardActive, setIsWizardActive] = React.useState(false);
 
   const handleModeChange = (newMode: 'invite' | 'manual') => {
     setMode(newMode);
-    if (newMode === 'manual') {
-      setIsManualWizardOpen(true);
-    }
+    setIsWizardActive(true);
   };
 
-  const handleManualWizardSave = (wizardData: any) => {
+  const handleWizardSave = (wizardData: any) => {
     // Update form data with wizard data
     Object.keys(wizardData).forEach(key => {
       onFormDataChange(key, wizardData[key]);
     });
-    setIsManualWizardOpen(false);
+    setIsWizardActive(false);
+    setMode(null);
     // Trigger save
     if (onSave) {
       onSave();
     }
+  };
+
+  const handleWizardCancel = () => {
+    setIsWizardActive(false);
+    setMode(null);
   };
 
   return (
@@ -156,205 +160,25 @@ export function UnifiedTeamForm({
 
       <Divider.Root variant="line-spacing" />
 
-      {/* Form Fields - Following auth form patterns */}
-      <div className="space-y-4">
-        {/* Basic Information */}
-        <div className="space-y-3">
-          <div className="text-label-sm">Basic Information</div>
-          
-          <div className="space-y-2">
-            <Label.Root htmlFor="name">
-              Full Name <Label.Asterisk />
-            </Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => onFormDataChange('name', e.target.value)}
-                  placeholder="e.g., Sarah Johnson"
-                  className={errors.name ? 'border-red-500' : ''}
-                />
-              </Input.Wrapper>
-            </Input.Root>
-            {errors.name && (
-              <div className="text-xs text-red-600">{errors.name}</div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label.Root htmlFor="email">
-                Email Address {mode === 'invite' && <Label.Asterisk />}
-              </Label.Root>
-              <Input.Root>
-                <Input.Wrapper>
-                  <Input.Icon as={RiMailLine} />
-                  <Input.Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => onFormDataChange('email', e.target.value)}
-                    placeholder="colleague@example.com"
-                    className={errors.email ? 'border-red-500' : ''}
-                  />
-                </Input.Wrapper>
-              </Input.Root>
-              {errors.email && (
-                <div className="text-xs text-red-600">{errors.email}</div>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label.Root htmlFor="phone">Phone Number</Label.Root>
-              <Input.Root>
-                <Input.Wrapper>
-                  <Input.Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => onFormDataChange('phone', e.target.value)}
-                    placeholder="(555) 123-4567"
-                    className={errors.phone ? 'border-red-500' : ''}
-                  />
-                </Input.Wrapper>
-              </Input.Root>
-              {errors.phone && (
-                <div className="text-xs text-red-600">{errors.phone}</div>
-              )}
-            </div>
+      {/* Show wizard when mode is selected */}
+      {!mode && (
+        <div className="text-center py-12">
+          <div className="text-text-sub-600">
+            Select a method above to start adding a team member.
           </div>
         </div>
+      )}
 
-        {/* Role & Category */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label.Root htmlFor="category">
-              Team Member Category <Label.Asterisk />
-            </Label.Root>
-            <Select.Root
-              value={formData.teamMemberCategory}
-              onValueChange={(value) => onFormDataChange('teamMemberCategory', value)}
-            >
-              <Select.Trigger>
-                <Select.Value placeholder="Select category" />
-              </Select.Trigger>
-              <Select.Content>
-                <Select.Item value="family">Family Member</Select.Item>
-                <Select.Item value="professional">Professional Caregiver</Select.Item>
-                <Select.Item value="volunteer">Volunteer</Select.Item>
-                <Select.Item value="organization">Organization</Select.Item>
-              </Select.Content>
-            </Select.Root>
-          </div>
-          
-          <div className="space-y-2">
-            <Label.Root htmlFor="role">
-              Role & Permissions <Label.Asterisk />
-            </Label.Root>
-            <Select.Root
-              value={formData.role}
-              onValueChange={(value) => onFormDataChange('role', value)}
-            >
-              <Select.Trigger>
-                <Select.Value placeholder="Select role" />
-              </Select.Trigger>
-              <Select.Content>
-                <Select.Item value="member">Member - Basic access</Select.Item>
-                <Select.Item value="admin">Admin - Manage team</Select.Item>
-                <Select.Item value="viewer">Viewer - Read only</Select.Item>
-              </Select.Content>
-            </Select.Root>
-          </div>
-        </div>
-
-        {/* Care Information */}
-        <div className="space-y-3">
-          <div className="text-label-sm">Care Information</div>
-          
-          <div className="space-y-2">
-            <Label.Root htmlFor="care-role">
-              Care Role <Label.Asterisk />
-            </Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="care-role"
-                  value={formData.careRole}
-                  onChange={(e) => onFormDataChange('careRole', e.target.value)}
-                  placeholder="e.g., Primary PCA, Family Coordinator"
-                  className={errors.careRole ? 'border-red-500' : ''}
-                />
-              </Input.Wrapper>
-            </Input.Root>
-            {errors.careRole && (
-              <div className="text-xs text-red-600">{errors.careRole}</div>
-            )}
-          </div>
-
-          <CareResponsibilitiesSelector
-            value={formData.careResponsibilities}
-            onChange={(value) => onFormDataChange('careResponsibilities', value)}
-            error={errors.careResponsibilities}
-          />
-        </div>
-
-        {/* Manual Mode - Now handled by wizard */}
-        {mode === 'manual' && (
-          <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
-            <div className="text-center space-y-3">
-              <div className="text-text-strong-950 font-medium">
-                Manual Entry Wizard
-              </div>
-              <div className="text-sm text-text-sub-600">
-                Click "Add Manually" above to open the detailed setup wizard with scheduling and recurrence options.
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Invitation Message for Invite Mode */}
-        {mode === 'invite' && (
-          <div className="space-y-2">
-            <Label.Root htmlFor="message">Personal Message (Optional)</Label.Root>
-            <Textarea.Root
-              id="message"
-              value={formData.customMessage}
-              onChange={(e) => onFormDataChange('customMessage', e.target.value)}
-              placeholder="Add a personal message to include with the invitation..."
-              rows={3}
-            />
-          </div>
-        )}
-      </div>
-
-      <Divider.Root variant="line-spacing" />
-
-      {/* Action Buttons - Following onboarding pattern */}
-      <div className="flex justify-end gap-3">
-        <Button.Root variant="neutral" mode="stroke" onClick={onCancel}>
-          Cancel
-        </Button.Root>
-        <FancyButton.Root 
-          variant="primary" 
-          size="medium"
-          onClick={mode === 'invite' ? onSendInvitation : onSave}
-          disabled={mode === 'invite' ? isInviting : isSaving}
-        >
-          {mode === 'invite' 
-            ? (isInviting ? 'Sending Invitation...' : 'Send Invitation')
-            : (isSaving ? 'Adding Member...' : 'Add Team Member')
-          }
-        </FancyButton.Root>
-      </div>
-
-      {/* Manual Add Wizard */}
-      <ManualAddWizard
-        isOpen={isManualWizardOpen}
-        onClose={() => setIsManualWizardOpen(false)}
-        onSave={handleManualWizardSave}
-        currentProfile={currentProfile}
-      />
+      {/* Inline Wizard - Shows when mode is selected */}
+      {mode && isWizardActive && (
+        <InlineWizard
+          mode={mode}
+          onSave={handleWizardSave}
+          onCancel={handleWizardCancel}
+          currentProfile={currentProfile}
+          isSaving={mode === 'invite' ? isInviting : isSaving}
+        />
+      )}
     </div>
   );
 }
