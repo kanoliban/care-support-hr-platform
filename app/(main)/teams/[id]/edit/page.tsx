@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { RiArrowLeftLine, RiUserSettingsLine } from '@remixicon/react';
 
 import Header from '@/app/(main)/header';
-import { TeamMemberForm, TeamMemberFormData } from '../../components/team-member-form';
+import { ComprehensiveEditModal, TeamMemberEditData } from '../../components/comprehensive-edit-modal';
 
 // Mock data - in real app this would come from API
 const mockTeamMembers = [
@@ -31,7 +31,7 @@ const mockTeamMembers = [
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'admin',
     permissions: {
@@ -41,8 +41,8 @@ const mockTeamMembers = [
       canDeleteProfile: false,
       canInviteMembers: true,
       canExportData: true,
-      canManageOrganization: true,
-      canManageIntegrations: true,
+      canManageOrganization: false,
+      canManageIntegrations: false,
       canManageSecurity: false,
     },
   },
@@ -85,37 +85,34 @@ const mockTeamMembers = [
   },
 ];
 
-
 export default function EditTeamMemberPage() {
   const router = useRouter();
   const params = useParams();
   const memberId = params.id as string;
 
-  const [formData, setFormData] = React.useState<TeamMemberFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    careRole: '',
-    careAssignment: '',
-    assignmentDescription: '',
-    teamMemberCategory: 'family',
-    schedule: '',
-    availabilityType: '',
-    careNotes: '',
-    emergencyContact: '',
-    emergencyPhone: '',
-    skills: '',
-    photo: '',
-  });
-
-  const [errors, setErrors] = React.useState<Partial<Record<keyof TeamMemberFormData, string>>>({});
-  const [isSaving, setIsSaving] = React.useState(false);
-
   // Find the team member to edit
   const teamMember = React.useMemo(() => {
     return mockTeamMembers.find(member => member.id === memberId);
   }, [memberId]);
+
+  // Form data state - using new interface
+  const [formData, setFormData] = React.useState<TeamMemberEditData>({
+    name: '',
+    email: '',
+    phone: '',
+    teamMemberCategory: 'family',
+    role: 'member',
+    careRole: '',
+    careResponsibilities: '',
+    careAssignment: '',
+    assignmentDescription: '',
+    schedule: '',
+    availabilityType: 'flexible',
+    careNotes: '',
+    photo: '',
+  });
+
+  const [isSaving, setIsSaving] = React.useState(false);
 
   // Initialize form data when team member is found
   React.useEffect(() => {
@@ -123,119 +120,58 @@ export default function EditTeamMemberPage() {
       setFormData({
         name: teamMember.member.name,
         email: teamMember.member.email,
-        phone: '', // Not in current data structure
-        address: '', // Not in current data structure
+        phone: '', // Not available in mock data
+        teamMemberCategory: 'family', // Default, not in mock data
+        role: teamMember.role as any,
         careRole: teamMember.title.name,
+        careResponsibilities: teamMember.project.description,
         careAssignment: teamMember.project.name,
         assignmentDescription: teamMember.project.description,
-        teamMemberCategory: 'family', // Default, could be determined by role
         schedule: teamMember.availability.schedule,
-        availabilityType: teamMember.availability.type,
-        careNotes: '', // Not in current data structure
-        emergencyContact: '', // Not in current data structure
-        emergencyPhone: '', // Not in current data structure
-        skills: '', // Not in current data structure
+        availabilityType: teamMember.availability.type.toLowerCase() as any,
+        careNotes: '',
         photo: teamMember.member.image,
       });
     }
   }, [teamMember]);
 
-  const handleFormDataChange = (field: keyof TeamMemberFormData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: undefined
-      }));
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof TeamMemberFormData, string>> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.careRole.trim()) {
-      newErrors.careRole = 'Care role is required';
-    }
-
-    if (!formData.careAssignment.trim()) {
-      newErrors.careAssignment = 'Care assignment is required';
-    }
-
-    if (!formData.schedule.trim()) {
-      newErrors.schedule = 'Schedule is required';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
+  const handleSave = async (data: TeamMemberEditData) => {
     setIsSaving(true);
     
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('Saving team member:', formData);
+      console.log('Updating team member:', data);
       
       // In real app, this would update the team member via API
       // For now, just redirect back to teams page
       router.push('/teams');
     } catch (error) {
-      console.error('Error saving team member:', error);
+      console.error('Error updating team member:', error);
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     router.push('/teams');
   };
 
   if (!teamMember) {
     return (
-      <>
-        <Header
-          icon={
-            <div className='flex size-12 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-              <RiUserSettingsLine className='size-6 text-text-sub-600' />
-            </div>
-          }
-          title="Team Member Not Found"
-          description="The team member you're looking for doesn't exist."
-          contentClassName='hidden'
-        />
-        <div className='px-4 lg:px-8 py-8'>
-          <div className="text-center">
-            <p className="text-text-sub-600 mb-4">Team member not found.</p>
-            <button
-              onClick={() => router.push('/teams')}
-              className="text-primary-600 hover:text-primary-700"
-            >
-              ← Back to Teams
-            </button>
-          </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Team Member Not Found</h1>
+          <p className="text-gray-600 mb-6">The team member you're looking for doesn't exist.</p>
+          <button
+            onClick={() => router.push('/teams')}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Back to Teams
+          </button>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -248,12 +184,12 @@ export default function EditTeamMemberPage() {
           </div>
         }
         title={`Edit ${teamMember.member.name}`}
-        description="Update team member information and care responsibilities."
+        description="Update team member information and permissions"
         contentClassName='hidden'
       />
 
       <div className='px-4 lg:px-8 py-8'>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           {/* Back Button */}
           <div className="mb-6">
             <button
@@ -265,18 +201,14 @@ export default function EditTeamMemberPage() {
             </button>
           </div>
 
-          {/* Form */}
-          <div className="bg-white rounded-lg border border-stroke-soft-200 p-6">
-            <TeamMemberForm
-              formData={formData}
-              onFormDataChange={handleFormDataChange}
-              errors={errors}
-              isEdit={true}
-              isSaving={isSaving}
-              onSave={handleSave}
-              onCancel={handleCancel}
-            />
-          </div>
+          {/* Edit Modal */}
+          <ComprehensiveEditModal
+            isOpen={true}
+            onClose={handleClose}
+            memberData={formData}
+            onSave={handleSave}
+            isLoading={isSaving}
+          />
         </div>
       </div>
     </>
