@@ -62,6 +62,7 @@ export function CareResponsibilitiesSelector({
   error 
 }: CareResponsibilitiesSelectorProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
   
   // Parse selected responsibilities from comma-separated string
   const selectedResponsibilities = React.useMemo(() => {
@@ -79,6 +80,7 @@ export function CareResponsibilitiesSelector({
   const handleAddResponsibility = (responsibility: CareResponsibility) => {
     const newSelected = [...selectedResponsibilities, responsibility];
     onChange(newSelected.join(', '));
+    setIsOpen(false); // Close dropdown after selection
   };
   
   const handleRemoveResponsibility = (responsibility: string) => {
@@ -93,6 +95,23 @@ export function CareResponsibilitiesSelector({
       onChange(newSelected.join(', '));
     }
   };
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <div className="space-y-3">
@@ -120,7 +139,7 @@ export function CareResponsibilitiesSelector({
       )}
       
       {/* Add Responsibilities Button */}
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <Button.Root
           type="button"
           variant="outline"
@@ -136,7 +155,7 @@ export function CareResponsibilitiesSelector({
         
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-white border border-stroke-soft-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-stroke-soft-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
             <div className="p-2">
               {/* Pre-defined responsibilities */}
               {availableResponsibilities.length > 0 && (
@@ -146,7 +165,7 @@ export function CareResponsibilitiesSelector({
                       key={responsibility}
                       type="button"
                       onClick={() => handleAddResponsibility(responsibility)}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-bg-soft-50 rounded-md transition-colors"
+                      className="w-full text-left px-3 py-2 text-sm text-text-strong-950 hover:bg-bg-soft-50 rounded-md transition-colors border border-transparent hover:border-stroke-soft-200"
                     >
                       {responsibility}
                     </button>
@@ -159,7 +178,7 @@ export function CareResponsibilitiesSelector({
                 <button
                   type="button"
                   onClick={handleAddCustom}
-                  className="w-full text-left px-3 py-2 text-sm text-primary-600 hover:bg-primary-50 rounded-md transition-colors"
+                  className="w-full text-left px-3 py-2 text-sm text-primary-600 hover:bg-primary-50 rounded-md transition-colors border border-transparent hover:border-primary-200"
                 >
                   + Add custom responsibility
                 </button>
