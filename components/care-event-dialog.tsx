@@ -66,15 +66,24 @@ export default function CareEventDialog({
   // Removed useEffect that was updating formData - initialization is handled in useState
   // This could cause unnecessary re-renders and potential infinite loops
 
-  const handleFormDataChange = (field: keyof RequestFormData, value: any) => {
+  const handleFormDataChange = React.useCallback((field: keyof RequestFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
-  };
+  }, [errors]);
 
-  const handleSave = async () => {
+  // Stabilize error and step change handlers for Radix children
+  const handleErrorsChange = React.useCallback((nextErrors: Partial<Record<keyof RequestFormData, string>>) => {
+    setErrors(nextErrors);
+  }, []);
+
+  const handleStepChange = React.useCallback((idx: number) => {
+    setCurrentStepIndex(idx);
+  }, []);
+
+  const handleSave = React.useCallback(async () => {
       // Validate required fields
       const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
       
@@ -147,7 +156,7 @@ export default function CareEventDialog({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [createEvent, formData, onClose, onEventCreated]);
 
   if (!isOpen) return null;
 
@@ -175,11 +184,11 @@ export default function CareEventDialog({
             formData={formData}
             onFormDataChange={handleFormDataChange}
             errors={errors}
-            onErrorsChange={setErrors}
+            onErrorsChange={handleErrorsChange}
             isSaving={isLoading}
             onSave={handleSave}
             onCancel={onClose}
-            onStepChange={setCurrentStepIndex}
+            onStepChange={handleStepChange}
             selectedDate={selectedDate}
             selectedTime={selectedTime}
           />

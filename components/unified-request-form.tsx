@@ -154,17 +154,17 @@ export function UnifiedRequestForm({
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
 
-  // Notify parent of step changes
+  // Notify parent of step changes (stable)
   React.useEffect(() => {
     onStepChange?.(currentStepIndex);
-  }, [currentStepIndex]);
+  }, [currentStepIndex, onStepChange]);
 
-  const handleRecurringChange = (field: keyof RequestFormData['recurrencePattern'], value: any) => {
+  const handleRecurringChange = React.useCallback((field: keyof RequestFormData['recurrencePattern'], value: any) => {
     onFormDataChange('recurrencePattern', {
       ...formData.recurrencePattern,
       [field]: value
     });
-  };
+  }, [formData.recurrencePattern, onFormDataChange]);
 
   // Stable callback functions to prevent infinite loops
   const handleRequestTypeChange = React.useCallback((value: string) => {
@@ -263,7 +263,7 @@ export function UnifiedRequestForm({
     onFormDataChange('notes', e.target.value);
   }, [onFormDataChange]);
 
-  const handleDayToggle = (dayValue: number) => {
+  const handleDayToggle = React.useCallback((dayValue: number) => {
     const currentDays = formData.recurrencePattern.daysOfWeek;
     const newDays = currentDays.includes(dayValue)
       ? currentDays.filter(d => d !== dayValue)
@@ -273,7 +273,14 @@ export function UnifiedRequestForm({
       ...formData.recurrencePattern,
       daysOfWeek: newDays
     });
-  };
+  }, [formData.recurrencePattern, onFormDataChange]);
+
+  const handleInviteClick = React.useCallback(() => {
+    setInviteSent(true);
+    setTimeout(() => {
+      console.log(`Invite sent to ${formData.customAssignedPerson} via ${formData.customPersonContactType}: ${formData.customPersonContact}`);
+    }, 100);
+  }, [formData.customAssignedPerson, formData.customPersonContactType, formData.customPersonContact]);
 
   const getTitlePlaceholder = (requestType: string): string => {
     switch (requestType) {
@@ -370,7 +377,7 @@ export function UnifiedRequestForm({
                 What kind of help do you need? <Label.Asterisk />
               </Label.Root>
               <Select.Root
-                value={formData.requestType}
+                value={formData.requestType || undefined}
                 onValueChange={handleRequestTypeChange}
               >
                 <Select.Trigger className="min-h-[3rem]">
@@ -419,7 +426,7 @@ export function UnifiedRequestForm({
                   Who needs care? <Label.Asterisk />
                 </Label.Root>
                 <Select.Root
-                  value={formData.careRecipient}
+                  value={formData.careRecipient || undefined}
                   onValueChange={handleCareRecipientChange}
                 >
                   <Select.Trigger>
@@ -443,7 +450,7 @@ export function UnifiedRequestForm({
                   Who can help? <Label.Asterisk />
                 </Label.Root>
                 <Select.Root
-                  value={formData.assignedPerson}
+                  value={formData.assignedPerson || undefined}
                   onValueChange={handleAssignedPersonChange}
                 >
                   <Select.Trigger>
@@ -543,14 +550,7 @@ export function UnifiedRequestForm({
                           variant="primary"
                           mode="filled"
                           size="medium"
-                          onClick={() => {
-                            // TODO: Implement actual invite functionality
-                            setInviteSent(true);
-                            // Simulate sending invite
-                            setTimeout(() => {
-                              console.log(`Invite sent to ${formData.customAssignedPerson} via ${formData.customPersonContactType}: ${formData.customPersonContact}`);
-                            }, 100);
-                          }}
+                          onClick={handleInviteClick}
                         >
                           <Button.Icon>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -575,7 +575,7 @@ export function UnifiedRequestForm({
             <div className="space-y-2">
               <Label.Root htmlFor="location">Where will this happen?</Label.Root>
               <Select.Root
-                value={formData.location}
+                value={formData.location || undefined}
                 onValueChange={handleLocationChange}
               >
                 <Select.Trigger>
