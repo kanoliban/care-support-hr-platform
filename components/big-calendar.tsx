@@ -348,14 +348,15 @@ export function BigCalendar({
   };
 
   // Helper function to get events for a specific day and hour
-  const getEventsForTimeSlot = (day: Date, hour: Date) => {
+  const getEventsForTimeSlot = (day: Date, hour: string) => {
     const matchingEvents = events.filter(event => {
       const eventStart = new Date(event.startDate);
       const eventEnd = new Date(event.endDate);
+      const hourDate = new Date(hour); // Convert ISO string to Date
       const slotStart = new Date(day);
-      slotStart.setHours(hour.getHours(), 0, 0, 0);
+      slotStart.setHours(hourDate.getHours(), 0, 0, 0);
       const slotEnd = new Date(slotStart);
-      slotEnd.setHours(hour.getHours() + 1, 0, 0, 0);
+      slotEnd.setHours(hourDate.getHours() + 1, 0, 0, 0);
       
       // Check if event overlaps with this time slot
       return eventStart < slotEnd && eventEnd > slotStart;
@@ -363,7 +364,8 @@ export function BigCalendar({
     
     // Debug logging
     if (matchingEvents.length > 0) {
-      console.log(`Found ${matchingEvents.length} events for ${day.toDateString()} at ${hour.getHours()}:00`, matchingEvents);
+      const hourDate = new Date(hour);
+      console.log(`Found ${matchingEvents.length} events for ${day.toDateString()} at ${hourDate.getHours()}:00`, matchingEvents);
     }
     
     return matchingEvents;
