@@ -70,11 +70,11 @@ export function DeleteConfirmationModal({
             <Label.Root className="text-sm font-medium text-text-sub-600 mb-2">
               Are you sure you want to delete this event?
             </Label.Root>
+            {isRecurring && (
+              <p className="text-sm text-text-sub-600 mb-4">This is a recurring event</p>
+            )}
             <div className="bg-bg-soft-50 rounded-lg p-3 border border-stroke-soft-200 mb-4">
               <p className="text-text-strong-950 font-medium">{eventTitle}</p>
-              {isRecurring && (
-                <p className="text-sm text-text-sub-600 mt-1">This is a recurring event</p>
-              )}
             </div>
 
             {/* Recurring Event Options */}
@@ -141,11 +141,6 @@ export function DeleteConfirmationModal({
             )}
           </div>
 
-          {/* Warning Message */}
-          <div className="mb-4 p-3 bg-error-50 rounded-lg border border-error-200">
-            <p className="text-sm text-error-800 font-medium">This action cannot be undone</p>
-          </div>
-
           {/* Actions */}
           <div className="flex gap-3">
             <Button.Root
@@ -174,6 +169,11 @@ export function DeleteConfirmationModal({
                 </>
               )}
             </Button.Root>
+          </div>
+
+          {/* Warning Message */}
+          <div className="mt-4 text-center">
+            <p className="text-sm text-text-sub-600">This action cannot be undone</p>
           </div>
         </div>
       </div>
