@@ -263,7 +263,7 @@ export default function PageCalendar() {
     // Add events for the current calendar view date
     if (testDate.getDate() !== today.getDate()) {
       events.push(
-          {
+        {
             startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
             endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
             title: 'Help with morning routine and medication',
@@ -429,6 +429,7 @@ export default function PageCalendar() {
             },
           }
         );
+      );
     }
 
     return [...events, ...calendarData]; // Combine with existing static data
