@@ -41,14 +41,18 @@ export function EditDetailsModalContent({
           
           <div className='space-y-2'>
             <Label.Root htmlFor='edit-email'>Email Address *</Label.Root>
-            <Input.Root
-              id='edit-email'
-              type='email'
-              value={editFormData.email}
-              onChange={(e) => handleFormFieldChange('email', e.target.value)}
-              placeholder="Enter email address"
-              className={formErrors.email ? 'border-red-500' : ''}
-            />
+            <Input.Root>
+              <Input.Wrapper>
+                <Input.Input
+                  id='edit-email'
+                  type='email'
+                  value={editFormData.email}
+                  onChange={(e) => handleFormFieldChange('email', e.target.value)}
+                  placeholder="Enter email address"
+                  className={formErrors.email ? 'border-red-500' : ''}
+                />
+              </Input.Wrapper>
+            </Input.Root>
             {formErrors.email && (
               <div className='text-xs text-red-600'>{formErrors.email}</div>
             )}
