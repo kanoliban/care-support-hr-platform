@@ -20,7 +20,11 @@ export default function EventDetailsModal({
   onEdit,
   onDelete,
 }: EventDetailsModalProps) {
-  if (!isOpen || !event) return null;
+  console.log('[EVENT DETAILS MODAL DEBUG] Rendering with isOpen:', isOpen, 'event:', event?.title);
+  if (!isOpen || !event) {
+    console.log('[EVENT DETAILS MODAL DEBUG] Not rendering - isOpen:', isOpen, 'event:', event);
+    return null;
+  }
 
   const handleEdit = () => {
     onEdit?.(event);
