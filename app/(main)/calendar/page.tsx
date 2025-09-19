@@ -257,8 +257,7 @@ export default function PageCalendar() {
   }, []);
 
   React.useEffect(() => {
-    const events = generateCalendarEvents();
-    setFilteredEvents(events);
+    setFilteredEvents(generateCalendarEvents);
   }, [generateCalendarEvents]);
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
@@ -280,7 +279,7 @@ export default function PageCalendar() {
   };
 
   const filterEvents = (query: string, range: {start: Date, end: Date} | null) => {
-    const events = generateCalendarEvents();
+    const events = generateCalendarEvents;
     let filtered = events;
 
     // Filter by search query
@@ -317,7 +316,7 @@ export default function PageCalendar() {
   const handleEventCreated = (eventId: string) => {
     console.log('Care event created:', eventId);
     // Refresh the calendar events
-    setFilteredEvents(generateCalendarEvents());
+    setFilteredEvents(generateCalendarEvents);
   };
 
   // Calculate dynamic description
