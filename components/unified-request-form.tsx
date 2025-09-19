@@ -811,7 +811,7 @@ export function UnifiedRequestForm({
             {/* Additional Notes */}
             <div className="space-y-2">
               <Label.Root htmlFor="notes">Additional Notes (Optional)</Label.Root>
-              <Textarea.Root>
+              <Textarea.Root simple>
                 <textarea
                   id="notes"
                   value={formData.notes}
@@ -848,37 +848,38 @@ export function UnifiedRequestForm({
           </button>
         </div>
         
-        {/* Step Progress Indicators */}
-        <div className="flex items-center justify-center space-x-4 mb-8">
+        {/* Progress Steps */}
+        <div className="flex items-center mt-4 space-x-2">
           {steps.map((step, index) => {
             const Icon = step.icon;
+            const isCompleted = index < currentStepIndex;
             const isCurrent = index === currentStepIndex;
-            console.log('Step progress:', { index, isCurrent, step: step.title });
             
             return (
               <React.Fragment key={step.id}>
-                <div className="flex flex-col items-center">
+                <div className="flex items-center">
                   <div
                     className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-                      isCurrent
+                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
+                      isCompleted
                         ? "bg-primary-600 text-white"
+                        : isCurrent
+                        ? "bg-primary-100 text-primary-600"
                         : "bg-bg-soft-100 text-text-sub-600"
                     )}
                   >
                     <Icon className="w-4 h-4" />
                   </div>
-                  <span className={cn(
-                    "text-xs mt-2 text-center",
-                    isCurrent && "text-primary-700 font-medium",
-                    !isCurrent && "text-text-sub-600"
-                  )}>
-                    {step.title}
-                  </span>
                 </div>
-                
                 {index < steps.length - 1 && (
-                  <div className="h-0.5 w-6 border-dashed border-t-2 border-stroke-soft-200" />
+                  <div
+                    className={cn(
+                      "h-0.5 w-8 transition-colors",
+                      index < currentStepIndex
+                        ? "bg-primary-600"
+                        : "bg-bg-soft-200"
+                    )}
+                  />
                 )}
               </React.Fragment>
             );

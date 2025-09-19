@@ -183,18 +183,6 @@ const data: Data[] = [
   {
     id: 'jennifer',
     profileId: 'robs-care-team',
-    role: 'member',
-    permissions: {
-      canManageTeam: false,
-      canViewSensitive: false,
-      canManageBilling: false,
-      canDeleteProfile: false,
-      canInviteMembers: false,
-      canExportData: false,
-      canManageOrganization: false,
-      canManageIntegrations: false,
-      canManageSecurity: false,
-    },
     member: {
       name: 'Jennifer',
       email: 'jennifer@caresupport.com',
@@ -1504,7 +1492,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-manage-team`} 
                       checked={currentPermissions.canManageTeam}
-                       onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canManageTeam: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canManageTeam: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1521,7 +1509,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-invite-members`} 
                       checked={currentPermissions.canInviteMembers}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canInviteMembers: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canInviteMembers: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1538,7 +1526,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-export-data`} 
                       checked={currentPermissions.canExportData}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canExportData: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canExportData: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1555,7 +1543,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-view-sensitive`} 
                       checked={currentPermissions.canViewSensitive}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canViewSensitive: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canViewSensitive: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1572,7 +1560,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-manage-billing`} 
                       checked={currentPermissions.canManageBilling}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canManageBilling: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canManageBilling: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1589,7 +1577,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-manage-organization`} 
                       checked={currentPermissions.canManageOrganization}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canManageOrganization: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canManageOrganization: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1606,7 +1594,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-manage-integrations`} 
                       checked={currentPermissions.canManageIntegrations}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canManageIntegrations: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canManageIntegrations: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1623,7 +1611,7 @@ const columns: ColumnDef<Data>[] = [
                     <Switch.Root 
                       id={`${selectedMember.id}-manage-security`} 
                       checked={currentPermissions.canManageSecurity}
-                      onCheckedChange={(checked) => setCurrentPermissions((prev: any) => ({...prev, canManageSecurity: checked}))}
+                      onCheckedChange={(checked) => setCurrentPermissions(prev => ({...prev, canManageSecurity: checked}))}
                     />
                     <Label.Root
                       className='flex-col items-start gap-1'
@@ -1650,7 +1638,7 @@ const columns: ColumnDef<Data>[] = [
                 member.id === selectedMember?.id 
                   ? {
                       ...member,
-                      role: currentRole as "admin" | "owner" | "member" | "viewer",
+                      role: currentRole,
                       permissions: currentPermissions
                     }
                   : member

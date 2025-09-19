@@ -337,7 +337,7 @@ function InvitationView({
         </Button.Root>
         <Button.Root 
           variant="primary" 
-          mode="filled" 
+          mode="solid" 
           onClick={onAccept}
           className="flex-1"
         >
@@ -396,18 +396,14 @@ function InvitationAccept({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label.Root htmlFor="accept-phone">Phone Number *</Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="accept-phone"
-                  type="tel"
-                  value={acceptData.phone}
-                  onChange={(e) => onAcceptDataChange('phone', e.target.value)}
-                  placeholder="(555) 123-4567"
-                  className={errors.phone ? 'border-red-500' : ''}
-                />
-              </Input.Wrapper>
-            </Input.Root>
+            <Input.Root
+              id="accept-phone"
+              type="tel"
+              value={acceptData.phone}
+              onChange={(e) => onAcceptDataChange('phone', e.target.value)}
+              placeholder="(555) 123-4567"
+              className={errors.phone ? 'border-red-500' : ''}
+            />
             {errors.phone && (
               <div className="text-xs text-red-600">{errors.phone}</div>
             )}
@@ -415,33 +411,25 @@ function InvitationAccept({
           
           <div className="space-y-2">
             <Label.Root htmlFor="accept-address">Address</Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="accept-address"
-                  value={acceptData.address}
-                  onChange={(e) => onAcceptDataChange('address', e.target.value)}
-                  placeholder="123 Main St, City, State 12345"
-                />
-              </Input.Wrapper>
-            </Input.Root>
+            <Input.Root
+              id="accept-address"
+              value={acceptData.address}
+              onChange={(e) => onAcceptDataChange('address', e.target.value)}
+              placeholder="123 Main St, City, State 12345"
+            />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label.Root htmlFor="accept-schedule">Schedule *</Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="accept-schedule"
-                  value={acceptData.schedule}
-                  onChange={(e) => onAcceptDataChange('schedule', e.target.value)}
-                  placeholder="e.g., Mon-Fri 9-5, On-call, Weekends only"
-                  className={errors.schedule ? 'border-red-500' : ''}
-                />
-              </Input.Wrapper>
-            </Input.Root>
+            <Input.Root
+              id="accept-schedule"
+              value={acceptData.schedule}
+              onChange={(e) => onAcceptDataChange('schedule', e.target.value)}
+              placeholder="e.g., Mon-Fri 9-5, On-call, Weekends only"
+              className={errors.schedule ? 'border-red-500' : ''}
+            />
             {errors.schedule && (
               <div className="text-xs text-red-600">{errors.schedule}</div>
             )}
@@ -470,46 +458,34 @@ function InvitationAccept({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label.Root htmlFor="accept-emergency-contact">Emergency Contact</Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="accept-emergency-contact"
-                  value={acceptData.emergencyContact}
-                  onChange={(e) => onAcceptDataChange('emergencyContact', e.target.value)}
-                  placeholder="Emergency contact person"
-                />
-              </Input.Wrapper>
-            </Input.Root>
+            <Input.Root
+              id="accept-emergency-contact"
+              value={acceptData.emergencyContact}
+              onChange={(e) => onAcceptDataChange('emergencyContact', e.target.value)}
+              placeholder="Emergency contact person"
+            />
           </div>
           
           <div className="space-y-2">
             <Label.Root htmlFor="accept-emergency-phone">Emergency Phone</Label.Root>
-            <Input.Root>
-              <Input.Wrapper>
-                <Input.Input
-                  id="accept-emergency-phone"
-                  type="tel"
-                  value={acceptData.emergencyPhone}
-                  onChange={(e) => onAcceptDataChange('emergencyPhone', e.target.value)}
-                  placeholder="(555) 123-4567"
-                />
-              </Input.Wrapper>
-            </Input.Root>
+            <Input.Root
+              id="accept-emergency-phone"
+              type="tel"
+              value={acceptData.emergencyPhone}
+              onChange={(e) => onAcceptDataChange('emergencyPhone', e.target.value)}
+              placeholder="(555) 123-4567"
+            />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label.Root htmlFor="accept-skills">Skills & Qualifications</Label.Root>
-          <Input.Root>
-            <Input.Wrapper>
-              <Input.Input
-                id="accept-skills"
-                value={acceptData.skills}
-                onChange={(e) => onAcceptDataChange('skills', e.target.value)}
-                placeholder="e.g., PCA Certified, Physical Therapy, Medication Management"
-              />
-            </Input.Wrapper>
-          </Input.Root>
+          <Input.Root
+            id="accept-skills"
+            value={acceptData.skills}
+            onChange={(e) => onAcceptDataChange('skills', e.target.value)}
+            placeholder="e.g., PCA Certified, Physical Therapy, Medication Management"
+          />
         </div>
 
         <div className="space-y-2">
@@ -533,7 +509,7 @@ function InvitationAccept({
         </Button.Root>
         <Button.Root 
           variant="primary" 
-          mode="filled" 
+          mode="solid" 
           onClick={onAccept}
           disabled={isAccepting}
           className="flex-1"
