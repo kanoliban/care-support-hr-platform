@@ -23,13 +23,17 @@ export function EditDetailsModalContent({
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div className='space-y-2'>
             <Label.Root htmlFor='edit-name'>Name *</Label.Root>
-            <Input.Root
-              id='edit-name'
-              value={editFormData.name}
-              onChange={(e) => handleFormFieldChange('name', e.target.value)}
-              placeholder="e.g., Marta Snow (Sister), Sarah Johnson (PCA), Dr. Smith (Therapist)"
-              className={formErrors.name ? 'border-red-500' : ''}
-            />
+            <Input.Root>
+              <Input.Wrapper>
+                <Input.Input
+                  id='edit-name'
+                  value={editFormData.name}
+                  onChange={(e) => handleFormFieldChange('name', e.target.value)}
+                  placeholder="e.g., Marta Snow (Sister), Sarah Johnson (PCA), Dr. Smith (Therapist)"
+                  className={formErrors.name ? 'border-red-500' : ''}
+                />
+              </Input.Wrapper>
+            </Input.Root>
             {formErrors.name && (
               <div className='text-xs text-red-600'>{formErrors.name}</div>
             )}

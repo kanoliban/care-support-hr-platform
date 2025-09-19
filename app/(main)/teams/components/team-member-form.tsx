@@ -225,13 +225,17 @@ export function TeamMemberForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label.Root htmlFor="schedule">Schedule *</Label.Root>
-            <Input.Root
-              id="schedule"
-              value={formData.schedule}
-              onChange={(e) => onFormDataChange('schedule', e.target.value)}
-              placeholder="e.g., Mon-Fri 9-5, On-call, Weekends only"
-              className={errors.schedule ? 'border-red-500' : ''}
-            />
+            <Input.Root>
+              <Input.Wrapper>
+                <Input.Input
+                  id="schedule"
+                  value={formData.schedule}
+                  onChange={(e) => onFormDataChange('schedule', e.target.value)}
+                  placeholder="e.g., Mon-Fri 9-5, On-call, Weekends only"
+                  className={errors.schedule ? 'border-red-500' : ''}
+                />
+              </Input.Wrapper>
+            </Input.Root>
             {errors.schedule && (
               <div className="text-xs text-red-600">{errors.schedule}</div>
             )}
@@ -294,7 +298,7 @@ export function TeamMemberForm({
         </Button.Root>
         <Button.Root 
           variant="primary" 
-          mode="solid" 
+          mode="filled" 
           onClick={onSave}
           disabled={isSaving}
         >

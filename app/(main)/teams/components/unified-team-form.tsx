@@ -66,7 +66,7 @@ export function UnifiedTeamForm({
   const handleWizardSave = (wizardData: any) => {
     // Update form data with wizard data
     Object.keys(wizardData).forEach(key => {
-      onFormDataChange(key, wizardData[key]);
+      onFormDataChange(key as keyof TeamMemberFormData, wizardData[key]);
     });
     setIsWizardActive(false);
     setMode(null);
