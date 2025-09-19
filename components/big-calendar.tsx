@@ -470,7 +470,7 @@ export function BigCalendar({
         // Extract days from pattern like "weekly every 1 on M,T,W,T,F"
         const daysMatch = event.recurrencePattern.match(/on ([A-Z,]+)/);
         if (daysMatch) {
-          const dayMap: { [key: string]: number } = { 'S': 0, 'M': 1, 'T': 2, 'W': 3, 'T': 4, 'F': 5, 'S': 6 };
+          const dayMap: { [key: string]: number } = { 'S': 0, 'M': 1, 'T': 2, 'W': 3, 'Th': 4, 'F': 5, 'Sa': 6 };
           recurrencePattern.daysOfWeek = daysMatch[1].split(',').map(d => dayMap[d.trim()]).filter(d => d !== undefined);
         }
       }
@@ -1085,7 +1085,6 @@ export function BigCalendar({
           />
           
           {/* Event Details Modal */}
-          {console.log('[BIGCALENDAR DEBUG] Rendering EventDetailsModal with isOpen:', isEventDetailsOpen, 'view:', view)}
           <EventDetailsModal
             isOpen={isEventDetailsOpen}
             onClose={() => setIsEventDetailsOpen(false)}
