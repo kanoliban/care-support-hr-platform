@@ -73,11 +73,11 @@ export default function CareEventDialog({
       // Validate required fields
       const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
       
-      if (!formData.title.trim()) newErrors.title = 'Title is required';
       if (!formData.requestType) newErrors.requestType = 'Request type is required';
       if (formData.requestType === 'other' && !formData.customRequestType.trim()) {
         newErrors.customRequestType = 'Custom request type is required';
       }
+      if (!formData.title.trim()) newErrors.title = 'Request details are required';
       // Description is now optional - removed validation
       if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
       if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';

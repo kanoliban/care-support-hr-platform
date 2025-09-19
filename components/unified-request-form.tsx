@@ -170,6 +170,31 @@ export function UnifiedRequestForm({
     });
   };
 
+  const getTitlePlaceholder = (requestType: string): string => {
+    switch (requestType) {
+      case 'medication':
+        return 'e.g., Morning blood pressure medication, Evening pain relief';
+      case 'appointment':
+        return 'e.g., Physical therapy session, Doctor check-up, Lab work';
+      case 'care-shift':
+        return 'e.g., Evening personal care, Morning assistance, Overnight supervision';
+      case 'transportation':
+        return 'e.g., Ride to doctor appointment, Grocery shopping trip';
+      case 'meal-prep':
+        return 'e.g., Prepare dinner, Meal planning, Special diet cooking';
+      case 'housekeeping':
+        return 'e.g., Weekly cleaning, Laundry, Home maintenance';
+      case 'companionship':
+        return 'e.g., Social visit, Activity companion, Emotional support';
+      case 'emergency':
+        return 'e.g., Urgent care needed, Crisis support, Emergency assistance';
+      case 'other':
+        return 'e.g., Describe your specific request';
+      default:
+        return 'e.g., Describe your specific request';
+    }
+  };
+
   React.useEffect(() => {
     // Initialize form data with selected date/time
     if (!formData.startDate) {
@@ -185,11 +210,11 @@ export function UnifiedRequestForm({
 
     switch (stepId) {
       case 'details':
-        if (!formData.title.trim()) newErrors.title = 'Title is required';
         if (!formData.requestType) newErrors.requestType = 'Request type is required';
         if (formData.requestType === 'other' && !formData.customRequestType.trim()) {
           newErrors.customRequestType = 'Custom request type is required';
         }
+        if (!formData.title.trim()) newErrors.title = 'Request details are required';
         // Description is now optional - removed validation
         if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
         if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
@@ -236,28 +261,8 @@ export function UnifiedRequestForm({
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label.Root htmlFor="title">
-                What kind of help do you need? <Label.Asterisk />
-              </Label.Root>
-              <Input.Root>
-                <Input.Wrapper>
-                  <Input.Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => onFormDataChange('title', e.target.value)}
-                    placeholder="e.g., Need care coverage, Medical appointment, Time off"
-                    className={errors.title ? 'border-red-500' : ''}
-                  />
-                </Input.Wrapper>
-              </Input.Root>
-              {errors.title && (
-                <div className="text-xs text-red-600">{errors.title}</div>
-              )}
-            </div>
-
-            <div className="space-y-2">
               <Label.Root htmlFor="requestType">
-                Request Type <Label.Asterisk />
+                What kind of help do you need? <Label.Asterisk />
               </Label.Root>
               <Select.Root
                 value={formData.requestType}
@@ -308,6 +313,26 @@ export function UnifiedRequestForm({
                 )}
               </div>
             )}
+
+            <div className="space-y-2">
+              <Label.Root htmlFor="title">
+                Request Details <Label.Asterisk />
+              </Label.Root>
+              <Input.Root>
+                <Input.Wrapper>
+                  <Input.Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => onFormDataChange('title', e.target.value)}
+                    placeholder={getTitlePlaceholder(formData.requestType)}
+                    className={errors.title ? 'border-red-500' : ''}
+                  />
+                </Input.Wrapper>
+              </Input.Root>
+              {errors.title && (
+                <div className="text-xs text-red-600">{errors.title}</div>
+              )}
+            </div>
 
             <div className="space-y-2">
               <Label.Root htmlFor="description">
