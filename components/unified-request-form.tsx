@@ -843,43 +843,6 @@ export function UnifiedRequestForm({
             ×
           </button>
         </div>
-        
-        {/* Progress Steps */}
-        <div className="flex items-center mt-4 space-x-2">
-          {steps.map((step, index) => {
-            const isCompleted = index < currentStepIndex;
-            const isCurrent = index === currentStepIndex;
-            
-            return (
-              <React.Fragment key={step.id}>
-                <div className="flex items-center">
-                  <div
-                    className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
-                      isCompleted
-                        ? "bg-primary-600 text-white"
-                        : isCurrent
-                        ? "bg-primary-100 text-primary-600"
-                        : "bg-bg-soft-100 text-text-sub-600"
-                    )}
-                  >
-                    {index + 1}
-                  </div>
-                </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={cn(
-                      "h-0.5 w-8 transition-colors",
-                      index < currentStepIndex
-                        ? "bg-primary-600"
-                        : "bg-bg-soft-200"
-                    )}
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
       </div>
 
       {/* Wizard Content */}
