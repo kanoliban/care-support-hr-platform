@@ -848,7 +848,7 @@ export function UnifiedRequestForm({
           </button>
         </div>
         
-        {/* Progress Steps */}
+        {/* Step Progress Indicators - Updated */}
         <div className="flex items-center mt-4 space-x-2">
           {steps.map((step, index) => {
             const Icon = step.icon;
