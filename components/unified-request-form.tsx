@@ -830,18 +830,10 @@ export function UnifiedRequestForm({
     <div className="bg-white border-t border-stroke-soft-200">
       {/* Wizard Header */}
       <div className="px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-text-sub-600">
-              Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
-            </p>
-          </div>
-          <button
-            onClick={onCancel}
-            className="text-text-strong-950 hover:text-text-sub-600 text-xl font-medium"
-          >
-            ×
-          </button>
+        <div>
+          <p className="text-sm text-text-sub-600">
+            Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
+          </p>
         </div>
       </div>
 
