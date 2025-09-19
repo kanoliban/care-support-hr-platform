@@ -625,7 +625,7 @@ export function BigCalendar({
     }
   };
 
-  const handleDrop = (e: React.DragEvent, day: Date, hour: string) => {
+  const handleDrop = (e: React.DragEvent, day: Date, hour: string | undefined) => {
     e.preventDefault();
     
     console.log('[DRAG DEBUG] handleDrop called:', { 
@@ -643,12 +643,20 @@ export function BigCalendar({
     performDragUpdate(draggedEvent, day, hour);
   };
 
-  const performDragUpdate = (event: CalendarData, day: Date, hour: string) => {
+  const performDragUpdate = (event: CalendarData, day: Date, hour: string | undefined) => {
     try {
-      // Parse the hour string to get the target time
-      const targetHour = parseInt(hour);
-      const targetDate = new Date(day);
-      targetDate.setHours(targetHour, 0, 0, 0);
+      // Parse the hour string to get the target time, or use original time if no hour provided
+      let targetDate: Date;
+      
+      if (hour !== undefined) {
+        const targetHour = parseInt(hour);
+        targetDate = new Date(day);
+        targetDate.setHours(targetHour, 0, 0, 0);
+      } else {
+        // For month view, keep the original time but change the date
+        targetDate = new Date(day);
+        targetDate.setHours(event.startDate.getHours(), event.startDate.getMinutes(), 0, 0);
+      }
 
       // Calculate the duration of the original event
       const duration = event.endDate.getTime() - event.startDate.getTime();
