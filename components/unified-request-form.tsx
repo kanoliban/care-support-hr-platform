@@ -223,6 +223,9 @@ export function UnifiedRequestForm({
         // Description is now optional - removed validation
         if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
         if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
+        if (formData.assignedPerson === 'other' && !formData.customAssignedPerson.trim()) {
+          newErrors.customAssignedPerson = 'Custom person is required';
+        }
         break;
       
       case 'schedule':
@@ -231,9 +234,7 @@ export function UnifiedRequestForm({
         break;
       
       case 'review':
-        if (formData.assignedPerson === 'other' && !formData.customAssignedPerson.trim()) {
-          newErrors.customAssignedPerson = 'Custom person is required';
-        }
+        // No validation needed for review step
         break;
     }
 
@@ -329,25 +330,6 @@ export function UnifiedRequestForm({
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label.Root htmlFor="description">
-                More details (Optional)
-              </Label.Root>
-              <Input.Root>
-                <Input.Wrapper>
-                  <Input.Input
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => onFormDataChange('description', e.target.value)}
-                    placeholder="Any additional context or special instructions..."
-                    className={errors.description ? 'border-red-500' : ''}
-                  />
-                </Input.Wrapper>
-              </Input.Root>
-              {errors.description && (
-                <div className="text-xs text-red-600">{errors.description}</div>
-              )}
-            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -397,6 +379,28 @@ export function UnifiedRequestForm({
                   <div className="text-xs text-red-600">{errors.assignedPerson}</div>
                 )}
               </div>
+
+              {formData.assignedPerson === 'other' && (
+                <div className="space-y-2">
+                  <Label.Root htmlFor="customAssignedPerson">
+                    Who's the other person's name? <Label.Asterisk />
+                  </Label.Root>
+                  <Input.Root>
+                    <Input.Wrapper>
+                      <Input.Input
+                        id="customAssignedPerson"
+                        placeholder="Enter their full name"
+                        value={formData.customAssignedPerson}
+                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
+                        className={errors.customAssignedPerson ? 'border-red-500' : ''}
+                      />
+                    </Input.Wrapper>
+                  </Input.Root>
+                  {errors.customAssignedPerson && (
+                    <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
+                  )}
+                </div>
+              )}
 
             </div>
 
@@ -695,11 +699,6 @@ export function UnifiedRequestForm({
                 <div>
                   <span className="font-medium">Request details:</span> {formData.title}
                 </div>
-                {formData.description && (
-                  <div>
-                    <span className="font-medium">More details:</span> {formData.description}
-                  </div>
-                )}
                 <div>
                   <span className="font-medium">Who needs care:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
@@ -743,29 +742,9 @@ export function UnifiedRequestForm({
 
             {formData.assignedPerson === 'other' && (
               <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
-                  <div className="space-y-2">
-                    <Label.Root htmlFor="customAssignedPerson">
-                      Who's the other person's name? <Label.Asterisk />
-                    </Label.Root>
-                  <Input.Root>
-                    <Input.Wrapper>
-                      <Input.Input
-                        id="customAssignedPerson"
-                        placeholder="Enter their full name"
-                        value={formData.customAssignedPerson}
-                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
-                        className={errors.customAssignedPerson ? 'border-red-500' : ''}
-                      />
-                    </Input.Wrapper>
-                  </Input.Root>
-                  {errors.customAssignedPerson && (
-                    <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
-                  )}
-                </div>
-
-                  <div className="space-y-2">
-                    <Label.Root>Add their contact info to invite them to your care team (Optional)</Label.Root>
-                    <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label.Root>Add their contact info to invite them to your care team (Optional)</Label.Root>
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
                       <Select.Root
