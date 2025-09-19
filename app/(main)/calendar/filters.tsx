@@ -1,17 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { format, startOfWeek, endOfWeek, addDays, subDays, startOfMonth, endOfMonth, addMonths, subMonths, addWeeks, subWeeks } from 'date-fns';
+import { format, startOfWeek, endOfWeek, addDays, subDays } from 'date-fns';
 import {
   RiArrowDownSLine,
-  RiArrowLeftSLine,
-  RiArrowRightSLine,
   RiCalendarLine,
   RiFilter3Fill,
-  RiLayoutGridLine,
   RiSearch2Line,
   RiSettings2Line,
-  RiTimeLine,
 } from '@remixicon/react';
 
 import * as Button from '@/components/ui/button';
@@ -26,8 +22,8 @@ interface CalendarFiltersProps {
   onTodayClick?: () => void;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
-  currentView?: 'month' | 'week';
-  onViewChange?: (view: 'month' | 'week') => void;
+  currentView?: 'week' | 'month';
+  onViewChange?: (view: 'week' | 'month') => void;
 }
 
 export default function CalendarFilters({ 
@@ -60,6 +56,27 @@ export default function CalendarFilters({
     onTodayClick?.();
   };
 
+  const handleViewToggle = () => {
+    const newView = currentView === 'week' ? 'month' : 'week';
+    onViewChange?.(newView);
+    
+    // Adjust date range based on view
+    const today = new Date();
+    if (newView === 'week') {
+      const startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 });
+      const endOfWeekDate = endOfWeek(today, { weekStartsOn: 1 });
+      const newRange = { start: startOfWeekDate, end: endOfWeekDate };
+      setCurrentDateRange(newRange);
+      onDateRangeChange?.(newRange.start, newRange.end);
+    } else {
+      // Month view - show current month
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      const newRange = { start: startOfMonth, end: endOfMonth };
+      setCurrentDateRange(newRange);
+      onDateRangeChange?.(newRange.start, newRange.end);
+    }
+  };
 
   const handleDateRangeClick = () => {
     // For now, just cycle through different ranges
@@ -74,112 +91,11 @@ export default function CalendarFilters({
     onDateRangeChange?.(newRange.start, newRange.end);
   };
 
-  const handlePreviousPeriod = () => {
-    let newRange;
-    if (currentView === 'month') {
-      const prevMonth = subMonths(currentDateRange.start, 1);
-      newRange = { 
-        start: startOfMonth(prevMonth), 
-        end: endOfMonth(prevMonth) 
-      };
-    } else {
-      const prevWeek = subWeeks(currentDateRange.start, 1);
-      newRange = { 
-        start: startOfWeek(prevWeek, { weekStartsOn: 1 }), 
-        end: endOfWeek(prevWeek, { weekStartsOn: 1 }) 
-      };
-    }
-    
-    setCurrentDateRange(newRange);
-    onDateRangeChange?.(newRange.start, newRange.end);
-  };
-
-  const handleNextPeriod = () => {
-    let newRange;
-    if (currentView === 'month') {
-      const nextMonth = addMonths(currentDateRange.start, 1);
-      newRange = { 
-        start: startOfMonth(nextMonth), 
-        end: endOfMonth(nextMonth) 
-      };
-    } else {
-      const nextWeek = addWeeks(currentDateRange.start, 1);
-      newRange = { 
-        start: startOfWeek(nextWeek, { weekStartsOn: 1 }), 
-        end: endOfWeek(nextWeek, { weekStartsOn: 1 }) 
-      };
-    }
-    
-    setCurrentDateRange(newRange);
-    onDateRangeChange?.(newRange.start, newRange.end);
-  };
-
-  const handleViewChange = (view: 'month' | 'week') => {
-    let newRange;
-    if (view === 'month') {
-      newRange = { 
-        start: startOfMonth(currentDateRange.start), 
-        end: endOfMonth(currentDateRange.start) 
-      };
-    } else {
-      newRange = { 
-        start: startOfWeek(currentDateRange.start, { weekStartsOn: 1 }), 
-        end: endOfWeek(currentDateRange.start, { weekStartsOn: 1 }) 
-      };
-    }
-    
-    setCurrentDateRange(newRange);
-    onDateRangeChange?.(newRange.start, newRange.end);
-    onViewChange?.(view);
-  };
-
   const formatDateRange = () => {
-    if (currentView === 'month') {
-      return format(currentDateRange.start, 'MMMM yyyy');
-    } else {
-      return `${format(currentDateRange.start, 'MMM dd')} - ${format(currentDateRange.end, 'MMM dd yyyy')}`;
-    }
+    return `${format(currentDateRange.start, 'MMM dd')} - ${format(currentDateRange.end, 'MMM dd yyyy')}`;
   };
   return (
     <div className='-mt-1 flex flex-col justify-between gap-4 lg:mt-0 lg:flex-row lg:flex-wrap lg:gap-3'>
-      {/* View Navigation Controls */}
-      <div className='flex items-center gap-2'>
-        <Button.Root 
-          variant='neutral' 
-          mode='stroke' 
-          size='small'
-          onClick={handlePreviousPeriod}
-        >
-          <Button.Icon as={RiArrowLeftSLine} />
-        </Button.Root>
-        
-        <ButtonGroup.Root size='small'>
-          <ButtonGroup.Item 
-            onClick={() => handleViewChange('week')}
-            className={currentView === 'week' ? 'bg-primary-50 text-primary-600' : ''}
-          >
-            <ButtonGroup.Icon as={RiTimeLine} />
-            Week
-          </ButtonGroup.Item>
-          <ButtonGroup.Item 
-            onClick={() => handleViewChange('month')}
-            className={currentView === 'month' ? 'bg-primary-50 text-primary-600' : ''}
-          >
-            <ButtonGroup.Icon as={RiLayoutGridLine} />
-            Month
-          </ButtonGroup.Item>
-        </ButtonGroup.Root>
-        
-        <Button.Root 
-          variant='neutral' 
-          mode='stroke' 
-          size='small'
-          onClick={handleNextPeriod}
-        >
-          <Button.Icon as={RiArrowRightSLine} />
-        </Button.Root>
-      </div>
-
       <div className='flex flex-row-reverse gap-3 lg:flex-row'>
         <Button.Root 
           variant='neutral' 
@@ -189,13 +105,17 @@ export default function CalendarFilters({
         >
           Today
         </Button.Root>
-          
-          <ButtonGroup.Root size='small' className='min-w-0'>
-            <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
-              <ButtonGroup.Icon as={RiCalendarLine} />
-              <div className='truncate'>{formatDateRange()}</div>
-            </ButtonGroup.Item>
-          </ButtonGroup.Root>
+
+        <ButtonGroup.Root size='small' className='min-w-0'>
+          <ButtonGroup.Item onClick={handleViewToggle}>
+            {currentView === 'week' ? 'Week View' : 'Month View'}
+            <ButtonGroup.Icon as={RiArrowDownSLine} />
+          </ButtonGroup.Item>
+          <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
+            <ButtonGroup.Icon as={RiCalendarLine} />
+            <div className='truncate'>{formatDateRange()}</div>
+          </ButtonGroup.Item>
+        </ButtonGroup.Root>
       </div>
 
       <Input.Root className='lg:hidden'>

@@ -215,8 +215,7 @@ export default function PageCalendar() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
-  const [currentView, setCurrentView] = React.useState<'month' | 'week'>('week');
-  const [activeFilter, setActiveFilter] = React.useState<string>('all');
+  const [currentView, setCurrentView] = React.useState<'week' | 'month'>('week');
   
   // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
@@ -228,42 +227,11 @@ export default function PageCalendar() {
     const events: CalendarData[] = [];
     const today = new Date();
     
-    // Add test events for the current calendar view
-    const testDate = currentDate; // Use the current calendar date
+    // Add test events for today and the next few days
+    const testDate = new Date(); // Use current date
     
-    // Add events for today
     events.push(
-      {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
-        title: 'Morning Care - Today',
-        type: 'meeting',
-        completed: false,
-        people: [
           {
-            alt: 'Jim Nelson',
-            image: '/images/avatar/illustration/james.png',
-            color: 'blue',
-          },
-        ],
-        platform: 'Rob\'s Home',
-        description: 'Assist with morning routine including medication administration',
-        assignedCaregiver: 'Jim Nelson',
-        client: 'Rob',
-        status: 'scheduled',
-        visibility: 'care-team-only',
-        metadata: {
-          requestType: 'Personal Care',
-          priority: 'medium',
-          notes: 'Regular morning care routine'
-        }
-      }
-    );
-    
-    // Add events for the current calendar view date
-    if (testDate.getDate() !== today.getDate()) {
-      events.push(
-        {
             startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
             endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
             title: 'Help with morning routine and medication',
@@ -429,8 +397,37 @@ export default function PageCalendar() {
             },
           }
         );
-      );
-    }
+
+    // Add a simple event for tomorrow
+    const tomorrow = new Date(testDate);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    events.push({
+      startDate: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 10, 0),
+      endDate: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 11, 0),
+      title: 'Doctor Appointment',
+      type: 'event',
+      completed: false,
+      location: 'Medical Center',
+      people: [
+        {
+          alt: 'Dr. Smith',
+          image: '/images/avatar/illustration/emma.png',
+          color: 'green',
+        },
+      ],
+      description: 'Regular checkup appointment',
+      assignedCaregiver: 'Dr. Smith',
+      client: 'Rob',
+      isRecurring: false,
+      status: 'scheduled',
+      visibility: 'care-team-only',
+      metadata: {
+        requestType: 'Medical Appointment',
+        notes: 'Bring insurance card',
+        isOpenToAnyone: false,
+      },
+    });
 
     return [...events, ...calendarData]; // Combine with existing static data
   };
@@ -440,7 +437,7 @@ export default function PageCalendar() {
     console.log('[CALENDAR DEBUG] generateCalendarEvents returned:', events.length, 'events');
     console.log('[CALENDAR DEBUG] First few events:', events.slice(0, 3));
     setFilteredEvents(events);
-  }, [currentDate]); // Regenerate when currentDate changes
+  }, []); // Run once on mount
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);
@@ -464,48 +461,6 @@ export default function PageCalendar() {
     setFilteredEvents(filtered);
   };
 
-  const handleViewChange = (view: 'month' | 'week') => {
-    setCurrentView(view);
-  };
-
-  const handleFilterChange = (filter: string) => {
-    setActiveFilter(filter);
-    // Apply filter to events
-    const events = generateCalendarEvents();
-    let filtered = events;
-    
-    switch (filter) {
-      case 'meetings':
-        filtered = events.filter(event => 
-          event.metadata?.requestType === 'Personal Care' || 
-          event.metadata?.requestType === 'Overnight Care'
-        );
-        break;
-      case 'events':
-        filtered = events.filter(event => 
-          event.metadata?.requestType === 'Medical Appointment'
-        );
-        break;
-      case 'conflicted':
-        // For now, filter events that might have conflicts (you can enhance this logic)
-        filtered = events.filter(event => 
-          event.status === 'conflict' || 
-          event.metadata?.requestType === 'Personal Care'
-        );
-        break;
-      case 'canceled':
-        filtered = events.filter(event => 
-          event.status === 'cancelled' || 
-          event.completed === false
-        );
-        break;
-      default:
-        filtered = events;
-    }
-    
-    setFilteredEvents(filtered);
-  };
-
   // Care Event Dialog handlers
   const handleCreateRequestClick = () => {
     setSelectedDate(new Date());
@@ -521,6 +476,10 @@ export default function PageCalendar() {
     console.log('Care event created:', eventId);
     // Refresh the calendar events
     setFilteredEvents(generateCalendarEvents());
+  };
+
+  const handleViewChange = (view: 'week' | 'month') => {
+    setCurrentView(view);
   };
 
   // Calculate dynamic description
@@ -565,11 +524,7 @@ export default function PageCalendar() {
           onViewChange={handleViewChange}
         />
 
-        <CalendarTabs 
-          className='mt-5 lg:mt-3' 
-          activeFilter={activeFilter}
-          onFilterChange={handleFilterChange}
-        />
+        <CalendarTabs className='mt-5 lg:mt-3' />
 
         <BigCalendar
           className='mt-4'
@@ -578,6 +533,7 @@ export default function PageCalendar() {
           showAllHours={true}
           view={currentView}
         />
+        {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
       </div>
       
       {/* Care Event Notifications */}

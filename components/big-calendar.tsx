@@ -23,7 +23,6 @@ import {
   setMinutes,
   setSeconds,
   startOfHour,
-  startOfWeek,
   subDays,
   isToday,
   getHours,
@@ -325,12 +324,12 @@ type BigCalendarProps = {
   className?: ClassValue;
   events: CalendarData[];
   showAllHours?: boolean;
-  view?: 'month' | 'week';
+  view?: 'week' | 'month';
 };
 
 export function BigCalendar({
   defaultStartDate,
-  totalShowingDays = 7,
+  totalShowingDays = 6,
   events,
   showAllHours = true, // Default to showing all hours
   className,
@@ -397,6 +396,13 @@ export function BigCalendar({
 
   const groupedEvents = groupEventsByHour(events);
 
+  const handlePrevDay = () => {
+    setCurrentStartDate(subDays(currentStartDate, 1));
+  };
+
+  const handleNextDay = () => {
+    setCurrentStartDate(addDays(currentStartDate, 1));
+  };
 
   const handleTimeSlotClick = (day: Date, hour: string) => {
     const hourDate = new Date(day);
@@ -733,136 +739,24 @@ export function BigCalendar({
     setEditFormData(null);
   };
 
-  // Month view helper functions
-  const getMonthDays = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay()); // Start from Sunday
-    
-    const days = [];
-    const current = new Date(startDate);
-    
-    // Generate 42 days (6 weeks)
-    for (let i = 0; i < 42; i++) {
-      days.push(new Date(current));
-      current.setDate(current.getDate() + 1);
-    }
-    
-    return days;
-  };
-
-  const getEventsForDay = (day: Date) => {
-    return localEvents.filter(event => {
-      const eventStart = new Date(event.startDate);
-      const eventEnd = new Date(event.endDate);
-      return isSameDay(eventStart, day) || isSameDay(eventEnd, day) || 
-             (eventStart < day && eventEnd > day);
-    });
-  };
-
-  // Render month view
-  if (view === 'month') {
-    const monthDays = getMonthDays(currentStartDate);
-    const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    
-    return (
-      <div className={cnExt('w-full bg-bg-white-0', className)}>
-        <div className='overflow-clip rounded-xl border border-stroke-soft-200'>
-          {/* Month Header */}
-          <div className='grid grid-cols-7 border-b border-stroke-soft-200 bg-bg-weak-50'>
-            {weekDays.map(day => (
-              <div key={day} className='p-3 text-center text-sm font-medium text-text-sub-600'>
-                {day}
-              </div>
-            ))}
-          </div>
-          
-          {/* Month Grid */}
-          <div className='grid grid-cols-7'>
-            {monthDays.map((day, index) => {
-              const dayEvents = getEventsForDay(day);
-              const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
-              const isToday = isSameDay(day, new Date());
-              
-              return (
-                <div
-                  key={index}
-                  className={cnExt(
-                    'min-h-[120px] border-r border-b border-stroke-soft-200 p-2',
-                    {
-                      'bg-bg-white-0': isCurrentMonth,
-                      'bg-bg-weak-50 text-text-sub-400': !isCurrentMonth,
-                      'bg-primary-lighter/20': isToday,
-                    }
-                  )}
-                >
-                  <div className={cnExt(
-                    'mb-1 text-sm font-medium',
-                    {
-                      'text-text-strong-950': isCurrentMonth,
-                      'text-text-sub-400': !isCurrentMonth,
-                      'text-primary-600': isToday,
-                    }
-                  )}>
-                    {day.getDate()}
-                  </div>
-                  
-                  {/* Events for this day */}
-                  <div className='space-y-1'>
-                    {dayEvents.slice(0, 3).map((event, eventIndex) => (
-                      <div
-                        key={eventIndex}
-                        className={cnExt(
-                          'cursor-pointer rounded px-2 py-1 text-xs',
-                          'bg-information-lighter text-information-base',
-                          'hover:bg-information-base hover:text-white',
-                          'transition-colors'
-                        )}
-                        onClick={() => handleEventClick(event)}
-                      >
-                        <div className='truncate font-medium'>{event.title}</div>
-                        <div className='truncate text-xs opacity-75'>
-                          {format(event.startDate, 'h:mm a')}
-                        </div>
-                      </div>
-                    ))}
-                    {dayEvents.length > 3 && (
-                      <div className='text-xs text-text-sub-500'>
-                        +{dayEvents.length - 3} more
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Week view (existing implementation)
   return (
     <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
       <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
         <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
           {/* Left Navigation Panel */}
           <div className='sticky -left-4 z-30 -ml-px w-[104px] shrink-0 overflow-hidden border-x border-stroke-soft-200 bg-bg-white-0 lg:left-0 lg:border-l-0'>
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows - Now replace the month/year cell */}
             <div className='grid h-8 w-full shrink-0 grid-cols-2 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200 bg-bg-weak-50'>
               <button
                 type='button'
-                onClick={() => setCurrentStartDate(subDays(currentStartDate, 1))}
+                onClick={() => handlePrevDay()}
                 className='flex items-center justify-center bg-bg-weak-50 hover:bg-bg-weak-100'
               >
                 <RiArrowLeftSLine className='size-5 text-text-sub-600' />
               </button>
               <button
                 type='button'
-                onClick={() => setCurrentStartDate(addDays(currentStartDate, 1))}
+                onClick={() => handleNextDay()}
                 className='flex items-center justify-center bg-bg-weak-50 hover:bg-bg-weak-100'
               >
                 <RiArrowRightSLine className='size-5 text-text-sub-600' />
@@ -900,7 +794,7 @@ export function BigCalendar({
                         : 'bg-bg-weak-50 text-text-soft-400'
                     }`}
                   >
-                    {format(day, 'EEE, MMM d').toUpperCase()}
+                    {format(day, 'EEE, MMM dd').toUpperCase()}
                   </div>
                 ))}
               </header>
@@ -925,8 +819,8 @@ export function BigCalendar({
               })()}
               
               {/* 24-Hour Grid Structure */}
-              <div className='grid grid-cols-7 divide-x divide-stroke-soft-200'>
-                {/* Generate 7 day columns */}
+              <div className='grid grid-cols-6 divide-x divide-stroke-soft-200'>
+                {/* Generate 6 day columns */}
                 {showingDays.map((day, dayIndex) => (
                   <div key={dayIndex} className='relative'>
                     {/* Generate 24 hour rows */}

@@ -130,17 +130,10 @@ function EventItem({ title, time, status, index = 0 }: EventItemProps) {
   );
 }
 
-interface CalendarTabsProps extends React.ComponentPropsWithoutRef<typeof TabMenuHorizontal.Root> {
-  onFilterChange?: (filter: string) => void;
-  activeFilter?: string;
-}
-
 export default function CalendarTabs({
   className,
-  onFilterChange,
-  activeFilter = 'all',
   ...rest
-}: CalendarTabsProps) {
+}: React.ComponentPropsWithoutRef<typeof TabMenuHorizontal.Root>) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   return (
@@ -153,11 +146,7 @@ export default function CalendarTabs({
         value='accordion'
         className={cnExt('group/accordion', className)}
       >
-        <TabMenuHorizontal.Root 
-          value={activeFilter} 
-          onValueChange={onFilterChange}
-          {...rest}
-        >
+        <TabMenuHorizontal.Root defaultValue='all' {...rest}>
           <div className='relative'>
             <TabMenuHorizontal.List
               wrapperClassName='-mx-4 pr-28 lg:mx-0'
