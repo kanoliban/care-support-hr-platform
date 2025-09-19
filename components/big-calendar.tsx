@@ -345,6 +345,21 @@ export function BigCalendar({
     return (totalMinutes / totalDayMinutes) * 100;
   };
 
+  // Helper function to get events for a specific day and hour
+  const getEventsForTimeSlot = (day: Date, hour: Date) => {
+    return events.filter(event => {
+      const eventStart = new Date(event.startDate);
+      const eventEnd = new Date(event.endDate);
+      const slotStart = new Date(day);
+      slotStart.setHours(hour.getHours(), 0, 0, 0);
+      const slotEnd = new Date(slotStart);
+      slotEnd.setHours(hour.getHours() + 1, 0, 0, 0);
+      
+      // Check if event overlaps with this time slot
+      return eventStart < slotEnd && eventEnd > slotStart;
+    });
+  };
+
   const handleCloseDialog = () => {
     setIsEventDialogOpen(false);
   };
@@ -438,13 +453,20 @@ export function BigCalendar({
                       <div
                         key={hourIndex}
                         onClick={() => handleTimeSlotClick(day, format(hour, 'h aa'))}
-                        className={`h-16 border-b border-stroke-soft-200 transition-colors cursor-pointer ${
+                        className={`h-16 border-b border-stroke-soft-200 transition-colors cursor-pointer relative ${
                           isToday(day)
                             ? 'bg-primary-lighter/20 hover:bg-primary-lighter/40'
                             : 'bg-bg-white-0 hover:bg-bg-weak-50'
                         }`}
                       >
-                        {/* Grid cell content - ready for events */}
+                        {/* Render events for this time slot */}
+                        {getEventsForTimeSlot(day, hour).map((event, eventIndex) => (
+                          <CalendarEventItem
+                            key={`${event.title}-${eventIndex}`}
+                            {...event}
+                            isTiny={true}
+                          />
+                        ))}
                       </div>
                     ))}
                   </div>

@@ -7,6 +7,7 @@ import { format, startOfWeek, endOfWeek } from 'date-fns';
 import * as Divider from '@/components/ui/divider';
 import { BigCalendar, type CalendarData } from '@/components/big-calendar';
 import { CreateRequestButton } from '@/components/create-request-button';
+import { ScheduleButton } from '@/components/schedule-button';
 import Header from '@/app/(main)/header';
 // import { useCareSupport } from '@/hooks/useCareSupport';
 
@@ -214,7 +215,6 @@ export default function PageCalendar() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
-  const [dateRange, setDateRange] = React.useState<{start: Date, end: Date} | null>(null);
   
   // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
@@ -275,11 +275,6 @@ export default function PageCalendar() {
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);
-    // Store the date range for filtering events
-    const newRange = { start: startDate, end: endDate };
-    setDateRange(newRange);
-    // Trigger filtering with current search query and new date range
-    filterEvents(searchQuery, newRange);
   };
 
   const handleTodayClick = () => {
@@ -288,30 +283,15 @@ export default function PageCalendar() {
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
-    filterEvents(query, dateRange);
-  };
-
-  const filterEvents = (query: string, range: {start: Date, end: Date} | null) => {
+    // Filter events based on search query
     const events = generateCalendarEvents();
-    let filtered = events;
-
-    // Filter by search query
-    if (query) {
-      filtered = filtered.filter(event => 
-        event.title?.toLowerCase().includes(query.toLowerCase()) ||
-        event.location?.toLowerCase().includes(query.toLowerCase()) ||
-        event.platform?.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-
-    // Filter by date range
-    if (range) {
-      filtered = filtered.filter(event => {
-        const eventDate = event.startDate;
-        return eventDate >= range.start && eventDate <= range.end;
-      });
-    }
-
+    const filtered = query 
+      ? events.filter(event => 
+          event.title?.toLowerCase().includes(query.toLowerCase()) ||
+          event.location?.toLowerCase().includes(query.toLowerCase()) ||
+          event.platform?.toLowerCase().includes(query.toLowerCase())
+        )
+      : events;
     setFilteredEvents(filtered);
   };
 
@@ -353,6 +333,7 @@ export default function PageCalendar() {
         title="Today's Care Schedule"
         description={getTodayDescription()}
       >
+        <ScheduleButton className='w-full md:w-auto' />
         <CreateRequestButton 
           className='w-full md:w-auto' 
           onClick={handleCreateRequestClick}

@@ -8,7 +8,6 @@ import * as Label from '@/components/ui/label';
 import * as Select from '@/components/ui/select';
 import * as Textarea from '@/components/ui/textarea';
 import { format, addHours } from 'date-fns';
-import { useCareTeam } from '@/lib/careTeamContext';
 
 export interface RequestFormData {
   // Core Information - Same for all requests
@@ -82,7 +81,25 @@ const careRecipients = [
   { id: 'luann-wudlick', name: 'Luann Wudlick (Mom)', needs: 'Dementia care' },
 ];
 
-// Team members will be provided by the care team context
+const teamMembers = [
+  { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'Team members can claim this slot' },
+  { id: 'marta-snow', name: 'Marta Snow (Sister)', roles: ['Family', 'Scheduler', 'General Administration', 'Backup PCA'], availability: 'On-call' },
+  { id: 'luann-wudlick', name: 'Luann Wudlick (Mom)', roles: ['Family', 'Nurse', 'PCA'], availability: 'All empty time slots' },
+  { id: 'jim-nelson', name: 'Jim Nelson', roles: ['Nurse'], availability: 'M-F 9am-5pm' },
+  { id: 'jennifer', name: 'Jennifer', roles: ['Overnight PCA'], availability: 'M,T 8pm-8am' },
+  { id: 'sarah', name: 'Sarah', roles: ['Overnight PCA'], availability: 'W, Th 8pm-8am' },
+  { id: 'ella', name: 'Ella', roles: ['Overnight PCA'], availability: 'F, Sat, Sun 8pm-9am' },
+  { id: 'alex', name: 'Alex', roles: ['PCA'], availability: 'Random' },
+  { id: 'olena', name: 'Olena', roles: ['PCA'], availability: 'Sat, Sun 9am-1pm' },
+  { id: 'isabela', name: 'Isabela', roles: ['Family', 'PCA'], availability: 'On-call' },
+  { id: 'lucy', name: 'Lucy', roles: ['PCA', 'Family'], availability: 'On-call' },
+  { id: 'grace', name: 'Grace', roles: ['Overnight PCA'], availability: 'On summer break' },
+  { id: 'kathleen', name: 'Kathleen', roles: ['Backup PCA'], availability: 'Random on-call' },
+  { id: 'annie', name: 'Annie', roles: ['Backup PCA'], availability: 'Random on-call' },
+  { id: 'uncle-jim', name: 'Uncle Jim', roles: ['Family', 'Backup PCA'], availability: 'On-call' },
+  { id: 'dan', name: 'Dan (Bro in-law)', roles: ['Family', 'Backup PCA'], availability: 'On-call' },
+  { id: 'other', name: 'Other', roles: ['Outside care team'], availability: 'Custom person' },
+];
 
 const locations = [
   { id: 'rob-home', name: 'Rob\'s Home' },
@@ -134,49 +151,8 @@ export function UnifiedRequestForm({
 }: UnifiedRequestFormProps) {
   const [currentStep, setCurrentStep] = React.useState(steps[0].id);
   const [inviteSent, setInviteSent] = React.useState(false);
-  const { teamMembers, inviteToTeam } = useCareTeam();
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
-
-  // Combine care team members with special options
-  const availableTeamMembers = React.useMemo(() => {
-    const specialOptions = [
-      { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'Team members can claim this slot' },
-      { id: 'other', name: 'Other', roles: ['Outside care team'], availability: 'Custom person' },
-    ];
-    
-    return [
-      ...specialOptions,
-      ...teamMembers.map(member => ({
-        id: member.id,
-        name: member.name,
-        roles: member.roles,
-        availability: member.availability
-      }))
-    ];
-  }, [teamMembers]);
-
-  // Proper callback function to prevent re-renders
-  const handleInviteToTeam = React.useCallback(async () => {
-    if (!formData.customAssignedPerson || !formData.customPersonContact) {
-      return;
-    }
-
-    try {
-      await inviteToTeam({
-        name: formData.customAssignedPerson,
-        email: formData.customPersonContactType === 'email' ? formData.customPersonContact : undefined,
-        phone: formData.customPersonContactType === 'phone' ? formData.customPersonContact : undefined,
-        contactType: formData.customPersonContactType,
-        invitedBy: 'Current User' // TODO: Get from auth context
-      });
-      
-      setInviteSent(true);
-    } catch (error) {
-      console.error('Failed to send invitation:', error);
-      // TODO: Show error message to user
-    }
-  }, [formData.customAssignedPerson, formData.customPersonContact, formData.customPersonContactType, inviteToTeam]);
 
   // Notify parent of step changes
   React.useEffect(() => {
@@ -394,13 +370,13 @@ export function UnifiedRequestForm({
                   <Select.Trigger>
                     <Select.Value placeholder="Select team member" />
                   </Select.Trigger>
-                      <Select.Content>
-                        {availableTeamMembers.map((member) => (
-                          <Select.Item key={member.id} value={member.id}>
-                            {member.name}
-                          </Select.Item>
-                        ))}
-                      </Select.Content>
+                  <Select.Content>
+                    {teamMembers.map((member) => (
+                      <Select.Item key={member.id} value={member.id}>
+                        {member.name}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
                 </Select.Root>
                 {errors.assignedPerson && (
                   <div className="text-xs text-red-600">{errors.assignedPerson}</div>
@@ -488,7 +464,14 @@ export function UnifiedRequestForm({
                           variant="primary"
                           mode="filled"
                           size="medium"
-                          onClick={handleInviteToTeam}
+                          onClick={() => {
+                            // TODO: Implement actual invite functionality
+                            setInviteSent(true);
+                            // Simulate sending invite
+                            setTimeout(() => {
+                              console.log(`Invite sent to ${formData.customAssignedPerson} via ${formData.customPersonContactType}: ${formData.customPersonContact}`);
+                            }, 100);
+                          }}
                         >
                           <Button.Icon>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -790,13 +773,13 @@ export function UnifiedRequestForm({
                 <div>
                   <span className="font-medium">Who needs care:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
-                    <div>
-                      <span className="font-medium">Who can help:</span> {
-                        formData.assignedPerson === 'other'
-                          ? formData.customAssignedPerson
-                          : availableTeamMembers.find(m => m.id === formData.assignedPerson)?.name
-                      }
-                    </div>
+                <div>
+                  <span className="font-medium">Who can help:</span> {
+                    formData.assignedPerson === 'other' 
+                      ? formData.customAssignedPerson 
+                      : teamMembers.find(m => m.id === formData.assignedPerson)?.name
+                  }
+                </div>
                 <div>
                   <span className="font-medium">When:</span> {format(formData.startDate || selectedTime, 'MMM dd, yyyy')} at {format(formData.startDate || selectedTime, 'h:mm a')} - {format(formData.endDate || addHours(selectedTime, 1), 'h:mm a')}
                 </div>

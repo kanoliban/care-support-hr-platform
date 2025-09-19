@@ -2,6 +2,7 @@
 
 import * as Avatar from '@/components/ui/avatar';
 import { CreateRequestButton } from '@/components/create-request-button';
+import { ScheduleButton } from '@/components/schedule-button';
 import { WidgetCourseProgressEmpty } from '@/components/widgets/widget-course-progress';
 import { WidgetCoursesEmpty } from '@/components/widgets/widget-courses';
 import { WidgetCurrentProjectEmpty } from '@/components/widgets/widget-current-project';
@@ -32,6 +33,7 @@ export default function PageHome() {
         description='Welcome back to Synergy 👋🏻'
         contentClassName='hidden lg:flex'
       >
+        <ScheduleButton className='hidden lg:flex' />
         <CreateRequestButton className='hidden lg:flex' />
       </Header>
 

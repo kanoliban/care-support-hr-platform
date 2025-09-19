@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as Avatar from '@/components/ui/avatar';
 import { CreateRequestButton } from '@/components/create-request-button';
+import { ScheduleButton } from '@/components/schedule-button';
 import WidgetCurrentProject from '@/components/widgets/widget-current-project';
 import WidgetNotes from '@/components/widgets/widget-notes';
 import WidgetSchedule from '@/components/widgets/widget-schedule';
@@ -49,6 +50,7 @@ export default function PageHome() {
         contentClassName='hidden lg:flex'
       >
         <RealTimeToggle className='hidden lg:flex' />
+        <ScheduleButton className='hidden lg:flex' />
         <CreateRequestButton 
           className='hidden lg:flex' 
           onClick={handleCreateRequestClick}

@@ -52,35 +52,13 @@ export default function CalendarFilters({
     onTodayClick?.();
   };
 
-  const [selectedDaysOption, setSelectedDaysOption] = React.useState('7');
-  
-  // Apply date range when selectedDaysOption changes
-  React.useEffect(() => {
+  const handleLast7DaysClick = () => {
     const today = new Date();
-    const daysAgo = parseInt(selectedDaysOption) - 1;
-    const startDate = subDays(today, daysAgo);
-    const newRange = { start: startDate, end: today };
+    const sevenDaysAgo = subDays(today, 6);
+    const newRange = { start: sevenDaysAgo, end: today };
     
     setCurrentDateRange(newRange);
     onDateRangeChange?.(newRange.start, newRange.end);
-  }, [selectedDaysOption, onDateRangeChange]);
-  
-  const handleLastDaysClick = () => {
-    const today = new Date();
-    const daysAgo = parseInt(selectedDaysOption) - 1;
-    const startDate = subDays(today, daysAgo);
-    const newRange = { start: startDate, end: today };
-    
-    setCurrentDateRange(newRange);
-    onDateRangeChange?.(newRange.start, newRange.end);
-  };
-
-  const handleDaysOptionChange = () => {
-    // Cycle through 7, 14, 30 days
-    const options = ['7', '14', '30'];
-    const currentIndex = options.indexOf(selectedDaysOption);
-    const nextIndex = (currentIndex + 1) % options.length;
-    setSelectedDaysOption(options[nextIndex]);
   };
 
   const handleDateRangeClick = () => {
@@ -112,8 +90,8 @@ export default function CalendarFilters({
         </Button.Root>
 
         <ButtonGroup.Root size='small' className='min-w-0'>
-          <ButtonGroup.Item onClick={handleDaysOptionChange}>
-            Last {selectedDaysOption} days
+          <ButtonGroup.Item onClick={handleLast7DaysClick}>
+            Last 7 days
             <ButtonGroup.Icon as={RiArrowDownSLine} />
           </ButtonGroup.Item>
           <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
