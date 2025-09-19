@@ -864,8 +864,8 @@ export function UnifiedRequestForm({
                       isCompleted
                         ? "bg-primary-600 text-white"
                         : isCurrent
-                        ? "bg-primary-100 text-primary-600"
-                        : "bg-bg-soft-100 text-text-sub-600"
+                        ? "bg-primary-100 text-primary-700"
+                        : "bg-bg-soft-100 text-text-strong-950"
                     )}
                   >
                     {isCompleted ? (
