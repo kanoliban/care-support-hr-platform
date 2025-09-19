@@ -28,12 +28,7 @@ export default function CareEventDialog({
   selectedTime,
   onEventCreated,
 }: CareEventDialogProps) {
-  // Temporarily disable useCareEvents to test for infinite loops
-  // const { createEvent } = useCareEvents();
-  const createEvent = async (data: any) => {
-    console.log('createEvent called with:', data);
-    return { id: 'test-id', ...data };
-  };
+  const { createEvent } = useCareEvents();
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<Partial<Record<keyof RequestFormData, string>>>({});
   const [currentStepIndex, setCurrentStepIndex] = React.useState(0);
@@ -184,15 +179,7 @@ export default function CareEventDialog({
             </button>
           </div>
 
-          {/* Unified Request Form - TEMPORARILY DISABLED TO ISOLATE INFINITE LOOP */}
-          <div className="p-8 text-center">
-            <h3 className="text-lg font-medium mb-4">Request Form Temporarily Disabled</h3>
-            <p className="text-gray-600 mb-4">Debugging persistent infinite loop issue...</p>
-            <div className="text-sm text-gray-500">
-              <p>Form data state: {JSON.stringify(formData, null, 2)}</p>
-            </div>
-          </div>
-          {/* 
+          {/* Unified Request Form */}
           <UnifiedRequestForm
             formData={formData}
             onFormDataChange={handleFormDataChange}
@@ -205,7 +192,6 @@ export default function CareEventDialog({
             selectedDate={selectedDate}
             selectedTime={selectedTime}
           />
-          */}
         </div>
       </div>
     </div>
