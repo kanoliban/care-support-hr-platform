@@ -28,7 +28,12 @@ export default function CareEventDialog({
   selectedTime,
   onEventCreated,
 }: CareEventDialogProps) {
-  const { createEvent } = useCareEvents();
+  // Temporarily disable useCareEvents to test for infinite loops
+  // const { createEvent } = useCareEvents();
+  const createEvent = async (data: any) => {
+    console.log('createEvent called with:', data);
+    return { id: 'test-id', ...data };
+  };
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<Partial<Record<keyof RequestFormData, string>>>({});
   const [currentStepIndex, setCurrentStepIndex] = React.useState(0);

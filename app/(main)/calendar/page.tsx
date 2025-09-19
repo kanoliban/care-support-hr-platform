@@ -245,10 +245,10 @@ export default function PageCalendar() {
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
   const [dateRange, setDateRange] = React.useState<{start: Date, end: Date} | null>(null);
   
-  // Care Event Dialog state
+  // Care Event Dialog state - Use stable date initialization
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [selectedTime, setSelectedTime] = React.useState(new Date());
+  const [selectedDate, setSelectedDate] = React.useState(() => new Date());
+  const [selectedTime, setSelectedTime] = React.useState(() => new Date());
 
   // Generate calendar events (using static data to avoid infinite loops)
   const generateCalendarEvents = React.useMemo((): CalendarData[] => {

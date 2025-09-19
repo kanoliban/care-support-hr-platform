@@ -18,8 +18,8 @@ import Header from './header';
 export default function PageHome() {
   // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const [selectedTime, setSelectedTime] = React.useState(new Date());
+  const [selectedDate, setSelectedDate] = React.useState(() => new Date());
+  const [selectedTime, setSelectedTime] = React.useState(() => new Date());
 
   // Care Event Dialog handlers
   const handleCreateRequestClick = () => {
