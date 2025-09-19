@@ -368,6 +368,27 @@ export function BigCalendar({
   };
 
   const handleEventEdit = (event: CalendarData) => {
+    // Parse recurrence pattern if it exists
+    let recurrencePattern = {
+      frequency: 'weekly' as const,
+      interval: 1,
+      daysOfWeek: [] as number[],
+      endDate: ''
+    };
+
+    if (event.recurrencePattern) {
+      // Simple parsing - in a real app, you'd want more robust parsing
+      if (event.recurrencePattern.includes('weekly')) {
+        recurrencePattern.frequency = 'weekly';
+        // Extract days from pattern like "weekly every 1 on M,T,W,T,F"
+        const daysMatch = event.recurrencePattern.match(/on ([A-Z,]+)/);
+        if (daysMatch) {
+          const dayMap: { [key: string]: number } = { 'S': 0, 'M': 1, 'T': 2, 'W': 3, 'T': 4, 'F': 5, 'S': 6 };
+          recurrencePattern.daysOfWeek = daysMatch[1].split(',').map(d => dayMap[d.trim()]).filter(d => d !== undefined);
+        }
+      }
+    }
+
     // Convert CalendarData to RequestFormData for editing
     const formData = {
       title: event.title || '',
@@ -384,12 +405,7 @@ export function BigCalendar({
       startDate: event.startDate,
       endDate: event.endDate,
       isRecurring: event.isRecurring || false,
-      recurrencePattern: {
-        frequency: 'weekly',
-        interval: 1,
-        daysOfWeek: [],
-        endDate: ''
-      },
+      recurrencePattern: recurrencePattern,
       location: event.location || '',
       customLocation: event.location === 'other' ? event.location : '',
       notes: event.metadata?.notes || '',

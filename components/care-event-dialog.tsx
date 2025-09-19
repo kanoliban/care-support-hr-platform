@@ -73,12 +73,22 @@ export default function CareEventDialog({
   });
 
   React.useEffect(() => {
+    // Only update start/end times if not in edit mode
+    if (!isEditMode) {
     setFormData(prev => ({
       ...prev,
       startDate: selectedTime,
       endDate: addHours(selectedTime, 1),
     }));
-  }, [selectedDate, selectedTime]);
+    }
+  }, [selectedDate, selectedTime, isEditMode]);
+
+  // Initialize form data when switching to edit mode
+  React.useEffect(() => {
+    if (isEditMode && initialFormData) {
+      setFormData(initialFormData);
+    }
+  }, [isEditMode, initialFormData]);
 
   const handleFormDataChange = (field: keyof RequestFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
