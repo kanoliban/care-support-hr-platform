@@ -399,69 +399,71 @@ export function UnifiedRequestForm({
               </div>
 
               {formData.assignedPerson === 'other' && (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label.Root htmlFor="customAssignedPerson">
-                      Person's Name <Label.Asterisk />
-                    </Label.Root>
-                    <Input.Root>
-                      <Input.Wrapper>
-                        <Input.Input
-                          id="customAssignedPerson"
-                          placeholder="Enter name of person outside care team"
-                          value={formData.customAssignedPerson}
-                          onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
-                          className={errors.customAssignedPerson ? 'border-red-500' : ''}
-                        />
-                      </Input.Wrapper>
-                    </Input.Root>
-                    {errors.customAssignedPerson && (
-                      <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
-                    )}
-                  </div>
+                <div className="space-y-2">
+                  <Label.Root htmlFor="customAssignedPerson">
+                    Person's Name <Label.Asterisk />
+                  </Label.Root>
+                  <Input.Root>
+                    <Input.Wrapper>
+                      <Input.Input
+                        id="customAssignedPerson"
+                        placeholder="Enter name of person outside care team"
+                        value={formData.customAssignedPerson}
+                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
+                        className={errors.customAssignedPerson ? 'border-red-500' : ''}
+                      />
+                    </Input.Wrapper>
+                  </Input.Root>
+                  {errors.customAssignedPerson && (
+                    <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
+                  )}
+                </div>
+              )}
 
-                  <div className="space-y-2">
-                    <Label.Root>Contact Information (Optional)</Label.Root>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
-                        <Select.Root
-                          value={formData.customPersonContactType}
-                          onValueChange={(value: 'phone' | 'email') => onFormDataChange('customPersonContactType', value)}
-                        >
-                          <Select.Trigger>
-                            <Select.Value placeholder="Select type" />
-                          </Select.Trigger>
-                          <Select.Content>
-                            <Select.Item value="phone">Phone</Select.Item>
-                            <Select.Item value="email">Email</Select.Item>
-                          </Select.Content>
-                        </Select.Root>
-                      </div>
-                      <div>
-                        <Label.Root htmlFor="customPersonContact">
-                          {formData.customPersonContactType === 'phone' ? 'Phone Number' : 'Email Address'}
-                        </Label.Root>
-                        <Input.Root>
-                          <Input.Wrapper>
-                            <Input.Input
-                              id="customPersonContact"
-                              type={formData.customPersonContactType === 'phone' ? 'tel' : 'email'}
-                              placeholder={formData.customPersonContactType === 'phone' ? '(555) 123-4567' : 'person@example.com'}
-                              value={formData.customPersonContact}
-                              onChange={(e) => onFormDataChange('customPersonContact', e.target.value)}
-                            />
-                          </Input.Wrapper>
-                        </Input.Root>
-                      </div>
+              {formData.assignedPerson === 'other' && (
+                <div className="space-y-2">
+                  <Label.Root>Contact Information (Optional)</Label.Root>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
+                      <Select.Root
+                        value={formData.customPersonContactType}
+                        onValueChange={(value: 'phone' | 'email') => onFormDataChange('customPersonContactType', value)}
+                      >
+                        <Select.Trigger>
+                          <Select.Value placeholder="Select type" />
+                        </Select.Trigger>
+                        <Select.Content>
+                          <Select.Item value="phone">Phone</Select.Item>
+                          <Select.Item value="email">Email</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </div>
+                    <div>
+                      <Label.Root htmlFor="customPersonContact">
+                        {formData.customPersonContactType === 'phone' ? 'Phone Number' : 'Email Address'}
+                      </Label.Root>
+                      <Input.Root>
+                        <Input.Wrapper>
+                          <Input.Input
+                            id="customPersonContact"
+                            type={formData.customPersonContactType === 'phone' ? 'tel' : 'email'}
+                            placeholder={formData.customPersonContactType === 'phone' ? '(555) 123-4567' : 'person@example.com'}
+                            value={formData.customPersonContact}
+                            onChange={(e) => onFormDataChange('customPersonContact', e.target.value)}
+                          />
+                        </Input.Wrapper>
+                      </Input.Root>
                     </div>
                   </div>
+                </div>
+              )}
 
-                  <div className="p-3 bg-bg-soft-50 rounded border border-stroke-soft-200">
-                    <p className="text-sm text-text-sub-600">
-                      💡 <strong>Tip:</strong> Adding contact information allows you to invite this person to join your care team in the future.
-                    </p>
-                  </div>
+              {formData.assignedPerson === 'other' && (
+                <div className="p-3 bg-bg-soft-50 rounded border border-stroke-soft-200">
+                  <p className="text-sm text-text-sub-600">
+                    💡 <strong>Tip:</strong> Adding contact information allows you to invite this person to join your care team in the future.
+                  </p>
                 </div>
               )}
             </div>
