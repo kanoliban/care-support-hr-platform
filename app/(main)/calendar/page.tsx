@@ -402,6 +402,8 @@ export default function PageCalendar() {
 
   React.useEffect(() => {
     const events = generateCalendarEvents();
+    console.log('[CALENDAR DEBUG] generateCalendarEvents returned:', events.length, 'events');
+    console.log('[CALENDAR DEBUG] First few events:', events.slice(0, 3));
     setFilteredEvents(events);
   }, [generateCalendarEvents]);
 
@@ -492,6 +494,7 @@ export default function PageCalendar() {
           events={filteredEvents}
           showAllHours={true}
         />
+        {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
       </div>
       
       {/* Care Event Notifications */}
