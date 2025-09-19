@@ -392,11 +392,16 @@ export function BigCalendar({
     // Convert CalendarData to RequestFormData for editing
     const formData = {
       title: event.title || '',
-      requestType: event.metadata?.requestType || '',
+      requestType: event.metadata?.requestType === 'Personal Care' ? 'care-shift' :
+                   event.metadata?.requestType === 'Medical Appointment' ? 'appointment' :
+                   event.metadata?.requestType === 'Overnight Care' ? 'care-shift' :
+                   event.metadata?.requestType?.toLowerCase().replace(' ', '-') || '',
       customRequestType: event.metadata?.requestType === 'other' ? event.title || '' : '',
       description: event.description || '',
-      careRecipient: event.client || '',
+      careRecipient: event.client === 'Rob' ? 'rob-wudlick' : event.client || '',
       assignedPerson: event.assignedCaregiver === 'Open to anyone' ? 'open-to-anyone' : 
+                     event.assignedCaregiver === 'Jim Nelson' ? 'jim-nelson' :
+                     event.assignedCaregiver === 'Jennifer Smith' ? 'jennifer' :
                      event.assignedCaregiver && !event.people?.some(p => p.alt === event.assignedCaregiver) ? 'other' : 
                      event.assignedCaregiver || '',
       customAssignedPerson: event.assignedCaregiver && !event.people?.some(p => p.alt === event.assignedCaregiver) ? event.assignedCaregiver : '',
@@ -406,8 +411,12 @@ export function BigCalendar({
       endDate: event.endDate,
       isRecurring: event.isRecurring || false,
       recurrencePattern: recurrencePattern,
-      location: event.location || '',
-      customLocation: event.location === 'other' ? event.location : '',
+      location: event.location === 'Rob\'s Home' ? 'rob-home' :
+                event.location === 'Medical Center' ? 'medical-center' :
+                event.location === 'Luann\'s Home' ? 'luann-home' :
+                event.location === 'Rehabilitation Center' ? 'rehabilitation-center' :
+                event.location || '',
+      customLocation: (event.location === 'other' || event.platform === 'other') ? (event.location || event.platform) : '',
       notes: event.metadata?.notes || '',
     };
 
