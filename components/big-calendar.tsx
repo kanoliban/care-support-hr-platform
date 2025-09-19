@@ -438,9 +438,11 @@ export function BigCalendar({
 
   const handleEventClick = (event: CalendarData) => {
     console.log('[BIGCALENDAR DEBUG] handleEventClick called with event:', event.title);
+    console.log('[BIGCALENDAR DEBUG] Current view:', view);
     console.log('[BIGCALENDAR DEBUG] Setting selectedEvent and opening modal');
     setSelectedEvent(event);
     setIsEventDetailsOpen(true);
+    console.log('[BIGCALENDAR DEBUG] Modal state set - isEventDetailsOpen should be true');
   };
 
   const handleEventEdit = (event: CalendarData) => {
@@ -1006,6 +1008,7 @@ export function BigCalendar({
           />
           
           {/* Event Details Modal */}
+          {console.log('[BIGCALENDAR DEBUG] Rendering EventDetailsModal with isOpen:', isEventDetailsOpen, 'view:', view)}
           <EventDetailsModal
             isOpen={isEventDetailsOpen}
             onClose={() => setIsEventDetailsOpen(false)}
