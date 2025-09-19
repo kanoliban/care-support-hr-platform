@@ -166,6 +166,21 @@ export function UnifiedRequestForm({
     });
   };
 
+  // Stable callback functions to prevent infinite loops
+  const handleRequestTypeChange = React.useCallback((value: string) => {
+    onFormDataChange('requestType', value);
+    if (value !== 'other') {
+      onFormDataChange('customRequestType', '');
+    }
+  }, [onFormDataChange]);
+
+  const handleLocationChange = React.useCallback((value: string) => {
+    onFormDataChange('location', value);
+    if (value !== 'other') {
+      onFormDataChange('customLocation', '');
+    }
+  }, [onFormDataChange]);
+
   const handleDayToggle = (dayValue: number) => {
     const currentDays = formData.recurrencePattern.daysOfWeek;
     const newDays = currentDays.includes(dayValue)
@@ -281,12 +296,7 @@ export function UnifiedRequestForm({
               </Label.Root>
               <Select.Root
                 value={formData.requestType}
-                onValueChange={(value) => {
-                  onFormDataChange('requestType', value);
-                  if (value !== 'other') {
-                    onFormDataChange('customRequestType', '');
-                  }
-                }}
+                onValueChange={handleRequestTypeChange}
               >
                 <Select.Trigger className="min-h-[3rem]">
                   <Select.Value placeholder="Select request type" />
@@ -497,12 +507,7 @@ export function UnifiedRequestForm({
               <Label.Root htmlFor="location">Where will this happen?</Label.Root>
               <Select.Root
                 value={formData.location}
-                onValueChange={(value) => {
-                  onFormDataChange('location', value);
-                  if (value !== 'other') {
-                    onFormDataChange('customLocation', '');
-                  }
-                }}
+                onValueChange={handleLocationChange}
               >
                 <Select.Trigger>
                   <Select.Value placeholder="Select location" />

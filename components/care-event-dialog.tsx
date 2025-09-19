@@ -175,12 +175,7 @@ export default function CareEventDialog({
             </button>
           </div>
 
-          {/* Unified Request Form - Temporarily disabled to debug infinite loop */}
-          <div className="p-8 text-center">
-            <h3 className="text-lg font-medium mb-4">Request Form Temporarily Disabled</h3>
-            <p className="text-gray-600">Debugging infinite loop issue...</p>
-          </div>
-          {/* 
+          {/* Unified Request Form */}
           <UnifiedRequestForm
             formData={formData}
             onFormDataChange={handleFormDataChange}
@@ -193,7 +188,6 @@ export default function CareEventDialog({
             selectedDate={selectedDate}
             selectedTime={selectedTime}
           />
-          */}
         </div>
       </div>
     </div>
