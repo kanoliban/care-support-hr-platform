@@ -207,35 +207,6 @@ const calendarData: CalendarData[] = [
   //   type: 'event',
   //   link: 'www.alignui.com',
   // },
-  // TEST EVENT: Jim Nelson - Friday, September 19, 2024 at noon (1-hour block)
-  {
-    startDate: new Date('2024-09-19T12:00:00'),
-    endDate: new Date('2024-09-19T13:00:00'),
-    title: 'Jim Nelson - Daily Care Routine (Medication & Mobility)',
-    completed: false,
-    type: 'meeting',
-    people: [
-      {
-        alt: 'Jim Nelson',
-        image: '/images/avatar/illustration/arthur.png',
-        color: 'blue',
-      },
-    ],
-    location: "Rob's Home",
-    description: 'Daily medication administration, mobility assistance, and health monitoring. Includes transfer to wheelchair, range of motion exercises, and vital signs check.',
-    assignedCaregiver: 'Jim Nelson',
-    client: 'Rob Wudlick',
-    careType: 'Daily Care',
-    priority: 'High',
-    status: 'scheduled',
-    visibility: 'care-team-only',
-    metadata: {
-      careResponsibilities: ['Medication Management', 'Mobility Assistance', 'Health Monitoring'],
-      specialInstructions: 'Rob requires assistance with morning medication routine and transfer from bed to wheelchair. Check for any overnight changes in condition.',
-      equipment: ['Wheelchair', 'Medication Organizer', 'Blood Pressure Monitor'],
-      notes: 'Regular Friday morning routine. Jim has been providing this care for 18 months and is familiar with Rob\'s specific needs.'
-    }
-  },
 ];
 
 export default function PageCalendar() {
@@ -245,20 +216,62 @@ export default function PageCalendar() {
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
   const [dateRange, setDateRange] = React.useState<{start: Date, end: Date} | null>(null);
   
-  // Care Event Dialog state - Use stable date initialization
+  // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(() => new Date());
-  const [selectedTime, setSelectedTime] = React.useState(() => new Date());
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [selectedTime, setSelectedTime] = React.useState(new Date());
 
-  // Generate calendar events (using static data to avoid infinite loops)
-  const generateCalendarEvents = React.useMemo((): CalendarData[] => {
-    // Return static data only - no dynamic date generation to avoid infinite loops
-    return calendarData;
+  // Generate dynamic calendar events (using static data for now)
+  const generateCalendarEvents = React.useCallback((): CalendarData[] => {
+    const events: CalendarData[] = [];
+    const today = new Date();
+    
+    // Add some additional care-related events with current dates
+    events.push(
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
+        title: 'Current Care Shift',
+        type: 'meeting',
+        completed: false,
+        people: [
+          {
+            alt: 'Jennifer Smith',
+            image: '/images/avatar/illustration/arthur.png',
+            color: 'blue',
+          },
+          {
+            alt: 'Elena Chen',
+            image: '/images/avatar/illustration/sophia.png',
+            color: 'purple',
+          },
+        ],
+        platform: 'Care Location',
+      },
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 10, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 11, 0),
+        title: 'Care Plan Review Meeting',
+        type: 'meeting',
+        completed: false,
+      },
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 14, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 15, 30),
+        title: 'Caregiver Training Session',
+        type: 'event',
+        location: 'Training Center',
+        completed: false,
+      }
+    );
+
+    return [...events, ...calendarData]; // Combine with existing static data
   }, []);
 
   React.useEffect(() => {
-    setFilteredEvents(generateCalendarEvents);
-  }, []);
+    const events = generateCalendarEvents();
+    setFilteredEvents(events);
+  }, [generateCalendarEvents]);
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);
@@ -278,8 +291,8 @@ export default function PageCalendar() {
     filterEvents(query, dateRange);
   };
 
-  const filterEvents = React.useCallback((query: string, range: {start: Date, end: Date} | null) => {
-    const events = generateCalendarEvents;
+  const filterEvents = (query: string, range: {start: Date, end: Date} | null) => {
+    const events = generateCalendarEvents();
     let filtered = events;
 
     // Filter by search query
@@ -300,7 +313,7 @@ export default function PageCalendar() {
     }
 
     setFilteredEvents(filtered);
-  }, [generateCalendarEvents]);
+  };
 
   // Care Event Dialog handlers
   const handleCreateRequestClick = () => {
@@ -316,7 +329,7 @@ export default function PageCalendar() {
   const handleEventCreated = (eventId: string) => {
     console.log('Care event created:', eventId);
     // Refresh the calendar events
-    setFilteredEvents(generateCalendarEvents);
+    setFilteredEvents(generateCalendarEvents());
   };
 
   // Calculate dynamic description
@@ -372,7 +385,6 @@ export default function PageCalendar() {
           defaultStartDate={currentDate}
           events={filteredEvents}
           showAllHours={true}
-          onDateChange={(date) => setCurrentDate(date)}
         />
       </div>
       

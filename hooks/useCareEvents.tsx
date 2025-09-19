@@ -59,19 +59,16 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
   const updateEvent = useCallback(async (eventData: CareEventUpdateData): Promise<CareEvent> => {
     const { id, ...updateData } = eventData;
     
-    let updatedEvent: CareEvent | undefined;
-    setEvents(prev => prev.map(event => {
-      if (event.id === id) {
-        updatedEvent = { ...event, ...updateData, updatedAt: new Date() };
-        return updatedEvent;
-      }
-      return event;
-    }));
+    setEvents(prev => prev.map(event => 
+      event.id === id 
+        ? { ...event, ...updateData, updatedAt: new Date() }
+        : event
+    ));
 
-    // Create update notification inline
+    // Create update notification
+    const updatedEvent = events.find(e => e.id === id);
     if (updatedEvent) {
-      const notification: CareEventNotification = {
-        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      await sendNotification({
         eventId: id,
         type: 'update',
         recipient: updatedEvent.assignedCaregiver || updatedEvent.client || 'care-team',
@@ -79,45 +76,39 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
         scheduledTime: new Date(),
         sent: false,
         deliveryMethod: 'in-app',
-      };
-      setNotifications(prev => [...prev, notification]);
+      });
     }
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    return updatedEvent!;
-  }, []);
+    return events.find(e => e.id === id)!;
+  }, [events]);
 
   const deleteEvent = useCallback(async (eventId: string): Promise<void> => {
-    let deletedEvent: CareEvent | undefined;
+    const event = events.find(e => e.id === eventId);
     
-    setEvents(prev => {
-      deletedEvent = prev.find(e => e.id === eventId);
-      return prev.filter(event => event.id !== eventId);
-    });
+    setEvents(prev => prev.filter(event => event.id !== eventId));
     
     // Remove associated notifications
     setNotifications(prev => prev.filter(notif => notif.eventId !== eventId));
 
-    // Create cancellation notification inline
-    if (deletedEvent) {
-      const notification: CareEventNotification = {
-        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    // Create cancellation notification
+    if (event) {
+      await sendNotification({
         eventId: eventId,
         type: 'cancellation',
-        recipient: deletedEvent.assignedCaregiver || deletedEvent.client || 'care-team',
-        message: `Care event "${deletedEvent.title}" has been cancelled`,
+        recipient: event.assignedCaregiver || event.client || 'care-team',
+        message: `Care event "${event.title}" has been cancelled`,
         scheduledTime: new Date(),
         sent: false,
         deliveryMethod: 'in-app',
-      };
-      setNotifications(prev => [...prev, notification]);
+      });
     }
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
-  }, []);
+  }, [events]);
 
   const getEventsByDateRange = useCallback((startDate: Date, endDate: Date): CareEvent[] => {
     return events.filter(event => 

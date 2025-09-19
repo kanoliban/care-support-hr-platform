@@ -8,7 +8,7 @@ import {
   RiMapPin2Fill,
 } from '@remixicon/react';
 import CareEventDialog from './care-event-dialog';
-// import { useCareEvents } from '@/hooks/useCareEvents';
+import { useCareEvents } from '@/hooks/useCareEvents';
 import {
   addDays,
   addHours,
@@ -253,7 +253,6 @@ type BigCalendarProps = {
   className?: ClassValue;
   events: CalendarData[];
   showAllHours?: boolean;
-  onDateChange?: (date: Date) => void;
 };
 
 export function BigCalendar({
@@ -262,9 +261,8 @@ export function BigCalendar({
   events,
   showAllHours = true, // Default to showing all hours
   className,
-  onDateChange,
 }: BigCalendarProps) {
-  // const { events: careEvents, getEventsByDateRange } = useCareEvents();
+  const { events: careEvents, getEventsByDateRange } = useCareEvents();
   const [currentStartDate, setCurrentStartDate] =
     React.useState(defaultStartDate);
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
@@ -284,10 +282,9 @@ export function BigCalendar({
   }, []);
 
   // Sync internal state with prop changes (for Today button functionality)
-  // Removed this useEffect as it was causing infinite loops
-  // React.useEffect(() => {
-  //   setCurrentStartDate(defaultStartDate);
-  // }, [defaultStartDate]);
+  React.useEffect(() => {
+    setCurrentStartDate(defaultStartDate);
+  }, [defaultStartDate]);
 
   const showingDays = Array.from({ length: totalShowingDays }, (_, i) =>
     addDays(currentStartDate, i),
@@ -301,15 +298,11 @@ export function BigCalendar({
   const groupedEvents = groupEventsByHour(events);
 
   const handlePrevDay = () => {
-    const newDate = subDays(currentStartDate, 1);
-    setCurrentStartDate(newDate);
-    onDateChange?.(newDate);
+    setCurrentStartDate(subDays(currentStartDate, 1));
   };
 
   const handleNextDay = () => {
-    const newDate = addDays(currentStartDate, 1);
-    setCurrentStartDate(newDate);
-    onDateChange?.(newDate);
+    setCurrentStartDate(addDays(currentStartDate, 1));
   };
 
   const handleTimeSlotClick = (day: Date, hour: string) => {

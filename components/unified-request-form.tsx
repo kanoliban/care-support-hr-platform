@@ -150,120 +150,24 @@ export function UnifiedRequestForm({
   selectedTime
 }: UnifiedRequestFormProps) {
   const [currentStep, setCurrentStep] = React.useState(steps[0].id);
-  // inviteSent state removed to fix infinite loops
+  const [inviteSent, setInviteSent] = React.useState(false);
+  const [isInviting, setIsInviting] = React.useState(false);
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
 
-  // Notify parent of step changes (stable)
+  // Notify parent of step changes
   React.useEffect(() => {
     onStepChange?.(currentStepIndex);
   }, [currentStepIndex, onStepChange]);
 
-  const handleRecurringChange = React.useCallback((field: keyof RequestFormData['recurrencePattern'], value: any) => {
+  const handleRecurringChange = (field: keyof RequestFormData['recurrencePattern'], value: any) => {
     onFormDataChange('recurrencePattern', {
       ...formData.recurrencePattern,
       [field]: value
     });
-  }, [formData.recurrencePattern, onFormDataChange]);
+  };
 
-  // Stable callback functions to prevent infinite loops
-  const handleRequestTypeChange = React.useCallback((value: string) => {
-    onFormDataChange('requestType', value);
-    if (value !== 'other') {
-      onFormDataChange('customRequestType', '');
-    }
-  }, [onFormDataChange]);
-
-  const handleLocationChange = React.useCallback((value: string) => {
-    onFormDataChange('location', value);
-    if (value !== 'other') {
-      onFormDataChange('customLocation', '');
-    }
-  }, [onFormDataChange]);
-
-  // Additional stable callback functions
-  const handleCareRecipientChange = React.useCallback((value: string) => {
-    onFormDataChange('careRecipient', value);
-  }, [onFormDataChange]);
-
-  const handleAssignedPersonChange = React.useCallback((value: string) => {
-    onFormDataChange('assignedPerson', value);
-  }, [onFormDataChange]);
-
-  const handleContactTypeChange = React.useCallback((value: 'phone' | 'email') => {
-    onFormDataChange('customPersonContactType', value);
-  }, [onFormDataChange]);
-
-  const handleFrequencyChange = React.useCallback((value: string) => {
-    handleRecurringChange('frequency', value);
-  }, [handleRecurringChange]);
-
-  // Stable callback functions for input onChange handlers
-  const handleTitleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (formData.requestType === 'other') {
-      onFormDataChange('customRequestType', e.target.value);
-    } else {
-      onFormDataChange('title', e.target.value);
-    }
-  }, [formData.requestType, onFormDataChange]);
-
-  const handleCustomAssignedPersonChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onFormDataChange('customAssignedPerson', e.target.value);
-  }, [onFormDataChange]);
-
-  const handleCustomPersonContactChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onFormDataChange('customPersonContact', e.target.value);
-  }, [onFormDataChange]);
-
-  const handleCustomLocationChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onFormDataChange('customLocation', e.target.value);
-  }, [onFormDataChange]);
-
-  const handleStartDateChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value);
-    const currentTime = formData.startDate || selectedTime;
-    const combinedDateTime = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), currentTime.getHours(), currentTime.getMinutes());
-    onFormDataChange('startDate', combinedDateTime);
-  }, [formData.startDate, selectedTime, onFormDataChange]);
-
-  const handleEndDateChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value);
-    const currentTime = formData.endDate || addHours(selectedTime, 1);
-    const combinedDateTime = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), currentTime.getHours(), currentTime.getMinutes());
-    onFormDataChange('endDate', combinedDateTime);
-  }, [formData.endDate, selectedTime, onFormDataChange]);
-
-  const handleStartTimeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':');
-    const currentDate = formData.startDate || selectedTime;
-    const newDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), parseInt(hours), parseInt(minutes));
-    onFormDataChange('startDate', newDateTime);
-  }, [formData.startDate, selectedTime, onFormDataChange]);
-
-  const handleEndTimeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':');
-    const currentDate = formData.endDate || addHours(selectedTime, 1);
-    const newDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), parseInt(hours), parseInt(minutes));
-    onFormDataChange('endDate', newDateTime);
-  }, [formData.endDate, selectedTime, onFormDataChange]);
-
-  const handleRecurringToggleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onFormDataChange('isRecurring', e.target.checked);
-  }, [onFormDataChange]);
-
-  const handleIntervalChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleRecurringChange('interval', parseInt(e.target.value) || 1);
-  }, [handleRecurringChange]);
-
-  const handleRecurringEndDateChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleRecurringChange('endDate', e.target.value);
-  }, [handleRecurringChange]);
-
-  const handleNotesChange = React.useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onFormDataChange('notes', e.target.value);
-  }, [onFormDataChange]);
-
-  const handleDayToggle = React.useCallback((dayValue: number) => {
+  const handleDayToggle = (dayValue: number) => {
     const currentDays = formData.recurrencePattern.daysOfWeek;
     const newDays = currentDays.includes(dayValue)
       ? currentDays.filter(d => d !== dayValue)
@@ -273,9 +177,7 @@ export function UnifiedRequestForm({
       ...formData.recurrencePattern,
       daysOfWeek: newDays
     });
-  }, [formData.recurrencePattern, onFormDataChange]);
-
-  // handleInviteClick removed to fix infinite loops
+  };
 
   const getTitlePlaceholder = (requestType: string): string => {
     switch (requestType) {
@@ -302,8 +204,83 @@ export function UnifiedRequestForm({
     }
   };
 
-  // Initialize form data with selected date/time - moved to parent component
-  // This useEffect was causing infinite loops by calling onFormDataChange
+  React.useEffect(() => {
+    // Initialize form data with selected date/time
+    if (!formData.startDate) {
+      onFormDataChange('startDate', selectedTime);
+    }
+    if (!formData.endDate) {
+      onFormDataChange('endDate', addHours(selectedTime, 1));
+    }
+  }, [selectedDate, selectedTime, formData.startDate, formData.endDate, onFormDataChange]);
+
+  // Reset inviteSent when assignedPerson changes from 'other'
+  React.useEffect(() => {
+    if (formData.assignedPerson !== 'other') {
+      setInviteSent(false);
+    }
+  }, [formData.assignedPerson]);
+
+  // Proper invitation handler to avoid inline functions and infinite loops
+  const handleInviteToCareTeam = React.useCallback(async () => {
+    if (!formData.customAssignedPerson.trim() || !formData.customPersonContact.trim()) {
+      return;
+    }
+
+    setIsInviting(true);
+    
+    try {
+      // Create new team member with inactive status
+      const newTeamMember = {
+        id: `invited-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        name: formData.customAssignedPerson.trim(),
+        role: 'backup_caregiver' as const,
+        contactInfo: {
+          [formData.customPersonContactType]: formData.customPersonContact.trim(),
+          preferredContact: formData.customPersonContactType
+        },
+        regularShifts: [],
+        currentAvailability: 'unavailable' as const, // Inactive until they accept
+        blockedDates: [],
+        lastAvailabilityUpdate: new Date().toISOString(),
+        skills: [],
+        certifications: [],
+        canDo: ['personal_care'],
+        relationshipToCareRecipient: 'Invited Caregiver',
+        trustLevel: 'new' as const,
+        reliability: {
+          showUpRate: 0,
+          onTimeRate: 0,
+          lastMinuteCancellations: 0
+        },
+        sourceAgency: 'Direct invitation',
+        hourlyRate: 0,
+        paymentMethod: 'volunteer' as const,
+        invitationStatus: 'pending' as const,
+        invitedAt: new Date().toISOString(),
+        invitedBy: 'Care Coordinator' // Could be dynamic
+      };
+
+      // TODO: In a real implementation, this would:
+      // 1. Add the team member to the care team roster
+      // 2. Send invitation via email/SMS
+      // 3. Store invitation status in database
+      
+      console.log('Adding new team member to roster:', newTeamMember);
+      console.log(`Sending invitation to ${formData.customAssignedPerson} via ${formData.customPersonContactType}: ${formData.customPersonContact}`);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setInviteSent(true);
+      
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+      // Could show error message to user
+    } finally {
+      setIsInviting(false);
+    }
+  }, [formData.customAssignedPerson, formData.customPersonContact, formData.customPersonContactType]);
 
   const validateStep = (stepId: string): boolean => {
     const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
@@ -372,8 +349,13 @@ export function UnifiedRequestForm({
                 What kind of help do you need? <Label.Asterisk />
               </Label.Root>
               <Select.Root
-                value={formData.requestType || undefined}
-                onValueChange={handleRequestTypeChange}
+                value={formData.requestType}
+                onValueChange={(value) => {
+                  onFormDataChange('requestType', value);
+                  if (value !== 'other') {
+                    onFormDataChange('customRequestType', '');
+                  }
+                }}
               >
                 <Select.Trigger className="min-h-[3rem]">
                   <Select.Value placeholder="Select request type" />
@@ -403,7 +385,13 @@ export function UnifiedRequestForm({
                   <Input.Input
                     id="title"
                     value={formData.requestType === 'other' ? formData.customRequestType : formData.title}
-                    onChange={handleTitleChange}
+                    onChange={(e) => {
+                      if (formData.requestType === 'other') {
+                        onFormDataChange('customRequestType', e.target.value);
+                      } else {
+                        onFormDataChange('title', e.target.value);
+                      }
+                    }}
                     placeholder={getTitlePlaceholder(formData.requestType)}
                     className={errors.title || errors.customRequestType ? 'border-red-500' : ''}
                   />
@@ -421,8 +409,8 @@ export function UnifiedRequestForm({
                   Who needs care? <Label.Asterisk />
                 </Label.Root>
                 <Select.Root
-                  value={formData.careRecipient || undefined}
-                  onValueChange={handleCareRecipientChange}
+                  value={formData.careRecipient}
+                  onValueChange={(value) => onFormDataChange('careRecipient', value)}
                 >
                   <Select.Trigger>
                     <Select.Value placeholder="Select care recipient" />
@@ -445,8 +433,8 @@ export function UnifiedRequestForm({
                   Who can help? <Label.Asterisk />
                 </Label.Root>
                 <Select.Root
-                  value={formData.assignedPerson || undefined}
-                  onValueChange={handleAssignedPersonChange}
+                  value={formData.assignedPerson}
+                  onValueChange={(value) => onFormDataChange('assignedPerson', value)}
                 >
                   <Select.Trigger>
                     <Select.Value placeholder="Select team member" />
@@ -478,7 +466,7 @@ export function UnifiedRequestForm({
                         id="customAssignedPerson"
                         placeholder="Enter their full name"
                         value={formData.customAssignedPerson}
-                        onChange={handleCustomAssignedPersonChange}
+                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
                         className={errors.customAssignedPerson ? 'border-red-500' : ''}
                       />
                     </Input.Wrapper>
@@ -495,7 +483,7 @@ export function UnifiedRequestForm({
                       <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
                       <Select.Root
                         value={formData.customPersonContactType}
-                        onValueChange={handleContactTypeChange}
+                        onValueChange={(value: 'phone' | 'email') => onFormDataChange('customPersonContactType', value)}
                       >
                         <Select.Trigger>
                           <Select.Value placeholder="Select type" />
@@ -517,14 +505,54 @@ export function UnifiedRequestForm({
                             type={formData.customPersonContactType === 'phone' ? 'tel' : 'email'}
                             placeholder={formData.customPersonContactType === 'phone' ? '(555) 123-4567' : 'person@example.com'}
                             value={formData.customPersonContact}
-                            onChange={handleCustomPersonContactChange}
+                            onChange={(e) => onFormDataChange('customPersonContact', e.target.value)}
                           />
                         </Input.Wrapper>
                       </Input.Root>
                     </div>
                   </div>
                   
-                  {/* Invite to Care Team functionality temporarily removed to fix infinite loops */}
+                  {formData.customPersonContact && (
+                    <div className="pt-2">
+                      {inviteSent ? (
+                        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex-shrink-0">
+                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <div className="text-sm text-green-800">
+                            <p className="font-medium">Invite sent!</p>
+                            <p className="text-xs text-green-700">
+                              {formData.customAssignedPerson} will receive an invitation via {formData.customPersonContactType === 'phone' ? 'phone' : 'email'}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button.Root 
+                          variant="primary"
+                          mode="filled"
+                          size="medium"
+                          onClick={handleInviteToCareTeam}
+                          disabled={isInviting}
+                        >
+                          <Button.Icon>
+                            {isInviting ? (
+                              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            ) : (
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                              </svg>
+                            )}
+                          </Button.Icon>
+                          {isInviting ? 'Sending Invite...' : 'Invite to Care Team'}
+                        </Button.Root>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -538,8 +566,13 @@ export function UnifiedRequestForm({
             <div className="space-y-2">
               <Label.Root htmlFor="location">Where will this happen?</Label.Root>
               <Select.Root
-                value={formData.location || undefined}
-                onValueChange={handleLocationChange}
+                value={formData.location}
+                onValueChange={(value) => {
+                  onFormDataChange('location', value);
+                  if (value !== 'other') {
+                    onFormDataChange('customLocation', '');
+                  }
+                }}
               >
                 <Select.Trigger>
                   <Select.Value placeholder="Select location" />
@@ -559,7 +592,7 @@ export function UnifiedRequestForm({
                     <Input.Input
                       placeholder="Enter custom location"
                       value={formData.customLocation}
-                      onChange={handleCustomLocationChange}
+                      onChange={(e) => onFormDataChange('customLocation', e.target.value)}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -575,7 +608,23 @@ export function UnifiedRequestForm({
                       id="start-date"
                       type="date"
                       value={format(formData.startDate || selectedDate, 'yyyy-MM-dd')}
-                      onChange={handleStartDateChange}
+                      onChange={(e) => {
+                        const newDate = new Date(e.target.value);
+                        const newStartDateTime = new Date(
+                          newDate.getFullYear(), 
+                          newDate.getMonth(), 
+                          newDate.getDate(), 
+                          formData.startDate?.getHours() || selectedTime.getHours(), 
+                          formData.startDate?.getMinutes() || selectedTime.getMinutes()
+                        );
+                        onFormDataChange('startDate', newStartDateTime);
+                        
+                        // Maintain duration
+                        const currentDuration = formData.endDate ? 
+                          (formData.endDate.getTime() - formData.startDate!.getTime()) : 
+                          60 * 60 * 1000; // 1 hour default
+                        onFormDataChange('endDate', new Date(newStartDateTime.getTime() + currentDuration));
+                      }}
                       className={errors.startDate ? 'border-red-500' : ''}
                     />
                   </Input.Wrapper>
@@ -593,7 +642,17 @@ export function UnifiedRequestForm({
                       id="end-date"
                       type="date"
                       value={format(formData.endDate || addHours(selectedTime, 1), 'yyyy-MM-dd')}
-                      onChange={handleEndDateChange}
+                      onChange={(e) => {
+                        const newDate = new Date(e.target.value);
+                        const newEndDateTime = new Date(
+                          newDate.getFullYear(), 
+                          newDate.getMonth(), 
+                          newDate.getDate(), 
+                          formData.endDate?.getHours() || addHours(selectedTime, 1).getHours(), 
+                          formData.endDate?.getMinutes() || addHours(selectedTime, 1).getMinutes()
+                        );
+                        onFormDataChange('endDate', newEndDateTime);
+                      }}
                       className={errors.endDate ? 'border-red-500' : ''}
                     />
                   </Input.Wrapper>
@@ -613,7 +672,18 @@ export function UnifiedRequestForm({
                       id="start-time"
                       type="time"
                       value={format(formData.startDate || selectedTime, 'HH:mm')}
-                      onChange={handleStartTimeChange}
+                      onChange={(e) => {
+                        const [hours, minutes] = e.target.value.split(':');
+                        const newStartDateTime = new Date(formData.startDate || selectedTime);
+                        newStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                        onFormDataChange('startDate', newStartDateTime);
+                        
+                        // Maintain duration
+                        const currentDuration = formData.endDate ? 
+                          (formData.endDate.getTime() - formData.startDate!.getTime()) : 
+                          60 * 60 * 1000; // 1 hour default
+                        onFormDataChange('endDate', new Date(newStartDateTime.getTime() + currentDuration));
+                      }}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -627,7 +697,12 @@ export function UnifiedRequestForm({
                       id="end-time"
                       type="time"
                       value={format(formData.endDate || addHours(selectedTime, 1), 'HH:mm')}
-                      onChange={handleEndTimeChange}
+                      onChange={(e) => {
+                        const [hours, minutes] = e.target.value.split(':');
+                        const newEndDateTime = new Date(formData.startDate || selectedTime);
+                        newEndDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                        onFormDataChange('endDate', newEndDateTime);
+                      }}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -641,7 +716,7 @@ export function UnifiedRequestForm({
                   type="checkbox"
                   id="isRecurring"
                   checked={formData.isRecurring}
-                  onChange={handleRecurringToggleChange}
+                  onChange={(e) => onFormDataChange('isRecurring', e.target.checked)}
                   className="rounded border-stroke-soft-200"
                 />
                 <Label.Root htmlFor="isRecurring">
@@ -656,7 +731,7 @@ export function UnifiedRequestForm({
                       <Label.Root>Frequency</Label.Root>
                       <Select.Root
                         value={formData.recurrencePattern.frequency}
-                        onValueChange={handleFrequencyChange}
+                        onValueChange={(value) => handleRecurringChange('frequency', value)}
                       >
                         <Select.Trigger>
                           <Select.Value />
@@ -679,7 +754,7 @@ export function UnifiedRequestForm({
                             type="number"
                             min="1"
                             value={formData.recurrencePattern.interval}
-                            onChange={handleIntervalChange}
+                            onChange={(e) => handleRecurringChange('interval', parseInt(e.target.value) || 1)}
                           />
                         </Input.Wrapper>
                       </Input.Root>
@@ -718,7 +793,7 @@ export function UnifiedRequestForm({
                         <Input.Input
                           type="date"
                           value={formData.recurrencePattern.endDate || ''}
-                          onChange={handleRecurringEndDateChange}
+                          onChange={(e) => handleRecurringChange('endDate', e.target.value)}
                           min={format(selectedDate, 'yyyy-MM-dd')}
                         />
                       </Input.Wrapper>
@@ -813,7 +888,7 @@ export function UnifiedRequestForm({
                 <textarea
                   id="notes"
                   value={formData.notes}
-                  onChange={handleNotesChange}
+                  onChange={(e) => onFormDataChange('notes', e.target.value)}
                   placeholder="Any additional information, special requirements, or notes..."
                   rows={2}
                 />

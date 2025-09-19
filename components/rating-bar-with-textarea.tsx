@@ -25,11 +25,11 @@ export const RatingBarWithTextarea = React.forwardRef<
 
   React.useEffect(() => {
     if (onTextChange) onTextChange(text);
-  }, [text, onTextChange]);
+  }, [text]);
 
   React.useEffect(() => {
     if (onRatingChange) onRatingChange(selectedRating);
-  }, [selectedRating, onRatingChange]);
+  }, [selectedRating]);
 
   return (
     <div className='flex flex-col -space-y-px'>
