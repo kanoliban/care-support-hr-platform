@@ -90,10 +90,7 @@ export function DeleteConfirmationModal({
                       onChange={(e) => setSelectedDeletionType(e.target.value as 'this')}
                       className="w-4 h-4 text-primary-600 border-stroke-soft-300 focus:ring-primary-500"
                     />
-                    <div>
-                      <span className="text-sm font-medium text-text-strong-950">This event</span>
-                      <p className="text-xs text-text-sub-600">Only this occurrence will be deleted</p>
-                    </div>
+                    <span className="text-sm font-medium text-text-strong-950">This event</span>
                   </label>
                 </div>
 
@@ -107,10 +104,7 @@ export function DeleteConfirmationModal({
                       onChange={(e) => setSelectedDeletionType(e.target.value as 'this-and-following')}
                       className="w-4 h-4 text-primary-600 border-stroke-soft-300 focus:ring-primary-500"
                     />
-                    <div>
-                      <span className="text-sm font-medium text-text-strong-950">This and following events</span>
-                      <p className="text-xs text-text-sub-600">This occurrence and all future occurrences will be deleted</p>
-                    </div>
+                    <span className="text-sm font-medium text-text-strong-950">This and following events</span>
                   </label>
                 </div>
 
@@ -124,10 +118,7 @@ export function DeleteConfirmationModal({
                       onChange={(e) => setSelectedDeletionType(e.target.value as 'all')}
                       className="w-4 h-4 text-primary-600 border-stroke-soft-300 focus:ring-primary-500"
                     />
-                    <div>
-                      <span className="text-sm font-medium text-text-strong-950">All events</span>
-                      <p className="text-xs text-text-sub-600">All occurrences of this recurring event will be deleted</p>
-                    </div>
+                    <span className="text-sm font-medium text-text-strong-950">All events</span>
                   </label>
                 </div>
               </div>
