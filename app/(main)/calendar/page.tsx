@@ -312,6 +312,88 @@ export default function PageCalendar() {
               notes: 'Emergency contact numbers posted on refrigerator',
               isOpenToAnyone: false,
             },
+          },
+          // Add more recurring events to test deletion functionality
+          {
+            startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 9, 0),
+            endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 17, 0),
+            title: 'Help with morning routine and medication',
+            type: 'meeting',
+            completed: false,
+            people: [
+              {
+                alt: 'Jim Nelson',
+                image: '/images/avatar/illustration/james.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Rob\'s Home',
+            description: 'Assist with morning routine including medication administration and light housekeeping',
+            assignedCaregiver: 'Jim Nelson',
+            client: 'Rob',
+            isRecurring: true,
+            recurrencePattern: 'weekly every 1 on M,T,W,T,F',
+            status: 'scheduled',
+            visibility: 'care-team-only',
+            metadata: {
+              requestType: 'Personal Care',
+              notes: 'Please arrive 15 minutes early to prepare medications',
+              isOpenToAnyone: false,
+            },
+          },
+          {
+            startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 2, 9, 0),
+            endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 2, 17, 0),
+            title: 'Help with morning routine and medication',
+            type: 'meeting',
+            completed: false,
+            people: [
+              {
+                alt: 'Jim Nelson',
+                image: '/images/avatar/illustration/james.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Rob\'s Home',
+            description: 'Assist with morning routine including medication administration and light housekeeping',
+            assignedCaregiver: 'Jim Nelson',
+            client: 'Rob',
+            isRecurring: true,
+            recurrencePattern: 'weekly every 1 on M,T,W,T,F',
+            status: 'scheduled',
+            visibility: 'care-team-only',
+            metadata: {
+              requestType: 'Personal Care',
+              notes: 'Please arrive 15 minutes early to prepare medications',
+              isOpenToAnyone: false,
+            },
+          },
+          {
+            startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 20, 0),
+            endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 2, 8, 0),
+            title: 'Overnight care and safety monitoring',
+            type: 'meeting',
+            completed: false,
+            people: [
+              {
+                alt: 'Jennifer',
+                image: '/images/avatar/illustration/arthur.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Rob\'s Home',
+            description: 'Overnight care including safety checks, medication reminders, and emergency response',
+            assignedCaregiver: 'Jennifer Smith',
+            client: 'Rob',
+            isRecurring: true,
+            recurrencePattern: 'weekly every 1 on F,Sat,Sun',
+            status: 'scheduled',
+            visibility: 'care-team-only',
+            metadata: {
+              requestType: 'Overnight Care',
+              notes: 'Emergency contact numbers posted on refrigerator',
+              isOpenToAnyone: false,
+            },
           }
         );
 

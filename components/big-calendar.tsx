@@ -456,19 +456,47 @@ export function BigCalendar({
       if (deletionType === 'this') {
         // Remove only this specific occurrence
         updatedEvents = events.filter(e => e !== eventToDelete);
+        console.log(`Deleted single occurrence: ${eventToDelete.title}`);
+        
       } else if (deletionType === 'this-and-following') {
         // Remove this occurrence and all future occurrences
-        // For now, we'll just remove this occurrence (in a real app, you'd filter by date)
-        updatedEvents = events.filter(e => e !== eventToDelete);
+        // Filter out events with same title and recurrence pattern that start on or after this event's date
+        updatedEvents = events.filter(e => {
+          if (e === eventToDelete) return false; // Remove this specific occurrence
+          
+          // If it's the same recurring event, check if it's a future occurrence
+          if (e.title === eventToDelete.title && 
+              e.isRecurring === eventToDelete.isRecurring && 
+              e.recurrencePattern === eventToDelete.recurrencePattern) {
+            return e.startDate < eventToDelete.startDate; // Keep only past occurrences
+          }
+          
+          return true; // Keep all other events
+        });
+        console.log(`Deleted this and future occurrences: ${eventToDelete.title}`);
+        
       } else if (deletionType === 'all') {
         // Remove all occurrences of this recurring event
-        // For now, we'll just remove this occurrence (in a real app, you'd filter by recurrence pattern)
-        updatedEvents = events.filter(e => e !== eventToDelete);
+        // Filter out all events with same title and recurrence pattern
+        updatedEvents = events.filter(e => {
+          if (e === eventToDelete) return false; // Remove this specific occurrence
+          
+          // Remove all other occurrences of the same recurring event
+          if (e.title === eventToDelete.title && 
+              e.isRecurring === eventToDelete.isRecurring && 
+              e.recurrencePattern === eventToDelete.recurrencePattern) {
+            return false;
+          }
+          
+          return true; // Keep all other events
+        });
+        console.log(`Deleted all occurrences: ${eventToDelete.title}`);
       }
       
       // Update the events in the parent component
       // For now, we'll just close the modals and show a success message
-      console.log(`Event deleted successfully (${deletionType}):`, eventToDelete.title);
+      console.log(`Event deletion completed (${deletionType}):`, eventToDelete.title);
+      console.log(`Remaining events:`, updatedEvents.length);
       
       // Close modals
       setIsDeleteModalOpen(false);
