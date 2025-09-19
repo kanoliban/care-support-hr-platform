@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Button from '@/components/ui/button';
 import * as Label from '@/components/ui/label';
-import { RiDeleteBinLine, RiCloseLine } from 'react-icons/ri';
+import { RiDeleteBinLine, RiCloseLine } from '@remixicon/react';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
