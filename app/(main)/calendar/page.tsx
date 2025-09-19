@@ -480,6 +480,20 @@ export default function PageCalendar() {
 
   const handleViewChange = (view: 'week' | 'month') => {
     setCurrentView(view);
+    
+    // Update currentDate based on view
+    if (view === 'month') {
+      // For month view, set to the first day of the current month
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      setCurrentDate(firstDayOfMonth);
+    } else {
+      // For week view, set to the start of the current week
+      const startOfWeek = new Date(currentDate);
+      const day = startOfWeek.getDay();
+      const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+      startOfWeek.setDate(diff);
+      setCurrentDate(startOfWeek);
+    }
   };
 
   // Calculate dynamic description
@@ -532,6 +546,7 @@ export default function PageCalendar() {
           events={filteredEvents}
           showAllHours={true}
           view={currentView}
+          totalShowingDays={currentView === 'month' ? 35 : 7} // 35 days for month view (5 weeks), 7 for week view
         />
         {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
       </div>

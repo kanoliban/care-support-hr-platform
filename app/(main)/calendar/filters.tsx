@@ -4,6 +4,8 @@ import * as React from 'react';
 import { format, startOfWeek, endOfWeek, addDays, subDays } from 'date-fns';
 import {
   RiArrowDownSLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
   RiCalendarLine,
   RiFilter3Fill,
   RiSearch2Line,
@@ -78,6 +80,40 @@ export default function CalendarFilters({
     }
   };
 
+  const handlePreviousPeriod = () => {
+    if (currentView === 'week') {
+      const newStart = subDays(currentDateRange.start, 7);
+      const newEnd = subDays(currentDateRange.end, 7);
+      const newRange = { start: newStart, end: newEnd };
+      setCurrentDateRange(newRange);
+      onDateRangeChange?.(newRange.start, newRange.end);
+    } else {
+      // Month view - go to previous month
+      const newStart = new Date(currentDateRange.start.getFullYear(), currentDateRange.start.getMonth() - 1, 1);
+      const newEnd = new Date(currentDateRange.start.getFullYear(), currentDateRange.start.getMonth(), 0);
+      const newRange = { start: newStart, end: newEnd };
+      setCurrentDateRange(newRange);
+      onDateRangeChange?.(newRange.start, newRange.end);
+    }
+  };
+
+  const handleNextPeriod = () => {
+    if (currentView === 'week') {
+      const newStart = addDays(currentDateRange.start, 7);
+      const newEnd = addDays(currentDateRange.end, 7);
+      const newRange = { start: newStart, end: newEnd };
+      setCurrentDateRange(newRange);
+      onDateRangeChange?.(newRange.start, newRange.end);
+    } else {
+      // Month view - go to next month
+      const newStart = new Date(currentDateRange.start.getFullYear(), currentDateRange.start.getMonth() + 1, 1);
+      const newEnd = new Date(currentDateRange.start.getFullYear(), currentDateRange.start.getMonth() + 2, 0);
+      const newRange = { start: newStart, end: newEnd };
+      setCurrentDateRange(newRange);
+      onDateRangeChange?.(newRange.start, newRange.end);
+    }
+  };
+
   const handleDateRangeClick = () => {
     // For now, just cycle through different ranges
     // In a real implementation, this would open a date picker
@@ -106,16 +142,40 @@ export default function CalendarFilters({
           Today
         </Button.Root>
 
-        <ButtonGroup.Root size='small' className='min-w-0'>
-          <ButtonGroup.Item onClick={handleViewToggle}>
-            {currentView === 'week' ? 'Week View' : 'Month View'}
-            <ButtonGroup.Icon as={RiArrowDownSLine} />
-          </ButtonGroup.Item>
-          <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
-            <ButtonGroup.Icon as={RiCalendarLine} />
-            <div className='truncate'>{formatDateRange()}</div>
-          </ButtonGroup.Item>
-        </ButtonGroup.Root>
+        <div className='flex items-center gap-2'>
+          <ButtonGroup.Root size='small' className='min-w-0'>
+            <ButtonGroup.Item onClick={handleViewToggle}>
+              {currentView === 'week' ? 'Week View' : 'Month View'}
+              <ButtonGroup.Icon as={RiArrowDownSLine} />
+            </ButtonGroup.Item>
+            <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
+              <ButtonGroup.Icon as={RiCalendarLine} />
+              <div className='truncate'>{formatDateRange()}</div>
+            </ButtonGroup.Item>
+          </ButtonGroup.Root>
+          
+          {/* Navigation arrows - only show for month view */}
+          {currentView === 'month' && (
+            <div className='flex gap-1'>
+              <Button.Root 
+                variant='neutral' 
+                mode='stroke' 
+                size='small'
+                onClick={handlePreviousPeriod}
+              >
+                <Button.Icon as={RiArrowLeftSLine} />
+              </Button.Root>
+              <Button.Root 
+                variant='neutral' 
+                mode='stroke' 
+                size='small'
+                onClick={handleNextPeriod}
+              >
+                <Button.Icon as={RiArrowRightSLine} />
+              </Button.Root>
+            </div>
+          )}
+        </div>
       </div>
 
       <Input.Root className='lg:hidden'>

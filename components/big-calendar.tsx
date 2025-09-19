@@ -335,6 +335,8 @@ export function BigCalendar({
   className,
   view = 'week',
 }: BigCalendarProps) {
+  // Calculate totalShowingDays based on view
+  const actualShowingDays = view === 'week' ? 7 : totalShowingDays; // 7 days for week view (including Sunday)
   // Debug logging
   console.log('BigCalendar received events:', events);
   const { events: careEvents, getEventsByDateRange } = useCareEvents();
@@ -385,7 +387,7 @@ export function BigCalendar({
     setCurrentStartDate(defaultStartDate);
   }, [defaultStartDate]);
 
-  const showingDays = Array.from({ length: totalShowingDays }, (_, i) =>
+  const showingDays = Array.from({ length: actualShowingDays }, (_, i) =>
     addDays(currentStartDate, i),
   );
 
@@ -739,6 +741,91 @@ export function BigCalendar({
     setEditFormData(null);
   };
 
+  // Render month view differently
+  if (view === 'month') {
+    // For month view, create a proper calendar grid
+    const firstDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth(), 1);
+    const lastDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth() + 1, 0);
+    
+    // Get the first day of the week for the calendar grid (Sunday)
+    const firstDayOfWeek = new Date(firstDayOfMonth);
+    firstDayOfWeek.setDate(firstDayOfWeek.getDate() - firstDayOfWeek.getDay());
+    
+    // Create 35 days (5 weeks) starting from the first Sunday
+    const monthDays = Array.from({ length: 35 }, (_, i) => 
+      addDays(firstDayOfWeek, i)
+    );
+    
+    return (
+      <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
+        <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
+          <div className='overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
+            {/* Month view header */}
+            <div className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200 bg-bg-weak-50'>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                <div key={day} className='flex h-8 items-center justify-center text-xs font-medium text-text-soft-600'>
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            {/* Month view grid */}
+            <div className='grid grid-cols-7 divide-x divide-stroke-soft-200'>
+              {monthDays.map((day, dayIndex) => {
+                const dayEvents = localEvents.filter(event => 
+                  isSameDay(new Date(event.startDate), day)
+                );
+                
+                const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
+                const isToday = isSameDay(day, new Date());
+                
+                return (
+                  <div 
+                    key={dayIndex}
+                    className={`min-h-[120px] border-b border-stroke-soft-200 p-2 ${
+                      !isCurrentMonth ? 'bg-bg-weak-50 text-text-soft-400' : ''
+                    } ${isToday ? 'bg-blue-50' : ''}`}
+                    onClick={() => {
+                      setSelectedDate(day);
+                      setSelectedTime(day);
+                      setIsEventDialogOpen(true);
+                    }}
+                  >
+                    <div className={`mb-2 text-sm font-medium ${
+                      isToday ? 'text-blue-600 font-bold' : 
+                      isCurrentMonth ? 'text-text-strong-900' : 'text-text-soft-400'
+                    }`}>
+                      {format(day, 'd')}
+                    </div>
+                    <div className='space-y-1'>
+                      {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                        <CalendarEventItem
+                          key={`${event.title}-${eventIndex}`}
+                          {...event}
+                          isTiny={true}
+                          onClick={() => handleEventClick(event)}
+                          onDragStart={handleDragStart}
+                          onDragEnd={handleDragEnd}
+                          isDragging={isDragging && draggedEvent?.title === event.title}
+                        />
+                      ))}
+                      {dayEvents.length > 3 && (
+                        <div className='text-xs text-text-soft-600'>
+                          +{dayEvents.length - 3} more
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Week view (existing implementation)
   return (
     <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
       <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
