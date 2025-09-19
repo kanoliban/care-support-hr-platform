@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 import {
-  RiArrowLeftSLine,
-  RiArrowRightSLine,
   RiGlobalLine,
   RiMapPin2Fill,
 } from '@remixicon/react';
@@ -329,7 +327,7 @@ type BigCalendarProps = {
 
 export function BigCalendar({
   defaultStartDate,
-  totalShowingDays = 6,
+  totalShowingDays = 7,
   events,
   showAllHours = true, // Default to showing all hours
   className,
@@ -396,13 +394,6 @@ export function BigCalendar({
 
   const groupedEvents = groupEventsByHour(events);
 
-  const handlePrevDay = () => {
-    setCurrentStartDate(subDays(currentStartDate, 1));
-  };
-
-  const handleNextDay = () => {
-    setCurrentStartDate(addDays(currentStartDate, 1));
-  };
 
   const handleTimeSlotClick = (day: Date, hour: string) => {
     const hourDate = new Date(day);
@@ -857,22 +848,16 @@ export function BigCalendar({
         <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
           {/* Left Navigation Panel */}
           <div className='sticky -left-4 z-30 -ml-px w-[104px] shrink-0 overflow-hidden border-x border-stroke-soft-200 bg-bg-white-0 lg:left-0 lg:border-l-0'>
-            {/* Navigation Arrows - Now replace the month/year cell */}
-            <div className='grid h-8 w-full shrink-0 grid-cols-2 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200 bg-bg-weak-50'>
-              <button
-                type='button'
-                onClick={() => handlePrevDay()}
-                className='flex items-center justify-center bg-bg-weak-50 hover:bg-bg-weak-100'
-              >
-                <RiArrowLeftSLine className='size-5 text-text-sub-600' />
-              </button>
-              <button
-                type='button'
-                onClick={() => handleNextDay()}
-                className='flex items-center justify-center bg-bg-weak-50 hover:bg-bg-weak-100'
-              >
-                <RiArrowRightSLine className='size-5 text-text-sub-600' />
-              </button>
+            {/* Month/Date Display */}
+            <div className='h-8 w-full shrink-0 border-b border-stroke-soft-200 bg-bg-weak-50 flex items-center justify-center'>
+              <div className='text-center'>
+                <div className='text-label-sm font-medium text-text-strong-950'>
+                  {format(currentStartDate, 'MMM')}
+                </div>
+                <div className='text-label-xs text-text-sub-600'>
+                  {format(currentStartDate, 'd')}
+                </div>
+              </div>
             </div>
             
             

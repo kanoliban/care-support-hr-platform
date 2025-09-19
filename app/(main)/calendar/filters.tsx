@@ -150,7 +150,7 @@ export default function CalendarFilters({
   };
   return (
     <div className='-mt-1 flex flex-col justify-between gap-4 lg:mt-0 lg:flex-row lg:flex-wrap lg:gap-3'>
-      {/* Navigation Controls */}
+      {/* Unified Navigation Controls */}
       <div className='flex items-center gap-2'>
         <Button.Root 
           variant='neutral' 
@@ -161,17 +161,6 @@ export default function CalendarFilters({
           <Button.Icon as={RiArrowLeftSLine} />
         </Button.Root>
         
-        <Button.Root 
-          variant='neutral' 
-          mode='stroke' 
-          size='small'
-          onClick={handleNextPeriod}
-        >
-          <Button.Icon as={RiArrowRightSLine} />
-        </Button.Root>
-
-        <div className='h-6 w-px bg-stroke-soft-200' />
-
         <ButtonGroup.Root size='small'>
           <ButtonGroup.Item 
             onClick={() => handleViewChange('week')}
@@ -188,6 +177,15 @@ export default function CalendarFilters({
             Month
           </ButtonGroup.Item>
         </ButtonGroup.Root>
+        
+        <Button.Root 
+          variant='neutral' 
+          mode='stroke' 
+          size='small'
+          onClick={handleNextPeriod}
+        >
+          <Button.Icon as={RiArrowRightSLine} />
+        </Button.Root>
       </div>
 
       <div className='flex flex-row-reverse gap-3 lg:flex-row'>
