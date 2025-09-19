@@ -626,13 +626,19 @@ export function BigCalendar({
 
       // Update the local events state to reflect the change
       setLocalEvents(prevEvents => {
-        const newEvents = prevEvents.map(event => 
-          event === draggedEvent ? updatedEvent : event
-        );
+        const newEvents = prevEvents.map(event => {
+          // Match events by title and original start date to handle recurring events
+          const isMatch = event.title === draggedEvent.title && 
+                         event.startDate.getTime() === draggedEvent.startDate.getTime() &&
+                         event.endDate.getTime() === draggedEvent.endDate.getTime();
+          
+          return isMatch ? updatedEvent : event;
+        });
         
         console.log('[DRAG DEBUG] Before update:', prevEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
         console.log('[DRAG DEBUG] After update:', newEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
         console.log('[DRAG DEBUG] Updated event:', { title: updatedEvent.title, start: updatedEvent.startDate, end: updatedEvent.endDate });
+        console.log('[DRAG DEBUG] Dragged event:', { title: draggedEvent.title, start: draggedEvent.startDate, end: draggedEvent.endDate });
         
         return newEvents;
       });
