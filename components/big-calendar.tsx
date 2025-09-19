@@ -625,11 +625,17 @@ export function BigCalendar({
       });
 
       // Update the local events state to reflect the change
-      setLocalEvents(prevEvents => 
-        prevEvents.map(event => 
+      setLocalEvents(prevEvents => {
+        const newEvents = prevEvents.map(event => 
           event === draggedEvent ? updatedEvent : event
-        )
-      );
+        );
+        
+        console.log('[DRAG DEBUG] Before update:', prevEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
+        console.log('[DRAG DEBUG] After update:', newEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
+        console.log('[DRAG DEBUG] Updated event:', { title: updatedEvent.title, start: updatedEvent.startDate, end: updatedEvent.endDate });
+        
+        return newEvents;
+      });
 
       // Show success message
       alert(`Event "${draggedEvent.title}" rescheduled to ${targetDate.toLocaleString()}`);
@@ -675,10 +681,17 @@ export function BigCalendar({
     });
     
     // Debug logging
+    const hourDate = new Date(hour);
     if (matchingEvents.length > 0) {
-      const hourDate = new Date(hour);
       console.log(`Found ${matchingEvents.length} events for ${day.toDateString()} at ${hourDate.getHours()}:00`, matchingEvents);
     }
+    
+    // Debug all local events
+    console.log(`[RENDER DEBUG] All local events:`, localEvents.map(e => ({ 
+      title: e.title, 
+      start: e.startDate.toISOString(), 
+      end: e.endDate.toISOString() 
+    })));
     
     return matchingEvents;
   };
