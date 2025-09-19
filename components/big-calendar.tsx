@@ -826,8 +826,7 @@ export function BigCalendar({
                               key={`${event.title}-${eventIndex}`}
                               {...event}
                               isTiny={true}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={() => {
                                 handleEventClick(event);
                               }}
                               onDragStart={handleDragStart}
