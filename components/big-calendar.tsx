@@ -411,11 +411,11 @@ export function BigCalendar({
       endDate: event.endDate,
       isRecurring: event.isRecurring || false,
       recurrencePattern: recurrencePattern,
-      location: event.location === 'Rob\'s Home' ? 'rob-home' :
-                event.location === 'Medical Center' ? 'medical-center' :
-                event.location === 'Luann\'s Home' ? 'luann-home' :
-                event.location === 'Rehabilitation Center' ? 'rehabilitation-center' :
-                event.location || '',
+      location: (event.location || event.platform) === 'Rob\'s Home' ? 'rob-home' :
+                (event.location || event.platform) === 'Medical Center' ? 'medical-center' :
+                (event.location || event.platform) === 'Luann\'s Home' ? 'luann-home' :
+                (event.location || event.platform) === 'Rehabilitation Center' ? 'rehabilitation-center' :
+                (event.location || event.platform) || '',
       customLocation: (event.location === 'other' || event.platform === 'other') ? (event.location || event.platform) : '',
       notes: event.metadata?.notes || '',
     };

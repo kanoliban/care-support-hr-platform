@@ -110,10 +110,10 @@ export default function EventDetailsModal({
             </div>
 
             {/* Where */}
-            {event.location && (
+            {(event.location || event.platform) && (
               <div>
                 <Label.Root className="text-sm font-medium text-text-sub-600">Where will this happen?</Label.Root>
-                <p className="text-text-strong-950 mt-1">{event.location}</p>
+                <p className="text-text-strong-950 mt-1">{event.location || event.platform}</p>
               </div>
             )}
 
