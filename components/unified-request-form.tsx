@@ -742,10 +742,10 @@ export function UnifiedRequestForm({
 
             {formData.assignedPerson === 'other' && (
               <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
-                <div className="space-y-2">
-                  <Label.Root htmlFor="customAssignedPerson">
-                    Who's the other person's name? <Label.Asterisk />
-                  </Label.Root>
+                  <div className="space-y-2">
+                    <Label.Root htmlFor="customAssignedPerson">
+                      Who's the other person's name? <Label.Asterisk />
+                    </Label.Root>
                   <Input.Root>
                     <Input.Wrapper>
                       <Input.Input
@@ -762,12 +762,12 @@ export function UnifiedRequestForm({
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label.Root>Contact Information (Optional)</Label.Root>
-                  <p className="text-xs text-text-sub-600">
-                    Add their contact info to invite them to your care team
-                  </p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label.Root>Contact Information (Optional)</Label.Root>
+                    <p className="text-xs text-text-sub-600">
+                      Add their contact info to invite them to your care team
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
                       <Select.Root
@@ -861,12 +861,12 @@ export function UnifiedRequestForm({
                 <div className="flex items-center">
                   <div
                     className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors border-2",
+                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
                       isCompleted
-                        ? "bg-blue-600 text-white border-blue-600"
+                        ? "bg-primary-600 text-white"
                         : isCurrent
-                        ? "bg-blue-100 text-blue-600 border-blue-600"
-                        : "bg-gray-100 text-gray-500 border-gray-300"
+                        ? "bg-primary-100 text-primary-600"
+                        : "bg-bg-soft-100 text-text-sub-600"
                     )}
                   >
                     {isCompleted ? (
@@ -881,8 +881,8 @@ export function UnifiedRequestForm({
                     className={cn(
                       "h-0.5 w-8 transition-colors",
                       index < currentStepIndex
-                        ? "bg-blue-600"
-                        : "bg-gray-300"
+                        ? "bg-primary-600"
+                        : "bg-bg-soft-200"
                     )}
                   />
                 )}
