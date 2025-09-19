@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine, RiEyeLine } from '@remixicon/react';
+import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine } from '@remixicon/react';
 import { cn } from '@/utils/cn';
 import * as Button from '@/components/ui/button';
 import * as Input from '@/components/ui/input';
@@ -74,7 +74,7 @@ const steps = [
     id: 'review',
     title: 'Review',
     description: 'Confirm your request',
-    icon: RiEyeLine
+    icon: RiCheckLine
   }
 ];
 
@@ -860,31 +860,28 @@ export function UnifiedRequestForm({
                 <div className="flex items-center">
                   <div
                     className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors border-2",
+                      "flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold transition-colors border-2 shadow-sm",
                       isCompleted
-                        ? "bg-blue-600 text-white border-blue-600"
+                        ? "bg-green-500 text-white border-green-500"
                         : isCurrent
-                        ? "bg-blue-100 text-blue-800 border-blue-300"
-                        : "bg-gray-100 text-gray-600 border-gray-300"
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-gray-300 text-gray-600 border-gray-400"
                     )}
                   >
                     {isCompleted ? (
-                      <RiCheckLine className="w-4 h-4 text-white" />
+                      <RiCheckLine className="w-5 h-5" />
                     ) : (
-                      <Icon className={cn(
-                        "w-4 h-4",
-                        isCurrent ? "text-blue-800" : "text-gray-600"
-                      )} />
+                      <span className="text-sm font-bold">{index + 1}</span>
                     )}
                   </div>
                 </div>
                 {index < steps.length - 1 && (
                   <div
                     className={cn(
-                      "h-0.5 w-8 transition-colors",
+                      "h-1 w-8 transition-colors rounded-full",
                       index < currentStepIndex
-                        ? "bg-primary-600"
-                        : "bg-bg-soft-200"
+                        ? "bg-green-500"
+                        : "bg-gray-300"
                     )}
                   />
                 )}
