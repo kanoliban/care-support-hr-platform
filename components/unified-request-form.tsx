@@ -862,10 +862,10 @@ export function UnifiedRequestForm({
                     className={cn(
                       "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
                       isCompleted
-                        ? "bg-primary-600 text-white"
+                        ? "bg-purple-600 text-white"
                         : isCurrent
-                        ? "bg-primary-100 text-primary-700"
-                        : "bg-bg-soft-100 text-text-strong-950"
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-gray-100 text-gray-800"
                     )}
                   >
                     {isCompleted ? (
