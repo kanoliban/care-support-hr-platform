@@ -287,9 +287,9 @@ export function UnifiedRequestForm({
                 <Select.Content>
                   {requestTypeOptions.map(option => (
                     <Select.Item key={option.value} value={option.value}>
-                      <div>
+                      <div className="py-2">
                         <div className="font-medium">{option.label}</div>
-                        <div className="text-xs text-text-sub-600">{option.description}</div>
+                        <div className="text-xs text-text-sub-600 mt-1">{option.description}</div>
                       </div>
                     </Select.Item>
                   ))}
