@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 import {
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
   RiGlobalLine,
   RiMapPin2Fill,
 } from '@remixicon/react';
@@ -765,17 +767,15 @@ export function BigCalendar({
   if (view === 'month') {
     const monthDays = getMonthDays(currentStartDate);
     const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    const currentWeekStart = startOfWeek(currentStartDate, { weekStartsOn: 0 }); // Start from Sunday
-    const weekDates = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
     
     return (
       <div className={cnExt('w-full bg-bg-white-0', className)}>
         <div className='overflow-clip rounded-xl border border-stroke-soft-200'>
           {/* Month Header */}
           <div className='grid grid-cols-7 border-b border-stroke-soft-200 bg-bg-weak-50'>
-            {weekDays.map((day, index) => (
+            {weekDays.map(day => (
               <div key={day} className='p-3 text-center text-sm font-medium text-text-sub-600'>
-                {day} {format(weekDates[index], 'd')}
+                {day}
               </div>
             ))}
           </div>
@@ -851,13 +851,22 @@ export function BigCalendar({
         <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
           {/* Left Navigation Panel */}
           <div className='sticky -left-4 z-30 -ml-px w-[104px] shrink-0 overflow-hidden border-x border-stroke-soft-200 bg-bg-white-0 lg:left-0 lg:border-l-0'>
-            {/* Month Display */}
-            <div className='h-8 w-full shrink-0 border-b border-stroke-soft-200 bg-bg-weak-50 flex items-center justify-center'>
-              <div className='text-center'>
-                <div className='text-label-sm font-medium text-text-strong-950'>
-                  {format(currentStartDate, 'MMM').toUpperCase()}
-                </div>
-              </div>
+            {/* Navigation Arrows */}
+            <div className='grid h-8 w-full shrink-0 grid-cols-2 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200 bg-bg-weak-50'>
+              <button
+                type='button'
+                onClick={() => setCurrentStartDate(subDays(currentStartDate, 1))}
+                className='flex items-center justify-center bg-bg-weak-50 hover:bg-bg-weak-100'
+              >
+                <RiArrowLeftSLine className='size-5 text-text-sub-600' />
+              </button>
+              <button
+                type='button'
+                onClick={() => setCurrentStartDate(addDays(currentStartDate, 1))}
+                className='flex items-center justify-center bg-bg-weak-50 hover:bg-bg-weak-100'
+              >
+                <RiArrowRightSLine className='size-5 text-text-sub-600' />
+              </button>
             </div>
             
             
@@ -891,7 +900,7 @@ export function BigCalendar({
                         : 'bg-bg-weak-50 text-text-soft-400'
                     }`}
                   >
-                    {format(day, 'EEE').toUpperCase()} {format(day, 'd')}
+                    {format(day, 'EEE').toUpperCase()}
                   </div>
                 ))}
               </header>
