@@ -865,7 +865,7 @@ export function UnifiedRequestForm({
                         ? "bg-primary-600 text-white"
                         : isCurrent
                         ? "bg-primary-100 text-primary-600"
-                        : "bg-bg-soft-100 text-text-sub-600"
+                        : "bg-bg-soft-100 text-text-strong-950"
                     )}
                   >
                     <Icon className="w-4 h-4" />
