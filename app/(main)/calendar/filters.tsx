@@ -64,16 +64,6 @@ export default function CalendarFilters({
     setCurrentDateRange(newRange);
     onDateRangeChange?.(newRange.start, newRange.end);
   }, [selectedDaysOption, onDateRangeChange]);
-
-  // Initialize with current week when component mounts
-  React.useEffect(() => {
-    if (!currentDateRange.start) {
-      const today = new Date();
-      const initialRange = { start: startOfWeek(today, { weekStartsOn: 1 }), end: endOfWeek(today, { weekStartsOn: 1 }) };
-      setCurrentDateRange(initialRange);
-      onDateRangeChange?.(initialRange.start, initialRange.end);
-    }
-  }, [onDateRangeChange]);
   
   const handleLastDaysClick = () => {
     const today = new Date();
@@ -94,26 +84,13 @@ export default function CalendarFilters({
   };
 
   const handleDateRangeClick = () => {
-    console.log('Date range clicked, current range:', currentDateRange);
-    
+    // For now, just cycle through different ranges
+    // In a real implementation, this would open a date picker
     const today = new Date();
-    
-    // Create different date ranges
-    const currentWeek = { start: startOfWeek(today, { weekStartsOn: 1 }), end: endOfWeek(today, { weekStartsOn: 1 }) };
-    const nextWeek = { start: startOfWeek(addDays(today, 7), { weekStartsOn: 1 }), end: endOfWeek(addDays(today, 7), { weekStartsOn: 1 }) };
-    const thisMonth = { start: new Date(today.getFullYear(), today.getMonth(), 1), end: new Date(today.getFullYear(), today.getMonth() + 1, 0) };
-    const nextMonth = { start: new Date(today.getFullYear(), today.getMonth() + 1, 1), end: new Date(today.getFullYear(), today.getMonth() + 2, 0) };
-    
-    // Simple cycling approach - just cycle through the ranges
-    const ranges = [currentWeek, nextWeek, thisMonth, nextMonth];
-    const currentIndex = ranges.findIndex(range => 
-      format(range.start, 'yyyy-MM-dd') === format(currentDateRange.start, 'yyyy-MM-dd')
-    );
-    
-    const nextIndex = (currentIndex + 1) % ranges.length;
-    const newRange = ranges[nextIndex];
-    
-    console.log('Switching to range:', newRange);
+    const nextWeek = addDays(today, 7);
+    const startOfNextWeek = startOfWeek(nextWeek, { weekStartsOn: 1 });
+    const endOfNextWeek = endOfWeek(nextWeek, { weekStartsOn: 1 });
+    const newRange = { start: startOfNextWeek, end: endOfNextWeek };
     
     setCurrentDateRange(newRange);
     onDateRangeChange?.(newRange.start, newRange.end);

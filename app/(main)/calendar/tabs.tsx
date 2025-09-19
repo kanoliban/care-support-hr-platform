@@ -13,54 +13,127 @@ import {
   RiSpamLine,
   RiTimeFill,
 } from '@remixicon/react';
+import { format, isToday, isPast, isFuture } from 'date-fns';
 
 import { cn, cnExt } from '@/utils/cn';
 import * as CompactButton from '@/components/ui/compact-button';
 import * as LinkButton from '@/components/ui/link-button';
 import * as TabMenuHorizontal from '@/components/ui/tab-menu-horizontal';
 
-const events = [
-  {
-    title: 'Care Team Handoff Meeting',
-    time: '3:00 PM - 4:30 PM',
-    status: {
-      type: 'success',
-      text: 'Today',
-      buttonLabel: 'Join Handoff',
-      icon: RiTimeFill,
-    },
-  },
-  {
-    title: 'Care Plan Review',
-    time: '3:00 PM - 4:30 PM',
-    status: {
-      type: 'warning',
-      text: '2 Coverage Gaps',
-      buttonLabel: 'See Gaps',
-      icon: RiSpamFill,
-    },
-  },
-  {
-    title: 'Care Training Workshop',
-    time: '9:00 AM - 12:00 PM',
-    status: {
-      type: 'error',
-      text: 'Cancelled',
-      date: 'Jan 06, 2024',
-      icon: RiTimeFill,
-    },
-  },
-  {
-    title: 'Care Strategy Planning',
-    time: '2:30 PM - 4:00 PM',
-    status: {
-      type: 'neutral',
-      text: '3 days later',
-      date: 'Jan 06, 2024',
-      icon: RiTimeFill,
-    },
-  },
-];
+interface CalendarEvent {
+  startDate: Date;
+  endDate: Date;
+  title: string;
+  type: 'meeting' | 'event';
+  completed?: boolean;
+  people?: Array<{
+    alt: string;
+    image: string;
+    color?: string;
+  }>;
+  link?: string;
+  location?: string;
+}
+
+interface CalendarTabsProps {
+  className?: string;
+  events: CalendarEvent[];
+  onTabChange?: (tabValue: string, filteredEvents: CalendarEvent[]) => void;
+}
+
+// Function to categorize events and determine their status
+const categorizeEvents = (events: CalendarEvent[]) => {
+  const now = new Date();
+  
+  return events.map(event => {
+    let statusType: 'success' | 'warning' | 'error' | 'neutral';
+    let statusText: string;
+    let buttonLabel: string | undefined;
+    
+    // Determine status based on event properties
+    if (event.completed === false && isPast(event.endDate)) {
+      // Past incomplete events are considered cancelled/missed
+      statusType = 'error';
+      statusText = 'Missed';
+      buttonLabel = 'Reschedule';
+    } else if (event.completed === true) {
+      // Completed events
+      statusType = 'success';
+      statusText = 'Completed';
+      buttonLabel = undefined;
+    } else if (isToday(event.startDate)) {
+      // Today's events
+      statusType = 'success';
+      statusText = 'Today';
+      buttonLabel = event.type === 'meeting' ? 'Join Care Shift' : 'Join Event';
+    } else if (isFuture(event.startDate)) {
+      // Future events
+      const daysDiff = Math.ceil((event.startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysDiff <= 1) {
+        statusType = 'warning';
+        statusText = 'Tomorrow';
+      } else if (daysDiff <= 3) {
+        statusType = 'neutral';
+        statusText = `${daysDiff} days later`;
+      } else {
+        statusType = 'neutral';
+        statusText = format(event.startDate, 'MMM dd');
+      }
+      buttonLabel = undefined;
+    } else {
+      // Default case
+      statusType = 'neutral';
+      statusText = format(event.startDate, 'MMM dd');
+      buttonLabel = undefined;
+    }
+    
+    return {
+      title: event.title,
+      time: `${format(event.startDate, 'h:mm a')} - ${format(event.endDate, 'h:mm a')}`,
+      status: {
+        type: statusType,
+        text: statusText,
+        buttonLabel,
+        icon: event.type === 'meeting' ? RiDiscussLine : RiCalendarEventLine,
+      },
+      originalEvent: event,
+    };
+  });
+};
+
+// Function to filter events by tab
+const filterEventsByTab = (events: CalendarEvent[], tabValue: string) => {
+  switch (tabValue) {
+    case 'all':
+      return events;
+    case 'meetings':
+      return events.filter(event => event.type === 'meeting');
+    case 'events':
+      return events.filter(event => event.type === 'event');
+    case 'conflicted':
+      // Events that are past but not completed (coverage gaps)
+      return events.filter(event => 
+        event.completed === false && isPast(event.endDate)
+      );
+    case 'canceled':
+      // Events that are explicitly cancelled or missed
+      return events.filter(event => 
+        event.completed === false && isPast(event.endDate)
+      );
+    default:
+      return events;
+  }
+};
+
+// Function to get event counts for tabs
+const getEventCounts = (events: CalendarEvent[]) => {
+  const meetings = events.filter(e => e.type === 'meeting').length;
+  const appointments = events.filter(e => e.type === 'event').length;
+  const coverageGaps = events.filter(e => e.completed === false && isPast(e.endDate)).length;
+  const cancelled = events.filter(e => e.completed === false && isPast(e.endDate)).length;
+  
+  return { meetings, appointments, coverageGaps, cancelled };
+};
 
 type EventItemProps = {
   title: string;
@@ -132,9 +205,22 @@ function EventItem({ title, time, status, index = 0 }: EventItemProps) {
 
 export default function CalendarTabs({
   className,
+  events,
+  onTabChange,
   ...rest
-}: React.ComponentPropsWithoutRef<typeof TabMenuHorizontal.Root>) {
+}: CalendarTabsProps & React.ComponentPropsWithoutRef<typeof TabMenuHorizontal.Root>) {
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = React.useState('all');
+  
+  // Get event counts for tab labels
+  const eventCounts = getEventCounts(events);
+  
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const filteredEvents = filterEventsByTab(events, value);
+    onTabChange?.(value, filteredEvents);
+  };
 
   return (
     <AccordionPrimivites.Root
@@ -146,7 +232,7 @@ export default function CalendarTabs({
         value='accordion'
         className={cnExt('group/accordion', className)}
       >
-        <TabMenuHorizontal.Root defaultValue='all' {...rest}>
+        <TabMenuHorizontal.Root defaultValue='all' value={activeTab} onValueChange={handleTabChange} {...rest}>
           <div className='relative'>
             <TabMenuHorizontal.List
               wrapperClassName='-mx-4 pr-28 lg:mx-0'
@@ -159,19 +245,19 @@ export default function CalendarTabs({
               </TabMenuHorizontal.Trigger>
               <TabMenuHorizontal.Trigger value='meetings'>
                 <TabMenuHorizontal.Icon as={RiDiscussLine} />
-                Care Shifts (6)
+                Care Shifts ({eventCounts.meetings})
               </TabMenuHorizontal.Trigger>
               <TabMenuHorizontal.Trigger value='events'>
                 <TabMenuHorizontal.Icon as={RiCalendarEventLine} />
-                Appointments (3)
+                Appointments ({eventCounts.appointments})
               </TabMenuHorizontal.Trigger>
               <TabMenuHorizontal.Trigger value='conflicted'>
                 <TabMenuHorizontal.Icon as={RiSpamLine} />
-                Coverage Gaps (2)
+                Coverage Gaps ({eventCounts.coverageGaps})
               </TabMenuHorizontal.Trigger>
               <TabMenuHorizontal.Trigger value='canceled'>
                 <TabMenuHorizontal.Icon as={RiCloseCircleLine} />
-                Cancelled Care (1)
+                Cancelled Care ({eventCounts.cancelled})
               </TabMenuHorizontal.Trigger>
             </TabMenuHorizontal.List>
             <div
@@ -193,83 +279,32 @@ export default function CalendarTabs({
 
           <AccordionPrimivites.Content className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
             <div className='pt-4'>
-              <TabMenuHorizontal.Content value='all' className='group/tab-menu'>
-                <div className='-mx-4 grid auto-cols-[264px] grid-flow-col gap-4 overflow-auto px-4 lg:mx-0 lg:px-0'>
-                  {events.map((event, index) => (
-                    <EventItem
-                      key={index}
-                      title={event.title}
-                      time={event.time}
-                      status={event.status}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </TabMenuHorizontal.Content>
-              <TabMenuHorizontal.Content
-                value='meetings'
-                className='group/tab-menu'
-              >
-                <div className='-mx-4 grid auto-cols-[264px] grid-flow-col gap-4 overflow-auto px-4 lg:mx-0 lg:px-0'>
-                  {[events[2], events[0]].map((event, index) => (
-                    <EventItem
-                      key={index}
-                      title={event.title}
-                      time={event.time}
-                      status={event.status}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </TabMenuHorizontal.Content>
-              <TabMenuHorizontal.Content
-                value='events'
-                className='group/tab-menu'
-              >
-                <div className='-mx-4 grid auto-cols-[264px] grid-flow-col gap-4 overflow-auto px-4 lg:mx-0 lg:px-0'>
-                  {[events[1], events[3]].map((event, index) => (
-                    <EventItem
-                      key={index}
-                      title={event.title}
-                      time={event.time}
-                      status={event.status}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </TabMenuHorizontal.Content>
-              <TabMenuHorizontal.Content
-                value='conflicted'
-                className='group/tab-menu'
-              >
-                <div className='-mx-4 grid auto-cols-[264px] grid-flow-col gap-4 overflow-auto px-4 lg:mx-0 lg:px-0'>
-                  {[events[2], events[1]].map((event, index) => (
-                    <EventItem
-                      key={index}
-                      title={event.title}
-                      time={event.time}
-                      status={event.status}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </TabMenuHorizontal.Content>
-              <TabMenuHorizontal.Content
-                value='canceled'
-                className='group/tab-menu'
-              >
-                <div className='-mx-4 grid auto-cols-[264px] grid-flow-col gap-4 overflow-auto px-4 lg:mx-0 lg:px-0'>
-                  {[events[2]].map((event, index) => (
-                    <EventItem
-                      key={index}
-                      title={event.title}
-                      time={event.time}
-                      status={event.status}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </TabMenuHorizontal.Content>
+              {['all', 'meetings', 'events', 'conflicted', 'canceled'].map(tabValue => {
+                const filteredEvents = filterEventsByTab(events, tabValue);
+                const categorizedEvents = categorizeEvents(filteredEvents);
+                
+                return (
+                  <TabMenuHorizontal.Content key={tabValue} value={tabValue} className='group/tab-menu'>
+                    <div className='-mx-4 grid auto-cols-[264px] grid-flow-col gap-4 overflow-auto px-4 lg:mx-0 lg:px-0'>
+                      {categorizedEvents.length > 0 ? (
+                        categorizedEvents.map((event, index) => (
+                          <EventItem
+                            key={`${tabValue}-${index}`}
+                            title={event.title}
+                            time={event.time}
+                            status={event.status}
+                            index={index}
+                          />
+                        ))
+                      ) : (
+                        <div className='col-span-full flex items-center justify-center py-8 text-text-sub-600'>
+                          No {tabValue === 'all' ? 'care activities' : tabValue === 'meetings' ? 'care shifts' : tabValue === 'events' ? 'appointments' : tabValue === 'conflicted' ? 'coverage gaps' : 'cancelled care'} found
+                        </div>
+                      )}
+                    </div>
+                  </TabMenuHorizontal.Content>
+                );
+              })}
             </div>
           </AccordionPrimivites.Content>
         </TabMenuHorizontal.Root>
