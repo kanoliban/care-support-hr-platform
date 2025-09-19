@@ -195,6 +195,15 @@ function CalendarEventItem({
   onDragStart,
   onDragEnd,
   isDragging = false,
+  // Include all the additional properties
+  description,
+  assignedCaregiver,
+  client,
+  isRecurring,
+  recurrencePattern,
+  status,
+  visibility,
+  metadata,
 }: CalendarEventItemProps) {
   const eventData: CalendarData = {
     startDate,
@@ -206,6 +215,15 @@ function CalendarEventItem({
     location,
     people,
     platform,
+    // Include all the additional properties
+    description,
+    assignedCaregiver,
+    client,
+    isRecurring,
+    recurrencePattern,
+    status,
+    visibility,
+    metadata,
   };
 
   return (
@@ -217,6 +235,7 @@ function CalendarEventItem({
       }}
       onDragStart={(e) => {
         e.stopPropagation();
+        console.log('[DRAG DEBUG] CalendarEventItem onDragStart called with eventData:', eventData);
         onDragStart?.(e, eventData);
       }}
       onDragEnd={(e) => {
@@ -625,7 +644,8 @@ export function BigCalendar({
     console.log('[DRAG DEBUG] handleDrop called:', { 
       draggedEvent: draggedEvent?.title, 
       isRecurring: draggedEvent?.isRecurring,
-      hasDraggedEvent: !!draggedEvent 
+      hasDraggedEvent: !!draggedEvent,
+      draggedEventFull: draggedEvent
     });
     
     if (!draggedEvent) {
