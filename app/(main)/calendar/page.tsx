@@ -210,11 +210,174 @@ const calendarData: CalendarData[] = [
   // },
 ];
 
+// Generate dynamic calendar events (using static data for now)
+const generateCalendarEvents = (): CalendarData[] => {
+  console.log('[CALENDAR DEBUG] generateCalendarEvents called');
+  const events: CalendarData[] = [];
+  const today = new Date();
+  
+  // Add test events for today and the next few days
+  const testDate = new Date(); // Use current date
+  console.log('[CALENDAR DEBUG] testDate:', testDate);
+  
+  events.push(
+        {
+          startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
+          endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
+          title: 'Help with morning routine and medication',
+          type: 'meeting',
+          completed: false,
+          people: [
+            {
+              alt: 'Jim Nelson',
+              image: '/images/avatar/illustration/james.png',
+              color: 'blue',
+            },
+          ],
+          platform: 'Rob\'s Home',
+          // Additional fields from create form
+          description: 'Assist with morning routine including medication administration and light housekeeping',
+          assignedCaregiver: 'Jim Nelson',
+          client: 'Rob',
+          isRecurring: true,
+          recurrencePattern: 'weekly every 1 on Mon,Tue,Wed,Thu,Fri',
+          status: 'scheduled',
+          visibility: 'care-team-only',
+          metadata: {
+            requestType: 'Personal Care',
+            notes: 'Please arrive 15 minutes early to prepare medications',
+            isOpenToAnyone: false,
+          },
+        },
+        {
+          startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 14, 0),
+          endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 15, 30),
+          title: 'Physical therapy session with Dr. Martinez',
+          type: 'event',
+          completed: false,
+          people: [
+            {
+              alt: 'Dr. Martinez',
+              image: '/images/avatar/illustration/sophia.png',
+              color: 'purple',
+            },
+          ],
+          platform: 'Rehabilitation Center',
+          // Additional fields from create form
+          description: 'Weekly physical therapy session focusing on mobility and strength training',
+          assignedCaregiver: 'Dr. Martinez',
+          client: 'Rob',
+          isRecurring: true,
+          recurrencePattern: 'weekly every 1 on Mon,Wed,Fri',
+          status: 'scheduled',
+          visibility: 'care-team-only',
+          metadata: {
+            requestType: 'Medical Care',
+            notes: 'Bring comfortable workout clothes and water bottle',
+            isOpenToAnyone: false,
+          },
+        },
+        {
+          startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 20, 0),
+          endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 8, 0),
+          title: 'Overnight care and safety monitoring',
+          type: 'meeting',
+          completed: false,
+          people: [
+            {
+              alt: 'Jennifer Smith',
+              image: '/images/avatar/illustration/arthur.png',
+              color: 'blue',
+            },
+          ],
+          platform: 'Rob\'s Home',
+          // Additional fields from create form
+          description: 'Overnight care including safety checks, medication reminders, and emergency response',
+          assignedCaregiver: 'Jennifer Smith',
+          client: 'Rob',
+          isRecurring: true,
+          recurrencePattern: 'weekly every 1 on Fri,Sat,Sun',
+          status: 'scheduled',
+          visibility: 'care-team-only',
+          metadata: {
+            requestType: 'Overnight Care',
+            notes: 'Emergency contact numbers posted on refrigerator',
+            isOpenToAnyone: false,
+          },
+        },
+        // Add more recurring events to test deletion functionality
+        {
+          startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 9, 0),
+          endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 17, 0),
+          title: 'Help with morning routine and medication',
+          type: 'meeting',
+          completed: false,
+          people: [
+            {
+              alt: 'Jim Nelson',
+              image: '/images/avatar/illustration/james.png',
+              color: 'blue',
+            },
+          ],
+          platform: 'Rob\'s Home',
+          description: 'Assist with morning routine including medication administration and light housekeeping',
+          assignedCaregiver: 'Jim Nelson',
+          client: 'Rob',
+          isRecurring: true,
+          recurrencePattern: 'weekly every 1 on Mon,Tue,Wed,Thu,Fri',
+          status: 'scheduled',
+          visibility: 'care-team-only',
+          metadata: {
+            requestType: 'Personal Care',
+            notes: 'Please arrive 15 minutes early to prepare medications',
+            isOpenToAnyone: false,
+          },
+        },
+        {
+          startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 2, 9, 0),
+          endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 2, 17, 0),
+          title: 'Help with morning routine and medication',
+          type: 'meeting',
+          completed: false,
+          people: [
+            {
+              alt: 'Jim Nelson',
+              image: '/images/avatar/illustration/james.png',
+              color: 'blue',
+            },
+          ],
+          platform: 'Rob\'s Home',
+          description: 'Assist with morning routine including medication administration and light housekeeping',
+          assignedCaregiver: 'Jim Nelson',
+          client: 'Rob',
+          isRecurring: true,
+          recurrencePattern: 'weekly every 1 on Mon,Tue,Wed,Thu,Fri',
+          status: 'scheduled',
+          visibility: 'care-team-only',
+          metadata: {
+            requestType: 'Personal Care',
+            notes: 'Please arrive 15 minutes early to prepare medications',
+            isOpenToAnyone: false,
+          },
+    });
+
+  const combinedEvents = [...events, ...calendarData]; // Combine with existing static data
+  console.log('[CALENDAR DEBUG] Combined events:', combinedEvents.length, 'total events');
+  console.log('[CALENDAR DEBUG] Generated events:', events.length);
+  console.log('[CALENDAR DEBUG] Static calendarData:', calendarData.length);
+  return combinedEvents;
+};
+
 export default function PageCalendar() {
   // const { currentProject } = useCareSupport();
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
+  // Initialize with static calendar data for now
+  const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>(() => {
+    console.log('[CALENDAR DEBUG] Initializing filteredEvents with static calendarData...');
+    console.log('[CALENDAR DEBUG] Static calendarData length:', calendarData.length);
+    return calendarData;
+  });
   const [currentView, setCurrentView] = React.useState<'week' | 'month'>('week');
   
   // Care Event Dialog state
@@ -438,22 +601,7 @@ export default function PageCalendar() {
     return combinedEvents;
   };
 
-  // Initialize events immediately
-  React.useEffect(() => {
-    console.log('[CALENDAR DEBUG] useEffect running, calling generateCalendarEvents...');
-    const events = generateCalendarEvents();
-    console.log('[CALENDAR DEBUG] generateCalendarEvents returned:', events.length, 'events');
-    console.log('[CALENDAR DEBUG] Events:', events);
-    setFilteredEvents(events);
-  }, []); // Run once on mount
-  
-  // Also set events on component mount
-  React.useLayoutEffect(() => {
-    console.log('[CALENDAR DEBUG] useLayoutEffect running, setting initial events...');
-    const events = generateCalendarEvents();
-    console.log('[CALENDAR DEBUG] Initial events:', events.length);
-    setFilteredEvents(events);
-  }, []);
+  // Events are initialized in state, no need for useEffect
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);
