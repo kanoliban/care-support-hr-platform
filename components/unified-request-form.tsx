@@ -869,9 +869,9 @@ export function UnifiedRequestForm({
                     )}
                   >
                     {isCompleted ? (
-                      <RiCheckLine className="w-4 h-4" />
+                      <span className="text-white font-bold">✓</span>
                     ) : (
-                      <Icon className="w-4 h-4" />
+                      <span className="font-bold">{index + 1}</span>
                     )}
                   </div>
                 </div>
