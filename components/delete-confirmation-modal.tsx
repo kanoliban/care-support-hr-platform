@@ -28,18 +28,6 @@ export function DeleteConfirmationModal({
     onConfirm(selectedDeletionType);
   };
 
-  const getDeletionDescription = () => {
-    switch (selectedDeletionType) {
-      case 'this':
-        return 'Only this occurrence will be deleted.';
-      case 'this-and-following':
-        return 'This occurrence and all future occurrences will be deleted.';
-      case 'all':
-        return 'All occurrences of this recurring event will be deleted.';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -124,12 +112,6 @@ export function DeleteConfirmationModal({
               </div>
             )}
 
-            {/* Deletion Description */}
-            {isRecurring && (
-              <div className="mt-4 p-3 bg-primary-50 rounded-lg border border-primary-200">
-                <p className="text-sm text-primary-800">{getDeletionDescription()}</p>
-              </div>
-            )}
           </div>
 
           {/* Actions */}
