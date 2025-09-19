@@ -399,7 +399,7 @@ export function UnifiedRequestForm({
               </div>
 
               {formData.assignedPerson === 'other' && (
-                <div className="space-y-4 p-4 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
+                <div className="space-y-4">
                   <div className="space-y-2">
                     <Label.Root htmlFor="customAssignedPerson">
                       Person's Name <Label.Asterisk />
@@ -457,7 +457,7 @@ export function UnifiedRequestForm({
                     </div>
                   </div>
 
-                  <div className="p-3 bg-white rounded border border-stroke-soft-200">
+                  <div className="p-3 bg-bg-soft-50 rounded border border-stroke-soft-200">
                     <p className="text-sm text-text-sub-600">
                       💡 <strong>Tip:</strong> Adding contact information allows you to invite this person to join your care team in the future.
                     </p>
