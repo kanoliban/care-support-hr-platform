@@ -278,7 +278,7 @@ export default function PageCalendar() {
     filterEvents(query, dateRange);
   };
 
-  const filterEvents = (query: string, range: {start: Date, end: Date} | null) => {
+  const filterEvents = React.useCallback((query: string, range: {start: Date, end: Date} | null) => {
     const events = generateCalendarEvents;
     let filtered = events;
 
@@ -300,7 +300,7 @@ export default function PageCalendar() {
     }
 
     setFilteredEvents(filtered);
-  };
+  }, [generateCalendarEvents]);
 
   // Care Event Dialog handlers
   const handleCreateRequestClick = () => {

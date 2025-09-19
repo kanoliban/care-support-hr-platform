@@ -284,9 +284,10 @@ export function BigCalendar({
   }, []);
 
   // Sync internal state with prop changes (for Today button functionality)
-  React.useEffect(() => {
-    setCurrentStartDate(defaultStartDate);
-  }, [defaultStartDate]);
+  // Removed this useEffect as it was causing infinite loops
+  // React.useEffect(() => {
+  //   setCurrentStartDate(defaultStartDate);
+  // }, [defaultStartDate]);
 
   const showingDays = Array.from({ length: totalShowingDays }, (_, i) =>
     addDays(currentStartDate, i),
