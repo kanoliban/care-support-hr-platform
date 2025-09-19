@@ -848,19 +848,18 @@ export function UnifiedRequestForm({
           </button>
         </div>
         
-        {/* Step Progress Indicators - Updated */}
-        <div className="flex items-center mt-4 space-x-2">
+        {/* Step Progress Indicators */}
+        <div className="flex items-center justify-center space-x-4 mb-8">
           {steps.map((step, index) => {
             const Icon = step.icon;
-            const isCompleted = index < currentStepIndex;
             const isCurrent = index === currentStepIndex;
             
             return (
               <React.Fragment key={step.id}>
-                <div className="flex items-center">
+                <div className="flex flex-col items-center">
                   <div
                     className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
+                      "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
                       isCurrent
                         ? "bg-primary-600 text-white"
                         : "bg-bg-soft-100 text-text-sub-600"
@@ -868,16 +867,17 @@ export function UnifiedRequestForm({
                   >
                     <Icon className="w-4 h-4" />
                   </div>
+                  <span className={cn(
+                    "text-xs mt-2 text-center",
+                    isCurrent && "text-primary-700 font-medium",
+                    !isCurrent && "text-text-sub-600"
+                  )}>
+                    {step.title}
+                  </span>
                 </div>
+                
                 {index < steps.length - 1 && (
-                  <div
-                    className={cn(
-                      "h-0.5 w-8 transition-colors border-dashed border-t-2",
-                      index < currentStepIndex
-                        ? "border-primary-600"
-                        : "border-bg-soft-200"
-                    )}
-                  />
+                  <div className="h-0.5 w-6 border-dashed border-t-2 border-stroke-soft-200" />
                 )}
               </React.Fragment>
             );
