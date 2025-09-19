@@ -438,6 +438,7 @@ export default function PageCalendar() {
     return combinedEvents;
   };
 
+  // Initialize events immediately
   React.useEffect(() => {
     console.log('[CALENDAR DEBUG] useEffect running, calling generateCalendarEvents...');
     const events = generateCalendarEvents();
@@ -445,6 +446,14 @@ export default function PageCalendar() {
     console.log('[CALENDAR DEBUG] Events:', events);
     setFilteredEvents(events);
   }, []); // Run once on mount
+  
+  // Also set events on component mount
+  React.useLayoutEffect(() => {
+    console.log('[CALENDAR DEBUG] useLayoutEffect running, setting initial events...');
+    const events = generateCalendarEvents();
+    console.log('[CALENDAR DEBUG] Initial events:', events.length);
+    setFilteredEvents(events);
+  }, []);
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);

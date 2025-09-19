@@ -372,6 +372,8 @@ export function BigCalendar({
   
   // Update local events when props change
   React.useEffect(() => {
+    console.log('[BIGCALENDAR DEBUG] useEffect running, events prop changed:', events.length, 'events');
+    console.log('[BIGCALENDAR DEBUG] events:', events);
     setLocalEvents(events);
   }, [events]);
   
