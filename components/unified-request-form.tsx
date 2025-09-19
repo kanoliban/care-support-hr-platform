@@ -23,6 +23,15 @@ export interface RequestFormData {
   startDate: Date;
   endDate: Date;
   
+  // Recurring - Recurrence pattern
+  isRecurring: boolean;
+  recurrencePattern: {
+    frequency: 'daily' | 'weekly' | 'monthly';
+    interval: number;
+    daysOfWeek: number[];
+    endDate?: string;
+  };
+  
   // Where - Location (if relevant)
   location: string;
   
@@ -96,6 +105,22 @@ const locations = [
   { id: 'other', name: 'Other' },
 ];
 
+const dayOptions = [
+  { label: 'S', value: 0 },
+  { label: 'M', value: 1 },
+  { label: 'T', value: 2 },
+  { label: 'W', value: 3 },
+  { label: 'T', value: 4 },
+  { label: 'F', value: 5 },
+  { label: 'S', value: 6 }
+];
+
+const frequencyOptions = [
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' }
+];
+
 export function UnifiedRequestForm({
   formData,
   onFormDataChange,
@@ -111,6 +136,25 @@ export function UnifiedRequestForm({
   const [customLocation, setCustomLocation] = React.useState('');
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+
+  const handleRecurringChange = (field: keyof RequestFormData['recurrencePattern'], value: any) => {
+    onFormDataChange('recurrencePattern', {
+      ...formData.recurrencePattern,
+      [field]: value
+    });
+  };
+
+  const handleDayToggle = (dayValue: number) => {
+    const currentDays = formData.recurrencePattern.daysOfWeek;
+    const newDays = currentDays.includes(dayValue)
+      ? currentDays.filter(d => d !== dayValue)
+      : [...currentDays, dayValue];
+    
+    onFormDataChange('recurrencePattern', {
+      ...formData.recurrencePattern,
+      daysOfWeek: newDays
+    });
+  };
 
   React.useEffect(() => {
     // Initialize form data with selected date/time
@@ -377,6 +421,117 @@ export function UnifiedRequestForm({
               </div>
             </div>
 
+            {/* Recurring Pattern */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isRecurring"
+                  checked={formData.isRecurring}
+                  onChange={(e) => onFormDataChange('isRecurring', e.target.checked)}
+                  className="rounded border-stroke-soft-200"
+                />
+                <Label.Root htmlFor="isRecurring">
+                  Set up recurring pattern
+                </Label.Root>
+              </div>
+
+              {formData.isRecurring && (
+                <div className="space-y-4 p-4 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label.Root>Frequency</Label.Root>
+                      <Select.Root
+                        value={formData.recurrencePattern.frequency}
+                        onValueChange={(value) => handleRecurringChange('frequency', value)}
+                      >
+                        <Select.Trigger>
+                          <Select.Value />
+                        </Select.Trigger>
+                        <Select.Content>
+                          {frequencyOptions.map(option => (
+                            <Select.Item key={option.value} value={option.value}>
+                              {option.label}
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select.Root>
+                    </div>
+
+                    <div>
+                      <Label.Root>Every</Label.Root>
+                      <Input.Root>
+                        <Input.Wrapper>
+                          <Input.Input
+                            type="number"
+                            min="1"
+                            value={formData.recurrencePattern.interval}
+                            onChange={(e) => handleRecurringChange('interval', parseInt(e.target.value) || 1)}
+                          />
+                        </Input.Wrapper>
+                      </Input.Root>
+                    </div>
+                  </div>
+
+                  {/* Days Selection - Show for weekly */}
+                  {formData.recurrencePattern.frequency === 'weekly' && (
+                    <div>
+                      <Label.Root>Repeat on</Label.Root>
+                      <div className="flex gap-1 mt-2">
+                        {dayOptions.map(day => (
+                          <button
+                            key={day.value}
+                            type="button"
+                            onClick={() => handleDayToggle(day.value)}
+                            className={cn(
+                              "w-10 h-10 text-sm font-medium border rounded-lg transition-colors",
+                              formData.recurrencePattern.daysOfWeek.includes(day.value)
+                                ? 'bg-primary-600 border-primary-600 text-white'
+                                : 'border-stroke-soft-200 hover:border-stroke-soft-300 hover:bg-bg-soft-50'
+                            )}
+                          >
+                            {day.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* End Date */}
+                  <div>
+                    <Label.Root>End Date (Optional)</Label.Root>
+                    <Input.Root>
+                      <Input.Wrapper>
+                        <Input.Input
+                          type="date"
+                          value={formData.recurrencePattern.endDate || ''}
+                          onChange={(e) => handleRecurringChange('endDate', e.target.value)}
+                          min={format(selectedDate, 'yyyy-MM-dd')}
+                        />
+                      </Input.Wrapper>
+                    </Input.Root>
+                  </div>
+
+                  {/* Summary */}
+                  <div className="p-3 bg-white rounded border border-stroke-soft-200">
+                    <p className="text-sm text-text-sub-600">
+                      {`Repeat ${formData.recurrencePattern.frequency} every ${formData.recurrencePattern.interval} ${
+                        formData.recurrencePattern.frequency === 'daily' ? 'day(s)' :
+                        formData.recurrencePattern.frequency === 'weekly' ? 'week(s)' :
+                        'month(s)'
+                      }`}
+                      {formData.recurrencePattern.frequency === 'weekly' && formData.recurrencePattern.daysOfWeek.length > 0 && (
+                        <span> on {formData.recurrencePattern.daysOfWeek.map(d => dayOptions[d].label).join(', ')}</span>
+                      )}
+                      {formData.recurrencePattern.endDate && (
+                        <span> until {format(new Date(formData.recurrencePattern.endDate), 'MMM dd, yyyy')}</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label.Root htmlFor="location">Where will this happen?</Label.Root>
               <Select.Root
@@ -452,6 +607,21 @@ export function UnifiedRequestForm({
                 <div>
                   <span className="font-medium">When:</span> {format(formData.startDate || selectedTime, 'MMM dd, yyyy')} at {format(formData.startDate || selectedTime, 'h:mm a')} - {format(formData.endDate || addHours(selectedTime, 1), 'h:mm a')}
                 </div>
+                {formData.isRecurring && (
+                  <div>
+                    <span className="font-medium">Recurring:</span> {formData.recurrencePattern.frequency} every {formData.recurrencePattern.interval} {
+                      formData.recurrencePattern.frequency === 'daily' ? 'day(s)' :
+                      formData.recurrencePattern.frequency === 'weekly' ? 'week(s)' :
+                      'month(s)'
+                    }
+                    {formData.recurrencePattern.frequency === 'weekly' && formData.recurrencePattern.daysOfWeek.length > 0 && (
+                      <span> on {formData.recurrencePattern.daysOfWeek.map(d => dayOptions[d].label).join(', ')}</span>
+                    )}
+                    {formData.recurrencePattern.endDate && (
+                      <span> until {format(new Date(formData.recurrencePattern.endDate), 'MMM dd, yyyy')}</span>
+                    )}
+                  </div>
+                )}
                 {formData.location && (
                   <div>
                     <span className="font-medium">Where:</span> {formData.location === 'other' ? customLocation : locations.find(l => l.id === formData.location)?.name}

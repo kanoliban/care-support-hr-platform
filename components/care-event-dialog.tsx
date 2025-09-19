@@ -39,6 +39,13 @@ export default function CareEventDialog({
     assignedPerson: '',
     startDate: selectedTime,
     endDate: addHours(selectedTime, 1),
+    isRecurring: false,
+    recurrencePattern: {
+      frequency: 'weekly',
+      interval: 1,
+      daysOfWeek: [],
+      endDate: ''
+    },
     location: '',
     notes: '',
   });
@@ -78,6 +85,16 @@ export default function CareEventDialog({
 
     setIsLoading(true);
     try {
+      // Build recurrence pattern string
+      let recurrencePatternStr = '';
+      if (formData.isRecurring) {
+        const daysStr = formData.recurrencePattern.daysOfWeek.length > 0 
+          ? ` on ${formData.recurrencePattern.daysOfWeek.map(d => ['S', 'M', 'T', 'W', 'T', 'F', 'S'][d]).join(',')}` 
+          : '';
+        const endDateStr = formData.recurrencePattern.endDate ? ` until ${formData.recurrencePattern.endDate}` : '';
+        recurrencePatternStr = `${formData.recurrencePattern.frequency} every ${formData.recurrencePattern.interval}${daysStr}${endDateStr}`;
+      }
+
       // Convert to CareEventCreateData format
       const eventData: CareEventCreateData = {
         title: formData.title,
@@ -88,8 +105,8 @@ export default function CareEventDialog({
         description: formData.description,
         assignedCaregiver: formData.assignedPerson === 'open-to-anyone' ? 'Open to anyone' : formData.assignedPerson,
         client: formData.careRecipient,
-        isRecurring: false, // Simplified - no recurrence for now
-        recurrencePattern: '',
+        isRecurring: formData.isRecurring,
+        recurrencePattern: recurrencePatternStr,
         notifications: ['30-min-before'],
         status: 'scheduled' as CareEventStatus,
         visibility: 'care-team-only' as CareEventVisibility,
