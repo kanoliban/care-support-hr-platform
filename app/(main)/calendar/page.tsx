@@ -228,10 +228,41 @@ export default function PageCalendar() {
     const events: CalendarData[] = [];
     const today = new Date();
     
-    // Add test events for the current calendar view (September 19, 2025)
-    const testDate = new Date(2025, 8, 19); // September 19, 2025 (month is 0-indexed)
+    // Add test events for the current calendar view
+    const testDate = currentDate; // Use the current calendar date
     
-        events.push(
+    // Add events for today
+    events.push(
+      {
+        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
+        title: 'Morning Care - Today',
+        type: 'meeting',
+        completed: false,
+        people: [
+          {
+            alt: 'Jim Nelson',
+            image: '/images/avatar/illustration/james.png',
+            color: 'blue',
+          },
+        ],
+        platform: 'Rob\'s Home',
+        description: 'Assist with morning routine including medication administration',
+        assignedCaregiver: 'Jim Nelson',
+        client: 'Rob',
+        status: 'scheduled',
+        visibility: 'care-team-only',
+        metadata: {
+          requestType: 'Personal Care',
+          priority: 'medium',
+          notes: 'Regular morning care routine'
+        }
+      }
+    );
+    
+    // Add events for the current calendar view date
+    if (testDate.getDate() !== today.getDate()) {
+      events.push(
           {
             startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
             endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
@@ -407,7 +438,7 @@ export default function PageCalendar() {
     console.log('[CALENDAR DEBUG] generateCalendarEvents returned:', events.length, 'events');
     console.log('[CALENDAR DEBUG] First few events:', events.slice(0, 3));
     setFilteredEvents(events);
-  }, []); // Run once on mount
+  }, [currentDate]); // Regenerate when currentDate changes
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);
