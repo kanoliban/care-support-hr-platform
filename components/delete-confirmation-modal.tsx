@@ -9,6 +9,7 @@ interface DeleteConfirmationModalProps {
   onConfirm: (deletionType: 'this' | 'this-and-following' | 'all') => void;
   eventTitle: string;
   isRecurring?: boolean;
+  recurrencePattern?: string;
   isDeleting?: boolean;
 }
 
@@ -18,6 +19,7 @@ export function DeleteConfirmationModal({
   onConfirm,
   eventTitle,
   isRecurring = false,
+  recurrencePattern,
   isDeleting = false,
 }: DeleteConfirmationModalProps) {
   const [selectedDeletionType, setSelectedDeletionType] = React.useState<'this' | 'this-and-following' | 'all'>('this');
@@ -63,6 +65,9 @@ export function DeleteConfirmationModal({
             )}
             <div className="bg-bg-soft-50 rounded-lg p-3 border border-stroke-soft-200 mb-4">
               <p className="text-text-strong-950 font-medium">{eventTitle}</p>
+              {isRecurring && recurrencePattern && (
+                <p className="text-sm text-text-sub-600 mt-1">Recurring: {recurrencePattern}</p>
+              )}
             </div>
 
             {/* Recurring Event Options */}

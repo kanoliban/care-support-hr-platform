@@ -718,6 +718,7 @@ export function BigCalendar({
             onConfirm={handleConfirmDelete}
             eventTitle={eventToDelete?.title || ''}
             isRecurring={eventToDelete?.isRecurring || false}
+            recurrencePattern={eventToDelete?.recurrencePattern}
             isDeleting={isDeleting}
           />
         </div>
