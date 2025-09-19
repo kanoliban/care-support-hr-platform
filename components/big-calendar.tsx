@@ -168,6 +168,9 @@ export type CalendarData = {
 type CalendarEventItemProps = CalendarData & {
   isTiny?: boolean;
   onClick?: () => void;
+  onDragStart?: (event: React.DragEvent, eventData: CalendarData) => void;
+  onDragEnd?: (event: React.DragEvent) => void;
+  isDragging?: boolean;
 };
 
 const bgColors: Partial<Record<NonNullable<CalendarData['type']>, string>> = {
@@ -188,19 +191,45 @@ function CalendarEventItem({
   platform,
   isTiny,
   onClick,
+  onDragStart,
+  onDragEnd,
+  isDragging = false,
 }: CalendarEventItemProps) {
+  const eventData: CalendarData = {
+    startDate,
+    endDate,
+    type,
+    completed,
+    title,
+    link,
+    location,
+    people,
+    platform,
+  };
+
   return (
     <div
+      draggable
       onClick={(e) => {
         e.stopPropagation(); // Prevent event from bubbling up to time slot
         onClick?.();
       }}
+      onDragStart={(e) => {
+        e.stopPropagation();
+        onDragStart?.(e, eventData);
+      }}
+      onDragEnd={(e) => {
+        e.stopPropagation();
+        onDragEnd?.(e);
+      }}
       className={cnExt(
         'flex min-h-0 w-full min-w-0 flex-col gap-2 overflow-hidden rounded-lg px-3 py-2',
-        'backdrop-blur-xl cursor-pointer hover:opacity-80 transition-opacity',
+        'backdrop-blur-xl cursor-move hover:opacity-80 transition-opacity',
+        'select-none', // Prevent text selection during drag
         bgColors[type],
         {
           'bg-bg-weak-50': completed,
+          'opacity-50 scale-95': isDragging,
         },
       )}
     >
@@ -307,6 +336,11 @@ export function BigCalendar({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [eventToDelete, setEventToDelete] = React.useState<CalendarData | null>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  
+  // Drag and drop state
+  const [draggedEvent, setDraggedEvent] = React.useState<CalendarData | null>(null);
+  const [dragOverTimeSlot, setDragOverTimeSlot] = React.useState<{ day: Date; hour: string } | null>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
   
   // Update current time every minute
   React.useEffect(() => {
@@ -525,7 +559,77 @@ export function BigCalendar({
     setEventToDelete(null);
   };
 
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, eventData: CalendarData) => {
+    setDraggedEvent(eventData);
+    setIsDragging(true);
+    
+    // Set drag image to be semi-transparent
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', JSON.stringify(eventData));
+  };
 
+  const handleDragEnd = (e: React.DragEvent) => {
+    setDraggedEvent(null);
+    setDragOverTimeSlot(null);
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent, day: Date, hour: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverTimeSlot({ day, hour });
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Only clear if we're leaving the time slot entirely
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setDragOverTimeSlot(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, day: Date, hour: string) => {
+    e.preventDefault();
+    
+    if (!draggedEvent) return;
+
+    try {
+      // Parse the hour string to get the target time
+      const targetHour = parseInt(hour);
+      const targetDate = new Date(day);
+      targetDate.setHours(targetHour, 0, 0, 0);
+
+      // Calculate the duration of the original event
+      const duration = draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime();
+      const newEndDate = new Date(targetDate.getTime() + duration);
+
+      // Create the updated event
+      const updatedEvent: CalendarData = {
+        ...draggedEvent,
+        startDate: targetDate,
+        endDate: newEndDate,
+      };
+
+      console.log('Event rescheduled:', {
+        original: { start: draggedEvent.startDate, end: draggedEvent.endDate },
+        new: { start: targetDate, end: newEndDate },
+        duration: duration / (1000 * 60), // duration in minutes
+      });
+
+      // In a real app, you would update the event in your data store here
+      // For now, we'll just show a success message
+      alert(`Event "${draggedEvent.title}" rescheduled to ${targetDate.toLocaleString()}`);
+
+    } catch (error) {
+      console.error('Error rescheduling event:', error);
+      alert('Failed to reschedule event. Please try again.');
+    } finally {
+      // Clean up drag state
+      setDraggedEvent(null);
+      setDragOverTimeSlot(null);
+      setIsDragging(false);
+    }
+  };
 
   // Calculate current time position for the indicator line
   const getCurrentTimePosition = () => {
@@ -660,10 +764,18 @@ export function BigCalendar({
                       <div
                         key={hourIndex}
                         onClick={() => handleTimeSlotClick(day, format(hour, 'h aa'))}
+                        onDragOver={(e) => handleDragOver(e, day, format(hour, 'H'))}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, day, format(hour, 'H'))}
                         className={`h-16 border-b border-stroke-soft-200 transition-colors cursor-pointer relative ${
                           isToday(day)
                             ? 'bg-primary-lighter/20 hover:bg-primary-lighter/40'
                             : 'bg-bg-white-0 hover:bg-bg-weak-50'
+                        } ${
+                          dragOverTimeSlot?.day.getTime() === day.getTime() && 
+                          dragOverTimeSlot?.hour === format(hour, 'H')
+                            ? 'bg-primary-lighter/60 border-primary-500 border-2'
+                            : ''
                         }`}
                       >
                           {/* Render events for this time slot */}
@@ -673,6 +785,9 @@ export function BigCalendar({
                               {...event}
                               isTiny={true}
                               onClick={() => handleEventClick(event)}
+                              onDragStart={handleDragStart}
+                              onDragEnd={handleDragEnd}
+                              isDragging={isDragging && draggedEvent?.title === event.title}
                             />
                           ))}
                       </div>
