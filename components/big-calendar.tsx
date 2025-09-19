@@ -760,64 +760,84 @@ export function BigCalendar({
       <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
         <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
           <div className='overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
-            {/* Month view header */}
+            {/* Month view header - Fixed width columns */}
             <div className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200 bg-bg-weak-50'>
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                <div key={day} className='flex h-8 items-center justify-center text-xs font-medium text-text-soft-600'>
+                <div key={day} className='flex h-8 items-center justify-center text-xs font-medium text-text-soft-600 min-w-[120px]'>
                   {day}
                 </div>
               ))}
             </div>
             
-            {/* Month view grid */}
-            <div className='grid grid-cols-7 divide-x divide-stroke-soft-200'>
-              {monthDays.map((day, dayIndex) => {
-                const dayEvents = localEvents.filter(event => 
-                  isSameDay(new Date(event.startDate), day)
-                );
-                
-                const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
-                const isToday = isSameDay(day, new Date());
-                
-                return (
-                  <div 
-                    key={dayIndex}
-                    className={`min-h-[120px] border-b border-stroke-soft-200 p-2 ${
-                      !isCurrentMonth ? 'bg-bg-weak-50 text-text-soft-400' : ''
-                    } ${isToday ? 'bg-blue-50' : ''}`}
-                    onClick={() => {
-                      setSelectedDate(day);
-                      setSelectedTime(day);
-                      setIsEventDialogOpen(true);
-                    }}
-                  >
-                    <div className={`mb-2 text-sm font-medium ${
-                      isToday ? 'text-blue-600 font-bold' : 
-                      isCurrentMonth ? 'text-text-strong-900' : 'text-text-soft-400'
-                    }`}>
-                      {format(day, 'd')}
-                    </div>
-                    <div className='space-y-1'>
-                      {dayEvents.slice(0, 3).map((event, eventIndex) => (
-                        <CalendarEventItem
-                          key={`${event.title}-${eventIndex}`}
-                          {...event}
-                          isTiny={true}
-                          onClick={() => handleEventClick(event)}
-                          onDragStart={handleDragStart}
-                          onDragEnd={handleDragEnd}
-                          isDragging={isDragging && draggedEvent?.title === event.title}
-                        />
-                      ))}
-                      {dayEvents.length > 3 && (
-                        <div className='text-xs text-text-soft-600'>
-                          +{dayEvents.length - 3} more
+            {/* Month view grid - 5 rows of 7 days each */}
+            <div className='grid grid-rows-5'>
+              {Array.from({ length: 5 }, (_, weekIndex) => (
+                <div key={weekIndex} className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200'>
+                  {Array.from({ length: 7 }, (_, dayIndex) => {
+                    const day = monthDays[weekIndex * 7 + dayIndex];
+                    const dayEvents = localEvents.filter(event => 
+                      isSameDay(new Date(event.startDate), day)
+                    );
+                    
+                    const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
+                    const isToday = isSameDay(day, new Date());
+                    
+                    return (
+                      <div 
+                        key={dayIndex}
+                        className={`min-h-[120px] p-2 min-w-[120px] ${
+                          !isCurrentMonth ? 'bg-bg-weak-50 text-text-soft-400' : ''
+                        } ${isToday ? 'bg-blue-50' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedDate(day);
+                          setSelectedTime(day);
+                          setIsEventDialogOpen(true);
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (draggedEvent) {
+                            handleDrop(e, day);
+                          }
+                        }}
+                      >
+                        <div className={`mb-2 text-sm font-medium ${
+                          isToday ? 'text-blue-600 font-bold' : 
+                          isCurrentMonth ? 'text-text-strong-900' : 'text-text-soft-400'
+                        }`}>
+                          {format(day, 'd')}
                         </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                        <div className='space-y-1'>
+                          {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                            <CalendarEventItem
+                              key={`${event.title}-${eventIndex}`}
+                              {...event}
+                              isTiny={true}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEventClick(event);
+                              }}
+                              onDragStart={handleDragStart}
+                              onDragEnd={handleDragEnd}
+                              isDragging={isDragging && draggedEvent?.title === event.title}
+                            />
+                          ))}
+                          {dayEvents.length > 3 && (
+                            <div className='text-xs text-text-soft-600'>
+                              +{dayEvents.length - 3} more
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
