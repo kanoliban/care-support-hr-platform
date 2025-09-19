@@ -128,9 +128,23 @@ export default function EventDetailsModal({
             {/* Status */}
             <div>
               <Label.Root className="text-sm font-medium text-text-sub-600">Status</Label.Root>
-              <p className="text-text-strong-950 mt-1">
-                {event.completed ? '✅ Completed' : '⏳ Pending'}
-              </p>
+              <div className={`mt-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
+                event.completed 
+                  ? 'bg-success-50 text-success-700 border border-success-200' 
+                  : 'bg-warning-50 text-warning-700 border border-warning-200'
+              }`}>
+                {event.completed ? (
+                  <>
+                    <RiCheckLine size={16} />
+                    Completed
+                  </>
+                ) : (
+                  <>
+                    <div className="w-4 h-4 border-2 border-warning-500 border-t-transparent rounded-full animate-spin" />
+                    Pending
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -148,14 +162,27 @@ export default function EventDetailsModal({
             </Button.Root>
             
             <Button.Root
-              variant="neutral"
-              mode="outline"
+              variant={event.completed ? "neutral" : "primary"}
+              mode={event.completed ? "outline" : "filled"}
               size="medium"
               onClick={handleToggleComplete}
-              className="flex-1"
+              className={`flex-1 ${
+                event.completed 
+                  ? 'text-warning-700 border-warning-300 hover:bg-warning-50' 
+                  : 'text-white'
+              }`}
             >
-              <RiCheckLine size={16} className="mr-2" />
-              {event.completed ? 'Mark Pending' : 'Mark Complete'}
+              {event.completed ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-warning-500 border-t-transparent rounded-full animate-spin mr-2" />
+                  Mark Pending
+                </>
+              ) : (
+                <>
+                  <RiCheckLine size={16} className="mr-2" />
+                  Mark Complete
+                </>
+              )}
             </Button.Root>
             
             <Button.Root
