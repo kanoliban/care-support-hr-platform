@@ -17,6 +17,7 @@ import { cn } from '@/utils/cn';
 import useBreakpoint from '@/hooks/use-breakpoint';
 import { CompanySwitchMobile } from '@/components/company-switch';
 import { CreateRequestButton } from '@/components/create-request-button';
+import { ScheduleButton } from '@/components/schedule-button';
 import * as TopbarItemButton from '@/components/topbar-item-button';
 import { UserButtonMobile } from '@/components/user-button';
 import { navigationLinks } from '@/app/(main)/sidebar';
@@ -127,8 +128,9 @@ export default function MobileMenu() {
               </div>
             </div>
 
-            <div className='border-y border-stroke-soft-200 p-4'>
-              <CreateRequestButton className='w-full' />
+            <div className='grid grid-cols-2 gap-4 border-y border-stroke-soft-200 p-4'>
+              <ScheduleButton />
+              <CreateRequestButton />
             </div>
 
             <div className='p-2'>
