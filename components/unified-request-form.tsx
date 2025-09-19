@@ -334,9 +334,9 @@ export function UnifiedRequestForm({
                   id="description"
                   value={formData.description}
                   onChange={(e) => onFormDataChange('description', e.target.value)}
-                  placeholder="Describe what kind of help you need, any special requirements, or important notes..."
+                  placeholder="Any additional context or special instructions..."
                   className={errors.description ? 'border-red-500' : ''}
-                  rows={3}
+                  rows={2}
                 />
               </Textarea.Root>
               {errors.description && (
