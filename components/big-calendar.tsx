@@ -436,6 +436,8 @@ export function BigCalendar({
   };
 
   const handleEventClick = (event: CalendarData) => {
+    console.log('[BIGCALENDAR DEBUG] handleEventClick called with event:', event.title);
+    console.log('[BIGCALENDAR DEBUG] Setting selectedEvent and opening modal');
     setSelectedEvent(event);
     setIsEventDetailsOpen(true);
   };
@@ -829,6 +831,7 @@ export function BigCalendar({
                               {...event}
                               isTiny={true}
                               onClick={() => {
+                                console.log('[MONTH VIEW DEBUG] Event clicked:', event.title);
                                 handleEventClick(event);
                               }}
                               onDragStart={handleDragStart}
