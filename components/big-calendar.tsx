@@ -750,6 +750,16 @@ export function BigCalendar({
     return matchingEvents;
   };
 
+  // Helper function to get events for a specific day (for month view)
+  const getEventsForDay = (day: Date) => {
+    const matchingEvents = localEvents.filter(event => {
+      const eventStart = new Date(event.startDate);
+      return isSameDay(eventStart, day);
+    });
+    
+    return matchingEvents;
+  };
+
   const handleCloseDialog = () => {
     setIsEventDialogOpen(false);
     setIsEditMode(false);
@@ -829,10 +839,7 @@ export function BigCalendar({
                         </div>
                         <div className='space-y-1'>
                           {/* Get all events for this day using the same method as week view */}
-                          {localEvents.filter(event => {
-                            const eventStart = new Date(event.startDate);
-                            return isSameDay(eventStart, day);
-                          }).slice(0, 3).map((event, eventIndex) => (
+                          {getEventsForDay(day).slice(0, 3).map((event, eventIndex) => (
                             <CalendarEventItem
                               key={`${event.title}-${eventIndex}`}
                               {...event}
@@ -843,15 +850,9 @@ export function BigCalendar({
                               isDragging={isDragging && draggedEvent?.title === event.title}
                             />
                           ))}
-                          {localEvents.filter(event => {
-                            const eventStart = new Date(event.startDate);
-                            return isSameDay(eventStart, day);
-                          }).length > 3 && (
+                          {getEventsForDay(day).length > 3 && (
                             <div className='text-xs text-text-soft-600'>
-                              +{localEvents.filter(event => {
-                                const eventStart = new Date(event.startDate);
-                                return isSameDay(eventStart, day);
-                              }).length - 3} more
+                              +{getEventsForDay(day).length - 3} more
                             </div>
                           )}
                         </div>
