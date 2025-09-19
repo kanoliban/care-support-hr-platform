@@ -744,7 +744,7 @@ export function UnifiedRequestForm({
               <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
                 <div className="space-y-2">
                   <Label.Root htmlFor="customAssignedPerson">
-                    Person's Name <Label.Asterisk />
+                    Who's the other person's name? <Label.Asterisk />
                   </Label.Root>
                   <Input.Root>
                     <Input.Wrapper>
@@ -764,6 +764,9 @@ export function UnifiedRequestForm({
 
                 <div className="space-y-2">
                   <Label.Root>Contact Information (Optional)</Label.Root>
+                  <p className="text-xs text-text-sub-600">
+                    Add their contact info to invite them to your care team
+                  </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
@@ -797,6 +800,26 @@ export function UnifiedRequestForm({
                       </Input.Root>
                     </div>
                   </div>
+                  
+                  {formData.customPersonContact && (
+                    <div className="pt-2">
+                      <Button.Root 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          // TODO: Implement invite functionality
+                          alert(`Invite ${formData.customAssignedPerson} to join your care team via ${formData.customPersonContactType === 'phone' ? 'phone' : 'email'}`);
+                        }}
+                      >
+                        <Button.Icon>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                          </svg>
+                        </Button.Icon>
+                        Invite to Care Team
+                      </Button.Root>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -838,12 +861,12 @@ export function UnifiedRequestForm({
                 <div className="flex items-center">
                   <div
                     className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
+                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors border-2",
                       isCompleted
-                        ? "bg-primary-600 text-white"
+                        ? "bg-blue-600 text-white border-blue-600"
                         : isCurrent
-                        ? "bg-primary-100 text-primary-600"
-                        : "bg-bg-soft-100 text-text-sub-600"
+                        ? "bg-blue-100 text-blue-600 border-blue-600"
+                        : "bg-gray-100 text-gray-500 border-gray-300"
                     )}
                   >
                     {isCompleted ? (
@@ -858,8 +881,8 @@ export function UnifiedRequestForm({
                     className={cn(
                       "h-0.5 w-8 transition-colors",
                       index < currentStepIndex
-                        ? "bg-primary-600"
-                        : "bg-bg-soft-200"
+                        ? "bg-blue-600"
+                        : "bg-gray-300"
                     )}
                   />
                 )}
