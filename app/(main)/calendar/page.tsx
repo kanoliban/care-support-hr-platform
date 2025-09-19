@@ -207,6 +207,35 @@ const calendarData: CalendarData[] = [
   //   type: 'event',
   //   link: 'www.alignui.com',
   // },
+  // TEST EVENT: Jim Nelson - Friday, September 19, 2024 at noon (1-hour block)
+  {
+    startDate: new Date('2024-09-19T12:00:00'),
+    endDate: new Date('2024-09-19T13:00:00'),
+    title: 'Jim Nelson - Daily Care Routine (Medication & Mobility)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Jim Nelson',
+        image: '/images/avatar/illustration/arthur.png',
+        color: 'blue',
+      },
+    ],
+    location: "Rob's Home",
+    description: 'Daily medication administration, mobility assistance, and health monitoring. Includes transfer to wheelchair, range of motion exercises, and vital signs check.',
+    assignedCaregiver: 'Jim Nelson',
+    client: 'Rob Wudlick',
+    careType: 'Daily Care',
+    priority: 'High',
+    status: 'scheduled',
+    visibility: 'care-team-only',
+    metadata: {
+      careResponsibilities: ['Medication Management', 'Mobility Assistance', 'Health Monitoring'],
+      specialInstructions: 'Rob requires assistance with morning medication routine and transfer from bed to wheelchair. Check for any overnight changes in condition.',
+      equipment: ['Wheelchair', 'Medication Organizer', 'Blood Pressure Monitor'],
+      notes: 'Regular Friday morning routine. Jim has been providing this care for 18 months and is familiar with Rob\'s specific needs.'
+    }
+  },
 ];
 
 export default function PageCalendar() {
