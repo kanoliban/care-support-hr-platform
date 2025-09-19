@@ -11,6 +11,7 @@ import CareEventDialog from './care-event-dialog';
 import EventDetailsModal from './event-details-modal';
 import { DeleteConfirmationModal } from './delete-confirmation-modal';
 import { DragConfirmationModal } from './drag-confirmation-modal';
+import { TestDragModal } from './test-drag-modal';
 import { useCareEvents } from '@/hooks/useCareEvents';
 import {
   addDays,
@@ -790,6 +791,19 @@ export function BigCalendar({
 
   return (
     <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
+      {/* Test Button */}
+      <div className="p-4 bg-yellow-100 mb-4">
+        <button 
+          onClick={() => {
+            console.log('[TEST] Button clicked, setting modal to true');
+            setIsDragModalOpen(true);
+          }}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Test Modal (isDragModalOpen: {isDragModalOpen.toString()})
+        </button>
+      </div>
+      
       <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
         <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
           {/* Left Navigation Panel */}
@@ -944,17 +958,11 @@ export function BigCalendar({
             isDeleting={isDeleting}
           />
           
-          {/* Drag Confirmation Modal */}
+          {/* Test Drag Modal */}
           {console.log('[DRAG DEBUG] Rendering modal with state:', { isDragModalOpen, draggedEvent: draggedEvent?.title, isRecurring: draggedEvent?.isRecurring })}
-          <DragConfirmationModal
+          <TestDragModal
             isOpen={isDragModalOpen}
             onClose={handleCancelDrag}
-            onConfirm={handleConfirmDrag}
-            eventTitle={draggedEvent?.title || ''}
-            isRecurring={draggedEvent?.isRecurring || false}
-            recurrencePattern={draggedEvent?.recurrencePattern}
-            isDragging={isDragging}
-            newTime={dragTarget ? `${format(new Date(dragTarget.day), 'MMM dd')} at ${parseInt(dragTarget.hour)}:00` : undefined}
           />
         </div>
       );
