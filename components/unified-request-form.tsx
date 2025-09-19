@@ -853,6 +853,7 @@ export function UnifiedRequestForm({
           {steps.map((step, index) => {
             const Icon = step.icon;
             const isCurrent = index === currentStepIndex;
+            console.log('Step progress:', { index, isCurrent, step: step.title });
             
             return (
               <React.Fragment key={step.id}>
