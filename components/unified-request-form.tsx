@@ -329,16 +329,17 @@ export function UnifiedRequestForm({
               <Label.Root htmlFor="description">
                 More details (Optional)
               </Label.Root>
-              <Textarea.Root simple>
-                <textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => onFormDataChange('description', e.target.value)}
-                  placeholder="Any additional context or special instructions..."
-                  className={`h-10 max-h-20 resize-none ${errors.description ? 'border-red-500' : ''}`}
-                  rows={1}
-                />
-              </Textarea.Root>
+              <Input.Root>
+                <Input.Wrapper>
+                  <Input.Input
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => onFormDataChange('description', e.target.value)}
+                    placeholder="Any additional context or special instructions..."
+                    className={errors.description ? 'border-red-500' : ''}
+                  />
+                </Input.Wrapper>
+              </Input.Root>
               {errors.description && (
                 <div className="text-xs text-red-600">{errors.description}</div>
               )}
