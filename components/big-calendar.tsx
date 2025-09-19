@@ -355,7 +355,6 @@ export function BigCalendar({
   // Event details modal state
   const [isEventDetailsOpen, setIsEventDetailsOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<CalendarData | null>(null);
-  const [showInlineDetails, setShowInlineDetails] = React.useState(false);
   
   // Edit mode state
   const [isEditMode, setIsEditMode] = React.useState(false);
@@ -445,7 +444,6 @@ export function BigCalendar({
     console.log('[BIGCALENDAR DEBUG] Opening modal for event details');
     setSelectedEvent(event);
     setIsEventDetailsOpen(true);
-    setShowInlineDetails(false); // Ensure inline details are hidden
   };
 
   const handleEventEdit = (event: CalendarData) => {

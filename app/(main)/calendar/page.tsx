@@ -45,6 +45,141 @@ const calendarData: CalendarData[] = [
       isOpenToAnyone: false,
     },
   },
+  
+  // RECURRING TEST EVENTS - These should appear consistently in both week and month views
+  
+  // Daily recurring event (Monday-Friday)
+  {
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 9, 0),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 10, 0),
+    title: 'Daily Standup (M-F 9am-10am)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Team Lead',
+        image: '/images/avatar/illustration/james.png',
+        color: 'blue',
+      },
+    ],
+    platform: 'Conference Room A',
+    description: 'Daily team standup meeting to discuss progress and blockers.',
+    assignedCaregiver: 'Team Lead',
+    client: 'Development Team',
+    isRecurring: true,
+    status: 'scheduled',
+    visibility: 'care-team-only',
+    metadata: {
+      requestType: 'Meeting',
+      notes: 'Daily team coordination',
+      isOpenToAnyone: false,
+    },
+    recurrence: {
+      frequency: 'weekly',
+      interval: 1,
+      daysOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    },
+  },
+  
+  // Weekly recurring event (Every Tuesday)
+  {
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 14, 0),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 15, 0),
+    title: 'Weekly Team Meeting (Tuesdays 2pm-3pm)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Project Manager',
+        image: '/images/avatar/illustration/arthur.png',
+        color: 'green',
+      },
+    ],
+    platform: 'Main Conference Room',
+    description: 'Weekly team meeting to review progress and plan upcoming work.',
+    assignedCaregiver: 'Project Manager',
+    client: 'Development Team',
+    isRecurring: true,
+    status: 'scheduled',
+    visibility: 'care-team-only',
+    metadata: {
+      requestType: 'Meeting',
+      notes: 'Weekly progress review',
+      isOpenToAnyone: false,
+    },
+    recurrence: {
+      frequency: 'weekly',
+      interval: 1,
+      daysOfWeek: ['Tuesday'],
+    },
+  },
+  
+  // Bi-weekly recurring event (Every other Wednesday)
+  {
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 16, 0),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 17, 0),
+    title: 'Bi-weekly Review (Every other Wed 4pm-5pm)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Reviewer',
+        image: '/images/avatar/illustration/james.png',
+        color: 'purple',
+      },
+    ],
+    platform: 'Review Room',
+    description: 'Bi-weekly review meeting to assess progress and provide feedback.',
+    assignedCaregiver: 'Reviewer',
+    client: 'Development Team',
+    isRecurring: true,
+    status: 'scheduled',
+    visibility: 'care-team-only',
+    metadata: {
+      requestType: 'Meeting',
+      notes: 'Bi-weekly progress assessment',
+      isOpenToAnyone: false,
+    },
+    recurrence: {
+      frequency: 'weekly',
+      interval: 2,
+      daysOfWeek: ['Wednesday'],
+    },
+  },
+  
+  // Monthly recurring event (First Monday of each month)
+  {
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 10, 0),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 11, 0),
+    title: 'Monthly Planning (1st Monday 10am-11am)',
+    completed: false,
+    type: 'meeting',
+    people: [
+      {
+        alt: 'Planning Lead',
+        image: '/images/avatar/illustration/arthur.png',
+        color: 'orange',
+      },
+    ],
+    platform: 'Planning Room',
+    description: 'Monthly planning session to set goals and priorities for the upcoming month.',
+    assignedCaregiver: 'Planning Lead',
+    client: 'Development Team',
+    isRecurring: true,
+    status: 'scheduled',
+    visibility: 'care-team-only',
+    metadata: {
+      requestType: 'Meeting',
+      notes: 'Monthly goal setting',
+      isOpenToAnyone: false,
+    },
+    recurrence: {
+      frequency: 'monthly',
+      interval: 1,
+      dayOfMonth: 1,
+    },
+  },
+  
   // Rob's Family Care Schedule - Real Data (using current date)
   {
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 9, 0),
