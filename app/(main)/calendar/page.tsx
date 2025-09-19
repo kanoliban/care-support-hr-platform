@@ -547,6 +547,11 @@ export default function PageCalendar() {
           showAllHours={true}
           view={currentView}
           totalShowingDays={currentView === 'month' ? 35 : 7} // 35 days for month view (5 weeks), 7 for week view
+          onEventDialogOpen={(date, time) => {
+            setSelectedDate(date);
+            setSelectedTime(time);
+            setIsEventDialogOpen(true);
+          }}
         />
         {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
       </div>

@@ -325,6 +325,7 @@ type BigCalendarProps = {
   events: CalendarData[];
   showAllHours?: boolean;
   view?: 'week' | 'month';
+  onEventDialogOpen?: (date: Date, time: Date) => void;
 };
 
 export function BigCalendar({
@@ -334,6 +335,7 @@ export function BigCalendar({
   showAllHours = true, // Default to showing all hours
   className,
   view = 'week',
+  onEventDialogOpen,
 }: BigCalendarProps) {
   // Calculate totalShowingDays based on view
   const actualShowingDays = view === 'week' ? 7 : totalShowingDays; // 7 days for week view (including Sunday)
@@ -798,9 +800,7 @@ export function BigCalendar({
                         } ${isToday ? 'bg-blue-50' : ''}`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedDate(day);
-                          setSelectedTime(day);
-                          setIsEventDialogOpen(true);
+                          onEventDialogOpen?.(day, day);
                         }}
                         onDragOver={(e) => {
                           e.preventDefault();
