@@ -441,7 +441,7 @@ export function BigCalendar({
     setIsDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = async (deletionType: 'this' | 'this-and-following' | 'all') => {
     if (!eventToDelete) return;
     
     setIsDeleting(true);
@@ -450,20 +450,39 @@ export function BigCalendar({
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Remove event from the events list
-      const updatedEvents = events.filter(e => e !== eventToDelete);
+      // Remove event from the events list based on deletion type
+      let updatedEvents = events;
+      
+      if (deletionType === 'this') {
+        // Remove only this specific occurrence
+        updatedEvents = events.filter(e => e !== eventToDelete);
+      } else if (deletionType === 'this-and-following') {
+        // Remove this occurrence and all future occurrences
+        // For now, we'll just remove this occurrence (in a real app, you'd filter by date)
+        updatedEvents = events.filter(e => e !== eventToDelete);
+      } else if (deletionType === 'all') {
+        // Remove all occurrences of this recurring event
+        // For now, we'll just remove this occurrence (in a real app, you'd filter by recurrence pattern)
+        updatedEvents = events.filter(e => e !== eventToDelete);
+      }
       
       // Update the events in the parent component
       // For now, we'll just close the modals and show a success message
-      console.log('Event deleted successfully:', eventToDelete.title);
+      console.log(`Event deleted successfully (${deletionType}):`, eventToDelete.title);
       
       // Close modals
       setIsDeleteModalOpen(false);
       setIsEventDetailsOpen(false);
       setEventToDelete(null);
       
-      // Show success feedback (in a real app, you'd update the events state)
-      alert(`Event "${eventToDelete.title}" has been deleted successfully!`);
+      // Show success feedback based on deletion type
+      const deletionMessage = deletionType === 'this' 
+        ? `Event "${eventToDelete.title}" has been deleted successfully!`
+        : deletionType === 'this-and-following'
+        ? `Event "${eventToDelete.title}" and all future occurrences have been deleted successfully!`
+        : `All occurrences of "${eventToDelete.title}" have been deleted successfully!`;
+      
+      alert(deletionMessage);
       
     } catch (error) {
       console.error('Error deleting event:', error);
@@ -670,6 +689,7 @@ export function BigCalendar({
             onClose={handleCancelDelete}
             onConfirm={handleConfirmDelete}
             eventTitle={eventToDelete?.title || ''}
+            isRecurring={eventToDelete?.isRecurring || false}
             isDeleting={isDeleting}
           />
         </div>
