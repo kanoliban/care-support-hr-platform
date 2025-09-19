@@ -763,10 +763,7 @@ export function UnifiedRequestForm({
                 </div>
 
                   <div className="space-y-2">
-                    <Label.Root>Contact Information (Optional)</Label.Root>
-                    <p className="text-xs text-text-sub-600">
-                      Add their contact info to invite them to your care team
-                    </p>
+                    <Label.Root>Add their contact info to invite them to your care team (Optional)</Label.Root>
                     <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
@@ -804,8 +801,9 @@ export function UnifiedRequestForm({
                   {formData.customPersonContact && (
                     <div className="pt-2">
                       <Button.Root 
-                        variant="outline" 
-                        size="sm"
+                        variant="primary"
+                        mode="filled"
+                        size="medium"
                         onClick={() => {
                           // TODO: Implement invite functionality
                           alert(`Invite ${formData.customAssignedPerson} to join your care team via ${formData.customPersonContactType === 'phone' ? 'phone' : 'email'}`);
