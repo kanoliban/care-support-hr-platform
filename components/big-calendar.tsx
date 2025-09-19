@@ -794,9 +794,14 @@ export function BigCalendar({
                 <div key={weekIndex} className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200'>
                   {Array.from({ length: 7 }, (_, dayIndex) => {
                     const day = monthDays[weekIndex * 7 + dayIndex];
-                            const dayEvents = localEvents.filter(event => 
-                              isSameDay(new Date(event.startDate), day)
-                            );
+                            const dayEvents = localEvents.filter(event => {
+                              const eventDate = new Date(event.startDate);
+                              const isMatch = isSameDay(eventDate, day);
+                              if (isMatch) {
+                                console.log('[MONTH VIEW DEBUG] Event match found:', event.title, 'on', format(day, 'yyyy-MM-dd'));
+                              }
+                              return isMatch;
+                            });
                             
                             if (dayEvents.length > 0) {
                               console.log('[MONTH VIEW DEBUG] Day:', format(day, 'yyyy-MM-dd'), 'has', dayEvents.length, 'events');
