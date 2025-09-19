@@ -861,9 +861,7 @@ export function UnifiedRequestForm({
                   <div
                     className={cn(
                       "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
-                      isCompleted
-                        ? "bg-primary-600 text-white"
-                        : isCurrent
+                      isCurrent
                         ? "bg-primary-600 text-white"
                         : "bg-bg-soft-100 text-text-sub-600"
                     )}
