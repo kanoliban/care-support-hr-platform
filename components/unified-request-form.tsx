@@ -34,6 +34,7 @@ export interface UnifiedRequestFormProps {
   formData: RequestFormData;
   onFormDataChange: (field: keyof RequestFormData, value: any) => void;
   errors: Partial<Record<keyof RequestFormData, string>>;
+  onErrorsChange: (errors: Partial<Record<keyof RequestFormData, string>>) => void;
   isSaving?: boolean;
   onSave?: () => void;
   onCancel: () => void;
@@ -98,6 +99,7 @@ export function UnifiedRequestForm({
   formData,
   onFormDataChange,
   errors,
+  onErrorsChange,
   isSaving = false,
   onSave,
   onCancel,
@@ -120,7 +122,7 @@ export function UnifiedRequestForm({
   }, [selectedDate, selectedTime, formData.startDate, formData.endDate, onFormDataChange]);
 
   const validateStep = (stepId: string): boolean => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
 
     switch (stepId) {
       case 'details':
@@ -136,12 +138,8 @@ export function UnifiedRequestForm({
         break;
     }
 
-    // Update errors state (assuming parent manages errors)
-    Object.keys(newErrors).forEach(key => {
-      if (errors[key as keyof RequestFormData] !== newErrors[key]) {
-        // Parent should handle error updates
-      }
-    });
+    // Update errors in parent component
+    onErrorsChange(newErrors);
 
     return Object.keys(newErrors).length === 0;
   };

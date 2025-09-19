@@ -133,6 +133,7 @@ export default function CareEventDialog({
             formData={formData}
             onFormDataChange={handleFormDataChange}
             errors={errors}
+            onErrorsChange={setErrors}
             isSaving={isLoading}
             onSave={handleSave}
             onCancel={onClose}
