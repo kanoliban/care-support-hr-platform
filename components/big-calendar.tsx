@@ -802,7 +802,7 @@ export function BigCalendar({
                           e.preventDefault();
                           e.stopPropagation();
                           if (draggedEvent) {
-                            handleDrop(e, day);
+                            handleDrop(e, day, undefined);
                           }
                         }}
                       >
@@ -926,7 +926,7 @@ export function BigCalendar({
               })()}
               
               {/* 24-Hour Grid Structure */}
-              <div className='grid grid-cols-6 divide-x divide-stroke-soft-200'>
+              <div className='grid grid-cols-7 divide-x divide-stroke-soft-200'>
                 {/* Generate 6 day columns */}
                 {showingDays.map((day, dayIndex) => (
                   <div key={dayIndex} className='relative'>

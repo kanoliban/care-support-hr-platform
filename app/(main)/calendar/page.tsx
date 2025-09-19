@@ -18,10 +18,10 @@ import { CareNotifications } from '@/components/care-notifications';
 import CareEventDialog from '@/components/care-event-dialog';
 
 const calendarData: CalendarData[] = [
-  // Rob's Family Care Schedule - Real Data
+  // Rob's Family Care Schedule - Real Data (using current date)
   {
-    startDate: new Date('2024-11-04T09:00:00'),
-    endDate: new Date('2024-11-04T17:00:00'),
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 9, 0),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 17, 0),
     title: 'Jim Nelson - Primary Care (M-F 9am-5pm)',
     completed: true,
     type: 'meeting',
@@ -34,8 +34,8 @@ const calendarData: CalendarData[] = [
     ],
   },
   {
-    startDate: new Date('2024-11-04T20:00:00'),
-    endDate: new Date('2024-11-05T08:00:00'),
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 20, 0),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1, 8, 0),
     title: 'Jennifer - Overnight Care (M,T 8pm-8am)',
     completed: true,
     type: 'meeting',
