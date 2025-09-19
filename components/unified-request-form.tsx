@@ -680,119 +680,35 @@ export function UnifiedRequestForm({
       case 'review':
         return (
           <div className="space-y-6">
-            {/* Section 1: Request Summary */}
             <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
-              <h3 className="font-medium text-text-strong-950 mb-3">Request Summary</h3>
+              <h3 className="font-medium text-text-strong-950 mb-3">Review Request Details</h3>
+              
               <div className="space-y-3 text-sm">
                 <div>
-                  <span className="font-medium">Type:</span> {
+                  <span className="font-medium">What kind of help:</span> {
                     formData.requestType === 'other' 
                       ? formData.customRequestType 
                       : requestTypeOptions.find(t => t.value === formData.requestType)?.label
                   }
                 </div>
                 <div>
-                  <span className="font-medium">Details:</span> {formData.title}
+                  <span className="font-medium">Request details:</span> {formData.title}
                 </div>
                 {formData.description && (
                   <div>
-                    <span className="font-medium">Additional Info:</span> {formData.description}
+                    <span className="font-medium">More details:</span> {formData.description}
                   </div>
                 )}
                 <div>
-                  <span className="font-medium">For:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
+                  <span className="font-medium">Who needs care:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
-              </div>
-            </div>
-
-            {/* Section 2: Assignment Details */}
-            <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
-              <h3 className="font-medium text-text-strong-950 mb-3">Assignment Details</h3>
-              
-              {formData.assignedPerson === 'other' ? (
-                <div className="space-y-4">
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800 font-medium mb-3">
-                      📝 Custom Person Assignment
-                    </p>
-                    <p className="text-xs text-blue-700 mb-4">
-                      You're assigning this request to someone outside your care team. Please provide their details below.
-                    </p>
-                    
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label.Root htmlFor="customAssignedPerson">
-                          Person's Name <Label.Asterisk />
-                        </Label.Root>
-                        <Input.Root>
-                          <Input.Wrapper>
-                            <Input.Input
-                              id="customAssignedPerson"
-                              placeholder="Enter their full name"
-                              value={formData.customAssignedPerson}
-                              onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
-                              className={errors.customAssignedPerson ? 'border-red-500' : ''}
-                            />
-                          </Input.Wrapper>
-                        </Input.Root>
-                        {errors.customAssignedPerson && (
-                          <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
-                        )}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label.Root>Contact Information (Optional)</Label.Root>
-                        <p className="text-xs text-text-sub-600">
-                          Add their contact info to invite them to your care team later
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
-                            <Select.Root
-                              value={formData.customPersonContactType}
-                              onValueChange={(value: 'phone' | 'email') => onFormDataChange('customPersonContactType', value)}
-                            >
-                              <Select.Trigger>
-                                <Select.Value placeholder="Select type" />
-                              </Select.Trigger>
-                              <Select.Content>
-                                <Select.Item value="phone">Phone</Select.Item>
-                                <Select.Item value="email">Email</Select.Item>
-                              </Select.Content>
-                            </Select.Root>
-                          </div>
-                          <div>
-                            <Label.Root htmlFor="customPersonContact">
-                              {formData.customPersonContactType === 'phone' ? 'Phone Number' : 'Email Address'}
-                            </Label.Root>
-                            <Input.Root>
-                              <Input.Wrapper>
-                                <Input.Input
-                                  id="customPersonContact"
-                                  type={formData.customPersonContactType === 'phone' ? 'tel' : 'email'}
-                                  placeholder={formData.customPersonContactType === 'phone' ? '(555) 123-4567' : 'person@example.com'}
-                                  value={formData.customPersonContact}
-                                  onChange={(e) => onFormDataChange('customPersonContact', e.target.value)}
-                                />
-                              </Input.Wrapper>
-                            </Input.Root>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div>
+                  <span className="font-medium">Who can help:</span> {
+                    formData.assignedPerson === 'other' 
+                      ? formData.customAssignedPerson 
+                      : teamMembers.find(m => m.id === formData.assignedPerson)?.name
+                  }
                 </div>
-              ) : (
-                <div className="text-sm">
-                  <span className="font-medium">Assigned to:</span> {teamMembers.find(m => m.id === formData.assignedPerson)?.name}
-                </div>
-              )}
-            </div>
-
-            {/* Section 3: Schedule & Location */}
-            <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
-              <h3 className="font-medium text-text-strong-950 mb-3">Schedule & Location</h3>
-              <div className="space-y-3 text-sm">
                 <div>
                   <span className="font-medium">When:</span> {format(formData.startDate || selectedTime, 'MMM dd, yyyy')} at {format(formData.startDate || selectedTime, 'h:mm a')} - {format(formData.endDate || addHours(selectedTime, 1), 'h:mm a')}
                 </div>
@@ -824,13 +740,66 @@ export function UnifiedRequestForm({
               </div>
             </div>
 
-            {/* Section 4: Final Confirmation */}
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <h3 className="font-medium text-green-800 mb-2">Ready to create this request?</h3>
-              <p className="text-sm text-green-700">
-                Review all details above and click "Create Request" to send this request to your care team.
-              </p>
-            </div>
+            {formData.assignedPerson === 'other' && (
+              <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
+                <div className="space-y-2">
+                  <Label.Root htmlFor="customAssignedPerson">
+                    Person's Name <Label.Asterisk />
+                  </Label.Root>
+                  <Input.Root>
+                    <Input.Wrapper>
+                      <Input.Input
+                        id="customAssignedPerson"
+                        placeholder="Enter their full name"
+                        value={formData.customAssignedPerson}
+                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
+                        className={errors.customAssignedPerson ? 'border-red-500' : ''}
+                      />
+                    </Input.Wrapper>
+                  </Input.Root>
+                  {errors.customAssignedPerson && (
+                    <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label.Root>Contact Information (Optional)</Label.Root>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
+                      <Select.Root
+                        value={formData.customPersonContactType}
+                        onValueChange={(value: 'phone' | 'email') => onFormDataChange('customPersonContactType', value)}
+                      >
+                        <Select.Trigger>
+                          <Select.Value placeholder="Select type" />
+                        </Select.Trigger>
+                        <Select.Content>
+                          <Select.Item value="phone">Phone</Select.Item>
+                          <Select.Item value="email">Email</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </div>
+                    <div>
+                      <Label.Root htmlFor="customPersonContact">
+                        {formData.customPersonContactType === 'phone' ? 'Phone Number' : 'Email Address'}
+                      </Label.Root>
+                      <Input.Root>
+                        <Input.Wrapper>
+                          <Input.Input
+                            id="customPersonContact"
+                            type={formData.customPersonContactType === 'phone' ? 'tel' : 'email'}
+                            placeholder={formData.customPersonContactType === 'phone' ? '(555) 123-4567' : 'person@example.com'}
+                            value={formData.customPersonContact}
+                            onChange={(e) => onFormDataChange('customPersonContact', e.target.value)}
+                          />
+                        </Input.Wrapper>
+                      </Input.Root>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
 
