@@ -142,7 +142,7 @@ export default function CalendarFilters({
   };
   return (
     <div className='-mt-1 flex flex-col justify-between gap-4 lg:mt-0 lg:flex-row lg:flex-wrap lg:gap-3'>
-      {/* Navigation Controls */}
+      {/* View Navigation Controls */}
       <div className='flex items-center gap-2'>
         <Button.Root 
           variant='neutral' 
@@ -152,6 +152,23 @@ export default function CalendarFilters({
         >
           <Button.Icon as={RiArrowLeftSLine} />
         </Button.Root>
+        
+        <ButtonGroup.Root size='small'>
+          <ButtonGroup.Item 
+            onClick={() => handleViewChange('week')}
+            className={currentView === 'week' ? 'bg-primary-50 text-primary-600' : ''}
+          >
+            <ButtonGroup.Icon as={RiTimeLine} />
+            Week
+          </ButtonGroup.Item>
+          <ButtonGroup.Item 
+            onClick={() => handleViewChange('month')}
+            className={currentView === 'month' ? 'bg-primary-50 text-primary-600' : ''}
+          >
+            <ButtonGroup.Icon as={RiLayoutGridLine} />
+            Month
+          </ButtonGroup.Item>
+        </ButtonGroup.Root>
         
         <Button.Root 
           variant='neutral' 
@@ -172,23 +189,6 @@ export default function CalendarFilters({
         >
           Today
         </Button.Root>
-
-          <ButtonGroup.Root size='small'>
-            <ButtonGroup.Item 
-              onClick={() => handleViewChange('week')}
-              className={currentView === 'week' ? 'bg-primary-50 text-primary-600' : ''}
-            >
-              <ButtonGroup.Icon as={RiTimeLine} />
-              Week
-            </ButtonGroup.Item>
-            <ButtonGroup.Item 
-              onClick={() => handleViewChange('month')}
-              className={currentView === 'month' ? 'bg-primary-50 text-primary-600' : ''}
-            >
-              <ButtonGroup.Icon as={RiLayoutGridLine} />
-              Month
-            </ButtonGroup.Item>
-          </ButtonGroup.Root>
           
           <ButtonGroup.Root size='small' className='min-w-0'>
             <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>

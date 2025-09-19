@@ -212,7 +212,7 @@ const calendarData: CalendarData[] = [
 
 export default function PageCalendar() {
   // const { currentProject } = useCareSupport();
-  const [currentDate, setCurrentDate] = React.useState(new Date(2025, 8, 19)); // September 19, 2025
+  const [currentDate, setCurrentDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
   const [currentView, setCurrentView] = React.useState<'month' | 'week'>('week');
@@ -414,7 +414,7 @@ export default function PageCalendar() {
   };
 
   const handleTodayClick = () => {
-    setCurrentDate(new Date(2025, 8, 19)); // September 19, 2025
+    setCurrentDate(new Date());
   };
 
   const handleSearchChange = (query: string) => {
