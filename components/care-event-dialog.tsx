@@ -18,6 +18,8 @@ interface CareEventDialogProps {
   selectedDate: Date;
   selectedTime: Date;
   onEventCreated?: (eventId: string) => void;
+  initialFormData?: RequestFormData;
+  isEditMode?: boolean;
 }
 
 
@@ -27,6 +29,8 @@ export default function CareEventDialog({
   selectedDate,
   selectedTime,
   onEventCreated,
+  initialFormData,
+  isEditMode = false,
 }: CareEventDialogProps) {
   const { createEvent } = useCareEvents();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -39,28 +43,33 @@ export default function CareEventDialog({
     { title: 'Review' }
   ];
   
-  const [formData, setFormData] = React.useState<RequestFormData>({
+  const [formData, setFormData] = React.useState<RequestFormData>(() => {
+    if (initialFormData) {
+      return initialFormData;
+    }
+    return {
     title: '',
-    requestType: '',
-    customRequestType: '',
-    description: '',
-    careRecipient: '',
-    assignedPerson: '',
-    customAssignedPerson: '',
-    customPersonContact: '',
-    customPersonContactType: 'phone',
+      requestType: '',
+      customRequestType: '',
+      description: '',
+      careRecipient: '',
+      assignedPerson: '',
+      customAssignedPerson: '',
+      customPersonContact: '',
+      customPersonContactType: 'phone',
     startDate: selectedTime,
     endDate: addHours(selectedTime, 1),
-    isRecurring: false,
-    recurrencePattern: {
-      frequency: 'weekly',
-      interval: 1,
-      daysOfWeek: [],
-      endDate: ''
-    },
+      isRecurring: false,
+      recurrencePattern: {
+        frequency: 'weekly',
+        interval: 1,
+        daysOfWeek: [],
+        endDate: ''
+      },
     location: '',
-    customLocation: '',
-    notes: '',
+      customLocation: '',
+      notes: '',
+    };
   });
 
   React.useEffect(() => {
@@ -164,7 +173,7 @@ export default function CareEventDialog({
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm text-text-sub-600">
-                Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
+                {isEditMode ? 'Edit Request' : 'Create Request'} • Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
               </p>
             </div>
             <button 

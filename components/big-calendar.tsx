@@ -300,6 +300,10 @@ export function BigCalendar({
   const [isEventDetailsOpen, setIsEventDetailsOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<CalendarData | null>(null);
   
+  // Edit mode state
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [editFormData, setEditFormData] = React.useState<any>(null);
+  
   // Update current time every minute
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -364,9 +368,41 @@ export function BigCalendar({
   };
 
   const handleEventEdit = (event: CalendarData) => {
-    // For now, just log - we'll implement edit functionality later
-    console.log('Edit event:', event);
-    // TODO: Open edit modal with pre-filled data
+    // Convert CalendarData to RequestFormData for editing
+    const formData = {
+      title: event.title || '',
+      requestType: event.metadata?.requestType || '',
+      customRequestType: event.metadata?.requestType === 'other' ? event.title || '' : '',
+      description: event.description || '',
+      careRecipient: event.client || '',
+      assignedPerson: event.assignedCaregiver === 'Open to anyone' ? 'open-to-anyone' : 
+                     event.assignedCaregiver && !event.people?.some(p => p.alt === event.assignedCaregiver) ? 'other' : 
+                     event.assignedCaregiver || '',
+      customAssignedPerson: event.assignedCaregiver && !event.people?.some(p => p.alt === event.assignedCaregiver) ? event.assignedCaregiver : '',
+      customPersonContact: event.metadata?.customPersonContact || '',
+      customPersonContactType: event.metadata?.customPersonContactType || 'phone',
+      startDate: event.startDate,
+      endDate: event.endDate,
+      isRecurring: event.isRecurring || false,
+      recurrencePattern: {
+        frequency: 'weekly',
+        interval: 1,
+        daysOfWeek: [],
+        endDate: ''
+      },
+      location: event.location || '',
+      customLocation: event.location === 'other' ? event.location : '',
+      notes: event.metadata?.notes || '',
+    };
+
+    // Set edit mode and form data
+    setEditFormData(formData);
+    setIsEditMode(true);
+    setSelectedDate(event.startDate);
+    setSelectedTime(event.startDate);
+    setIsEventDialogOpen(true);
+    
+    console.log('Edit event with form data:', formData);
   };
 
   const handleEventDelete = (event: CalendarData) => {
@@ -422,6 +458,8 @@ export function BigCalendar({
 
   const handleCloseDialog = () => {
     setIsEventDialogOpen(false);
+    setIsEditMode(false);
+    setEditFormData(null);
   };
 
   return (
@@ -545,6 +583,8 @@ export function BigCalendar({
             selectedDate={selectedDate}
             selectedTime={selectedTime}
             onEventCreated={handleEventCreated}
+            initialFormData={editFormData}
+            isEditMode={isEditMode}
           />
           
           {/* Event Details Modal */}
