@@ -739,6 +739,118 @@ export function BigCalendar({
     setEditFormData(null);
   };
 
+  // Month view helper functions
+  const getMonthDays = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay()); // Start from Sunday
+    
+    const days = [];
+    const current = new Date(startDate);
+    
+    // Generate 42 days (6 weeks)
+    for (let i = 0; i < 42; i++) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return days;
+  };
+
+  const getEventsForDay = (day: Date) => {
+    return localEvents.filter(event => {
+      const eventStart = new Date(event.startDate);
+      const eventEnd = new Date(event.endDate);
+      return isSameDay(eventStart, day) || isSameDay(eventEnd, day) || 
+             (eventStart < day && eventEnd > day);
+    });
+  };
+
+  // Render month view
+  if (view === 'month') {
+    const monthDays = getMonthDays(currentStartDate);
+    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    return (
+      <div className={cnExt('w-full bg-bg-white-0', className)}>
+        <div className='overflow-clip rounded-xl border border-stroke-soft-200'>
+          {/* Month Header */}
+          <div className='grid grid-cols-7 border-b border-stroke-soft-200 bg-bg-weak-50'>
+            {weekDays.map(day => (
+              <div key={day} className='p-3 text-center text-sm font-medium text-text-sub-600'>
+                {day}
+              </div>
+            ))}
+          </div>
+          
+          {/* Month Grid */}
+          <div className='grid grid-cols-7'>
+            {monthDays.map((day, index) => {
+              const dayEvents = getEventsForDay(day);
+              const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
+              const isToday = isSameDay(day, new Date());
+              
+              return (
+                <div
+                  key={index}
+                  className={cnExt(
+                    'min-h-[120px] border-r border-b border-stroke-soft-200 p-2',
+                    {
+                      'bg-bg-white-0': isCurrentMonth,
+                      'bg-bg-weak-50 text-text-sub-400': !isCurrentMonth,
+                      'bg-primary-lighter/20': isToday,
+                    }
+                  )}
+                >
+                  <div className={cnExt(
+                    'mb-1 text-sm font-medium',
+                    {
+                      'text-text-strong-950': isCurrentMonth,
+                      'text-text-sub-400': !isCurrentMonth,
+                      'text-primary-600': isToday,
+                    }
+                  )}>
+                    {day.getDate()}
+                  </div>
+                  
+                  {/* Events for this day */}
+                  <div className='space-y-1'>
+                    {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                      <div
+                        key={eventIndex}
+                        className={cnExt(
+                          'cursor-pointer rounded px-2 py-1 text-xs',
+                          'bg-information-lighter text-information-base',
+                          'hover:bg-information-base hover:text-white',
+                          'transition-colors'
+                        )}
+                        onClick={() => handleEventClick(event)}
+                      >
+                        <div className='truncate font-medium'>{event.title}</div>
+                        <div className='truncate text-xs opacity-75'>
+                          {format(event.startDate, 'h:mm a')}
+                        </div>
+                      </div>
+                    ))}
+                    {dayEvents.length > 3 && (
+                      <div className='text-xs text-text-sub-500'>
+                        +{dayEvents.length - 3} more
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Week view (existing implementation)
   return (
     <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
       <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>

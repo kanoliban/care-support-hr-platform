@@ -216,6 +216,7 @@ export default function PageCalendar() {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
   const [currentView, setCurrentView] = React.useState<'month' | 'week'>('week');
+  const [activeFilter, setActiveFilter] = React.useState<string>('all');
   
   // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
@@ -434,6 +435,44 @@ export default function PageCalendar() {
     setCurrentView(view);
   };
 
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
+    // Apply filter to events
+    const events = generateCalendarEvents();
+    let filtered = events;
+    
+    switch (filter) {
+      case 'meetings':
+        filtered = events.filter(event => 
+          event.metadata?.requestType === 'Personal Care' || 
+          event.metadata?.requestType === 'Overnight Care'
+        );
+        break;
+      case 'events':
+        filtered = events.filter(event => 
+          event.metadata?.requestType === 'Medical Appointment'
+        );
+        break;
+      case 'conflicted':
+        // For now, filter events that might have conflicts (you can enhance this logic)
+        filtered = events.filter(event => 
+          event.status === 'conflict' || 
+          event.metadata?.requestType === 'Personal Care'
+        );
+        break;
+      case 'canceled':
+        filtered = events.filter(event => 
+          event.status === 'cancelled' || 
+          event.completed === false
+        );
+        break;
+      default:
+        filtered = events;
+    }
+    
+    setFilteredEvents(filtered);
+  };
+
   // Care Event Dialog handlers
   const handleCreateRequestClick = () => {
     setSelectedDate(new Date());
@@ -493,7 +532,11 @@ export default function PageCalendar() {
           onViewChange={handleViewChange}
         />
 
-        <CalendarTabs className='mt-5 lg:mt-3' />
+        <CalendarTabs 
+          className='mt-5 lg:mt-3' 
+          activeFilter={activeFilter}
+          onFilterChange={handleFilterChange}
+        />
 
         <BigCalendar
           className='mt-4'
