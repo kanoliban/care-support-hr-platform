@@ -517,7 +517,7 @@ export default function PageCalendar() {
         title="Today's Care Schedule"
         description={getTodayDescription()}
       >
-        <ScheduleButton className='w-full md:w-auto' />
+        <ScheduleButton className='w-full md:hidden' />
         <CreateRequestButton 
           className='w-full md:w-auto' 
           onClick={handleCreateRequestClick}

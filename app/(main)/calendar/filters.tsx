@@ -154,27 +154,25 @@ export default function CalendarFilters({
             </ButtonGroup.Item>
           </ButtonGroup.Root>
           
-          {/* Navigation arrows - only show for month view */}
-          {currentView === 'month' && (
-            <div className='flex gap-1'>
-              <Button.Root 
-                variant='neutral' 
-                mode='stroke' 
-                size='small'
-                onClick={handlePreviousPeriod}
-              >
-                <Button.Icon as={RiArrowLeftSLine} />
-              </Button.Root>
-              <Button.Root 
-                variant='neutral' 
-                mode='stroke' 
-                size='small'
-                onClick={handleNextPeriod}
-              >
-                <Button.Icon as={RiArrowRightSLine} />
-              </Button.Root>
-            </div>
-          )}
+          {/* Navigation arrows - show for both week and month views */}
+          <div className='flex gap-1'>
+            <Button.Root 
+              variant='neutral' 
+              mode='stroke' 
+              size='small'
+              onClick={handlePreviousPeriod}
+            >
+              <Button.Icon as={RiArrowLeftSLine} />
+            </Button.Root>
+            <Button.Root 
+              variant='neutral' 
+              mode='stroke' 
+              size='small'
+              onClick={handleNextPeriod}
+            >
+              <Button.Icon as={RiArrowRightSLine} />
+            </Button.Root>
+          </div>
         </div>
       </div>
 
