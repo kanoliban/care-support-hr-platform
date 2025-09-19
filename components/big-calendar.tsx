@@ -342,6 +342,14 @@ export function BigCalendar({
   const [dragOverTimeSlot, setDragOverTimeSlot] = React.useState<{ day: Date; hour: string } | null>(null);
   const [isDragging, setIsDragging] = React.useState(false);
   
+  // Local events state for drag and drop updates
+  const [localEvents, setLocalEvents] = React.useState<CalendarData[]>(events);
+  
+  // Update local events when props change
+  React.useEffect(() => {
+    setLocalEvents(events);
+  }, [events]);
+  
   // Update current time every minute
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -616,8 +624,14 @@ export function BigCalendar({
         duration: duration / (1000 * 60), // duration in minutes
       });
 
-      // In a real app, you would update the event in your data store here
-      // For now, we'll just show a success message
+      // Update the local events state to reflect the change
+      setLocalEvents(prevEvents => 
+        prevEvents.map(event => 
+          event === draggedEvent ? updatedEvent : event
+        )
+      );
+
+      // Show success message
       alert(`Event "${draggedEvent.title}" rescheduled to ${targetDate.toLocaleString()}`);
 
     } catch (error) {
@@ -647,7 +661,7 @@ export function BigCalendar({
 
   // Helper function to get events for a specific day and hour
   const getEventsForTimeSlot = (day: Date, hour: string) => {
-    const matchingEvents = events.filter(event => {
+    const matchingEvents = localEvents.filter(event => {
       const eventStart = new Date(event.startDate);
       const eventEnd = new Date(event.endDate);
       const hourDate = new Date(hour); // Convert ISO string to Date
