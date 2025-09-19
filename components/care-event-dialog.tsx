@@ -40,6 +40,8 @@ export default function CareEventDialog({
     careRecipient: '',
     assignedPerson: '',
     customAssignedPerson: '',
+    customPersonContact: '',
+    customPersonContactType: 'phone',
     startDate: selectedTime,
     endDate: addHours(selectedTime, 1),
     isRecurring: false,
@@ -129,6 +131,8 @@ export default function CareEventDialog({
           notes: formData.notes,
           isOpenToAnyone: formData.assignedPerson === 'open-to-anyone',
           requestType: formData.requestType === 'other' ? formData.customRequestType : formData.requestType,
+          customPersonContact: formData.assignedPerson === 'other' ? formData.customPersonContact : undefined,
+          customPersonContactType: formData.assignedPerson === 'other' ? formData.customPersonContactType : undefined,
         },
       };
 
