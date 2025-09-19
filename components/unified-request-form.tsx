@@ -300,15 +300,8 @@ export function UnifiedRequestForm({
     }
   };
 
-  React.useEffect(() => {
-    // Initialize form data with selected date/time
-    if (!formData.startDate) {
-      onFormDataChange('startDate', selectedTime);
-    }
-    if (!formData.endDate) {
-      onFormDataChange('endDate', addHours(selectedTime, 1));
-    }
-  }, [selectedDate, selectedTime, formData.startDate, formData.endDate, onFormDataChange]);
+  // Initialize form data with selected date/time - moved to parent component
+  // This useEffect was causing infinite loops by calling onFormDataChange
 
   const validateStep = (stepId: string): boolean => {
     const newErrors: Partial<Record<keyof RequestFormData, string>> = {};

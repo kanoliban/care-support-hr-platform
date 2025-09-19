@@ -63,13 +63,8 @@ export default function CareEventDialog({
     notes: '',
   });
 
-  React.useEffect(() => {
-    setFormData(prev => ({
-      ...prev,
-      startDate: selectedTime,
-      endDate: addHours(selectedTime, 1),
-    }));
-  }, [selectedDate, selectedTime]);
+  // Removed useEffect that was updating formData - initialization is handled in useState
+  // This could cause unnecessary re-renders and potential infinite loops
 
   const handleFormDataChange = (field: keyof RequestFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
