@@ -224,11 +224,13 @@ export default function PageCalendar() {
 
   // Generate dynamic calendar events (using static data for now)
   const generateCalendarEvents = (): CalendarData[] => {
+    console.log('[CALENDAR DEBUG] generateCalendarEvents called');
     const events: CalendarData[] = [];
     const today = new Date();
     
     // Add test events for today and the next few days
     const testDate = new Date(); // Use current date
+    console.log('[CALENDAR DEBUG] testDate:', testDate);
     
     events.push(
           {
@@ -429,13 +431,18 @@ export default function PageCalendar() {
       },
     });
 
-    return [...events, ...calendarData]; // Combine with existing static data
+    const combinedEvents = [...events, ...calendarData]; // Combine with existing static data
+    console.log('[CALENDAR DEBUG] Combined events:', combinedEvents.length, 'total events');
+    console.log('[CALENDAR DEBUG] Generated events:', events.length);
+    console.log('[CALENDAR DEBUG] Static calendarData:', calendarData.length);
+    return combinedEvents;
   };
 
   React.useEffect(() => {
+    console.log('[CALENDAR DEBUG] useEffect running, calling generateCalendarEvents...');
     const events = generateCalendarEvents();
     console.log('[CALENDAR DEBUG] generateCalendarEvents returned:', events.length, 'events');
-    console.log('[CALENDAR DEBUG] First few events:', events.slice(0, 3));
+    console.log('[CALENDAR DEBUG] Events:', events);
     setFilteredEvents(events);
   }, []); // Run once on mount
 
