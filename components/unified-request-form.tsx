@@ -380,8 +380,8 @@ export function UnifiedRequestForm({
                 )}
               </div>
 
-              {formData.assignedPerson === 'other' && (
-                <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
+            {formData.assignedPerson === 'other' && (
+              <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
                   <div className="space-y-2">
                     <Label.Root htmlFor="customAssignedPerson">
                       Who's the other person's name? <Label.Asterisk />
@@ -403,7 +403,7 @@ export function UnifiedRequestForm({
                   </div>
 
                   <div className="space-y-2">
-                    <Label.Root>Add their contact info to invite them to your care team (Optional)</Label.Root>
+                    <Label.Root>Contact Information (Optional)</Label.Root>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
