@@ -355,6 +355,7 @@ export function BigCalendar({
   // Event details modal state
   const [isEventDetailsOpen, setIsEventDetailsOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<CalendarData | null>(null);
+  const [showInlineDetails, setShowInlineDetails] = React.useState(false);
   
   // Edit mode state
   const [isEditMode, setIsEditMode] = React.useState(false);
@@ -439,10 +440,18 @@ export function BigCalendar({
   const handleEventClick = (event: CalendarData) => {
     console.log('[BIGCALENDAR DEBUG] handleEventClick called with event:', event.title);
     console.log('[BIGCALENDAR DEBUG] Current view:', view);
-    console.log('[BIGCALENDAR DEBUG] Setting selectedEvent and opening modal');
-    setSelectedEvent(event);
-    setIsEventDetailsOpen(true);
-    console.log('[BIGCALENDAR DEBUG] Modal state set - isEventDetailsOpen should be true');
+    
+    if (view === 'month') {
+      // In month view, show inline details instead of modal
+      console.log('[BIGCALENDAR DEBUG] Month view - showing inline details');
+      setSelectedEvent(event);
+      setShowInlineDetails(true);
+    } else {
+      // In week view, use the modal
+      console.log('[BIGCALENDAR DEBUG] Week view - opening modal');
+      setSelectedEvent(event);
+      setIsEventDetailsOpen(true);
+    }
   };
 
   const handleEventEdit = (event: CalendarData) => {
@@ -867,6 +876,74 @@ export function BigCalendar({
           </div>
         </div>
       </div>
+      
+      {/* Inline Event Details for Month View */}
+      {showInlineDetails && selectedEvent && (
+        <div className="mt-4 p-4 bg-white border border-stroke-soft-200 rounded-lg shadow-lg">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="text-lg font-semibold text-text-strong-900">{selectedEvent.title}</h3>
+            <button
+              onClick={() => setShowInlineDetails(false)}
+              className="text-text-soft-600 hover:text-text-strong-900"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-text-strong-700">When:</span>
+              <span className="text-text-soft-700">
+                {format(selectedEvent.startDate, 'MMM d, yyyy')} at {format(selectedEvent.startDate, 'h:mm a')} - {format(selectedEvent.endDate, 'h:mm a')}
+              </span>
+            </div>
+            
+            {selectedEvent.platform && (
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-text-strong-700">Where:</span>
+                <span className="text-text-soft-700">{selectedEvent.platform}</span>
+              </div>
+            )}
+            
+            {selectedEvent.people && selectedEvent.people.length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-text-strong-700">Who:</span>
+                <span className="text-text-soft-700">
+                  {selectedEvent.people.map(person => person.alt || 'Unknown').join(', ')}
+                </span>
+              </div>
+            )}
+            
+            {selectedEvent.description && (
+              <div className="flex items-start gap-2">
+                <span className="font-medium text-text-strong-700">Details:</span>
+                <span className="text-text-soft-700">{selectedEvent.description}</span>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={() => {
+                setShowInlineDetails(false);
+                handleEventEdit(selectedEvent);
+              }}
+              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => {
+                setShowInlineDetails(false);
+                handleEventDelete(selectedEvent);
+              }}
+              className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
     );
   }
 
