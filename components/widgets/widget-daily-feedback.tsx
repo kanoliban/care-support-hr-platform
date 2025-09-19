@@ -44,11 +44,19 @@ function Step1() {
     },
   ];
 
+  const handleRatingChange = React.useCallback((value: string | undefined) => {
+    setSelectedRating(value);
+  }, []);
+
+  const handleTextChange = React.useCallback((value: string) => {
+    setText(value);
+  }, []);
+
   return (
     <RatingBarWithTextarea
       data={data}
-      onRatingChange={(value) => setSelectedRating(value)}
-      onTextChange={(value) => setText(value)}
+      onRatingChange={handleRatingChange}
+      onTextChange={handleTextChange}
       placeholder='Tell us why'
     />
   );
