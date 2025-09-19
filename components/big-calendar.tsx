@@ -337,6 +337,7 @@ export function BigCalendar({
   view = 'week',
   onEventDialogOpen,
 }: BigCalendarProps) {
+  console.log('[BIGCALENDAR DEBUG] BigCalendar received view:', view);
   // Calculate totalShowingDays based on view
   const actualShowingDays = view === 'week' ? 7 : totalShowingDays; // 7 days for week view (including Sunday)
   // Debug logging
