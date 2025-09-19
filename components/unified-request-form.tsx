@@ -152,6 +152,7 @@ export function UnifiedRequestForm({
   selectedTime
 }: UnifiedRequestFormProps) {
   const [currentStep, setCurrentStep] = React.useState(steps[0].id);
+  const [inviteSent, setInviteSent] = React.useState(false);
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
 
@@ -800,22 +801,42 @@ export function UnifiedRequestForm({
                   
                   {formData.customPersonContact && (
                     <div className="pt-2">
-                      <Button.Root 
-                        variant="primary"
-                        mode="filled"
-                        size="medium"
-                        onClick={() => {
-                          // TODO: Implement invite functionality
-                          alert(`Invite ${formData.customAssignedPerson} to join your care team via ${formData.customPersonContactType === 'phone' ? 'phone' : 'email'}`);
-                        }}
-                      >
-                        <Button.Icon>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                          </svg>
-                        </Button.Icon>
-                        Invite to Care Team
-                      </Button.Root>
+                      {inviteSent ? (
+                        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex-shrink-0">
+                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <div className="text-sm text-green-800">
+                            <p className="font-medium">Invite sent!</p>
+                            <p className="text-xs text-green-700">
+                              {formData.customAssignedPerson} will receive an invitation via {formData.customPersonContactType === 'phone' ? 'phone' : 'email'}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button.Root 
+                          variant="primary"
+                          mode="filled"
+                          size="medium"
+                          onClick={() => {
+                            // TODO: Implement actual invite functionality
+                            setInviteSent(true);
+                            // Simulate sending invite
+                            setTimeout(() => {
+                              console.log(`Invite sent to ${formData.customAssignedPerson} via ${formData.customPersonContactType}: ${formData.customPersonContact}`);
+                            }, 100);
+                          }}
+                        >
+                          <Button.Icon>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                            </svg>
+                          </Button.Icon>
+                          Invite to Care Team
+                        </Button.Root>
+                      )}
                     </div>
                   )}
                 </div>
