@@ -160,9 +160,9 @@ export default function CareEventDialog({
             </h3>
             <button 
               onClick={onClose} 
-              className="text-text-soft-400 hover:text-text-sub-600 transition-colors p-1 rounded hover:bg-bg-weak-50"
+              className="text-text-soft-400 hover:text-text-sub-600 transition-colors p-2 rounded hover:bg-bg-weak-50 flex items-center justify-center"
             >
-              <RiCloseLine size={16} />
+              <RiCloseLine size={20} />
             </button>
           </div>
 
