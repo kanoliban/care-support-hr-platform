@@ -8,6 +8,7 @@ import {
   RiMapPin2Fill,
 } from '@remixicon/react';
 import CareEventDialog from './care-event-dialog';
+import EventDetailsModal from './event-details-modal';
 import { useCareEvents } from '@/hooks/useCareEvents';
 import {
   addDays,
@@ -150,6 +151,7 @@ export type CalendarData = {
 
 type CalendarEventItemProps = CalendarData & {
   isTiny?: boolean;
+  onClick?: () => void;
 };
 
 const bgColors: Partial<Record<NonNullable<CalendarData['type']>, string>> = {
@@ -169,12 +171,14 @@ function CalendarEventItem({
   people,
   platform,
   isTiny,
+  onClick,
 }: CalendarEventItemProps) {
   return (
     <div
+      onClick={onClick}
       className={cnExt(
         'flex min-h-0 w-full min-w-0 flex-col gap-2 overflow-hidden rounded-lg px-3 py-2',
-        'backdrop-blur-xl',
+        'backdrop-blur-xl cursor-pointer hover:opacity-80 transition-opacity',
         bgColors[type],
         {
           'bg-bg-weak-50': completed,
@@ -274,6 +278,10 @@ export function BigCalendar({
   // Current time for the time indicator line
   const [currentTime, setCurrentTime] = React.useState(new Date());
   
+  // Event details modal state
+  const [isEventDetailsOpen, setIsEventDetailsOpen] = React.useState(false);
+  const [selectedEvent, setSelectedEvent] = React.useState<CalendarData | null>(null);
+  
   // Update current time every minute
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -330,6 +338,29 @@ export function BigCalendar({
     console.log('Care event created:', eventId);
     // The care events context will automatically update the events list
     // and the calendar will re-render with the new events
+  };
+
+  const handleEventClick = (event: CalendarData) => {
+    setSelectedEvent(event);
+    setIsEventDetailsOpen(true);
+  };
+
+  const handleEventEdit = (event: CalendarData) => {
+    // For now, just log - we'll implement edit functionality later
+    console.log('Edit event:', event);
+    // TODO: Open edit modal with pre-filled data
+  };
+
+  const handleEventDelete = (event: CalendarData) => {
+    // For now, just log - we'll implement delete functionality later
+    console.log('Delete event:', event);
+    // TODO: Remove event from events array
+  };
+
+  const handleEventToggleComplete = (event: CalendarData) => {
+    // For now, just log - we'll implement toggle functionality later
+    console.log('Toggle complete for event:', event);
+    // TODO: Update event completion status
   };
 
 
@@ -470,14 +501,15 @@ export function BigCalendar({
                             : 'bg-bg-white-0 hover:bg-bg-weak-50'
                         }`}
                       >
-                        {/* Render events for this time slot */}
-                        {getEventsForTimeSlot(day, hour).map((event, eventIndex) => (
-                          <CalendarEventItem
-                            key={`${event.title}-${eventIndex}`}
-                            {...event}
-                            isTiny={true}
-                          />
-                        ))}
+                          {/* Render events for this time slot */}
+                          {getEventsForTimeSlot(day, hour).map((event, eventIndex) => (
+                            <CalendarEventItem
+                              key={`${event.title}-${eventIndex}`}
+                              {...event}
+                              isTiny={true}
+                              onClick={() => handleEventClick(event)}
+                            />
+                          ))}
                       </div>
                     ))}
                   </div>
@@ -488,14 +520,24 @@ export function BigCalendar({
         </div>
       </div>
       
-      {/* Care Event Creation Dialog */}
-      <CareEventDialog
-        isOpen={isEventDialogOpen}
-        onClose={handleCloseDialog}
-        selectedDate={selectedDate}
-        selectedTime={selectedTime}
-        onEventCreated={handleEventCreated}
-      />
-    </div>
-  );
-}
+          {/* Care Event Creation Dialog */}
+          <CareEventDialog
+            isOpen={isEventDialogOpen}
+            onClose={handleCloseDialog}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            onEventCreated={handleEventCreated}
+          />
+          
+          {/* Event Details Modal */}
+          <EventDetailsModal
+            isOpen={isEventDetailsOpen}
+            onClose={() => setIsEventDetailsOpen(false)}
+            event={selectedEvent}
+            onEdit={handleEventEdit}
+            onDelete={handleEventDelete}
+            onToggleComplete={handleEventToggleComplete}
+          />
+        </div>
+      );
+    }
