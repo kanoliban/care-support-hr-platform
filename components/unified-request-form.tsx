@@ -858,9 +858,7 @@ export function UnifiedRequestForm({
               <React.Fragment key={step.id}>
                 <div className="flex items-center">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white text-xs font-medium">
-                    {step.icon === RiUserLine && <RiUserLine className="w-4 h-4" />}
-                    {step.icon === RiCalendarLine && <RiCalendarLine className="w-4 h-4" />}
-                    {step.icon === RiCheckLine && <RiCheckLine className="w-4 h-4" />}
+                    {index + 1}
                   </div>
                 </div>
                 {index < steps.length - 1 && (
