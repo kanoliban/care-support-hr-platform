@@ -70,6 +70,7 @@ const careRecipients = [
 ];
 
 const teamMembers = [
+  { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'First available' },
   { id: 'marta-snow', name: 'Marta Snow (Sister)', roles: ['Family', 'Scheduler', 'General Administration', 'Backup PCA'], availability: 'On-call' },
   { id: 'luann-wudlick', name: 'Luann Wudlick (Mom)', roles: ['Family', 'Nurse', 'PCA'], availability: 'All empty time slots' },
   { id: 'jim-nelson', name: 'Jim Nelson', roles: ['Nurse'], availability: 'M-F 9am-5pm' },
@@ -127,7 +128,7 @@ export function UnifiedRequestForm({
     switch (stepId) {
       case 'details':
         if (!formData.title.trim()) newErrors.title = 'Title is required';
-        if (!formData.description.trim()) newErrors.description = 'Description is required';
+        // Description is now optional - removed validation
         if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
         if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
         break;
@@ -194,7 +195,7 @@ export function UnifiedRequestForm({
 
             <div className="space-y-2">
               <Label.Root htmlFor="description">
-                More details <Label.Asterisk />
+                More details (Optional)
               </Label.Root>
               <Textarea.Root simple>
                 <textarea

@@ -64,7 +64,7 @@ export default function CareEventDialog({
     const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
     
     if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    // Description is now optional - removed validation
     if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
     if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
     if (!formData.startDate) newErrors.startDate = 'Start date is required';
@@ -86,7 +86,7 @@ export default function CareEventDialog({
         endDate: formData.endDate,
         location: formData.location,
         description: formData.description,
-        assignedCaregiver: formData.assignedPerson,
+        assignedCaregiver: formData.assignedPerson === 'open-to-anyone' ? 'Open to anyone' : formData.assignedPerson,
         client: formData.careRecipient,
         isRecurring: false, // Simplified - no recurrence for now
         recurrencePattern: '',
@@ -95,6 +95,7 @@ export default function CareEventDialog({
         visibility: 'care-team-only' as CareEventVisibility,
         metadata: {
           notes: formData.notes,
+          isOpenToAnyone: formData.assignedPerson === 'open-to-anyone',
         },
       };
 
