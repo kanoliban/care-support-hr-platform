@@ -181,6 +181,88 @@ export function UnifiedRequestForm({
     }
   }, [onFormDataChange]);
 
+  // Additional stable callback functions
+  const handleCareRecipientChange = React.useCallback((value: string) => {
+    onFormDataChange('careRecipient', value);
+  }, [onFormDataChange]);
+
+  const handleAssignedPersonChange = React.useCallback((value: string) => {
+    onFormDataChange('assignedPerson', value);
+  }, [onFormDataChange]);
+
+  const handleContactTypeChange = React.useCallback((value: 'phone' | 'email') => {
+    onFormDataChange('customPersonContactType', value);
+  }, [onFormDataChange]);
+
+  const handleFrequencyChange = React.useCallback((value: string) => {
+    handleRecurringChange('frequency', value);
+  }, [handleRecurringChange]);
+
+  // Stable callback functions for input onChange handlers
+  const handleTitleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (formData.requestType === 'other') {
+      onFormDataChange('customRequestType', e.target.value);
+    } else {
+      onFormDataChange('title', e.target.value);
+    }
+  }, [formData.requestType, onFormDataChange]);
+
+  const handleCustomAssignedPersonChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onFormDataChange('customAssignedPerson', e.target.value);
+  }, [onFormDataChange]);
+
+  const handleCustomPersonContactChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onFormDataChange('customPersonContact', e.target.value);
+  }, [onFormDataChange]);
+
+  const handleCustomLocationChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onFormDataChange('customLocation', e.target.value);
+  }, [onFormDataChange]);
+
+  const handleStartDateChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(e.target.value);
+    const currentTime = formData.startDate || selectedTime;
+    const combinedDateTime = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), currentTime.getHours(), currentTime.getMinutes());
+    onFormDataChange('startDate', combinedDateTime);
+  }, [formData.startDate, selectedTime, onFormDataChange]);
+
+  const handleEndDateChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(e.target.value);
+    const currentTime = formData.endDate || addHours(selectedTime, 1);
+    const combinedDateTime = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), currentTime.getHours(), currentTime.getMinutes());
+    onFormDataChange('endDate', combinedDateTime);
+  }, [formData.endDate, selectedTime, onFormDataChange]);
+
+  const handleStartTimeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(':');
+    const currentDate = formData.startDate || selectedTime;
+    const newDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), parseInt(hours), parseInt(minutes));
+    onFormDataChange('startDate', newDateTime);
+  }, [formData.startDate, selectedTime, onFormDataChange]);
+
+  const handleEndTimeChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(':');
+    const currentDate = formData.endDate || addHours(selectedTime, 1);
+    const newDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), parseInt(hours), parseInt(minutes));
+    onFormDataChange('endDate', newDateTime);
+  }, [formData.endDate, selectedTime, onFormDataChange]);
+
+  const handleRecurringToggleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onFormDataChange('isRecurring', e.target.checked);
+  }, [onFormDataChange]);
+
+  const handleIntervalChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleRecurringChange('interval', parseInt(e.target.value) || 1);
+  }, [handleRecurringChange]);
+
+  const handleRecurringEndDateChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleRecurringChange('endDate', e.target.value);
+  }, [handleRecurringChange]);
+
+  const handleNotesChange = React.useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onFormDataChange('notes', e.target.value);
+  }, [onFormDataChange]);
+
   const handleDayToggle = (dayValue: number) => {
     const currentDays = formData.recurrencePattern.daysOfWeek;
     const newDays = currentDays.includes(dayValue)
@@ -326,13 +408,7 @@ export function UnifiedRequestForm({
                   <Input.Input
                     id="title"
                     value={formData.requestType === 'other' ? formData.customRequestType : formData.title}
-                    onChange={(e) => {
-                      if (formData.requestType === 'other') {
-                        onFormDataChange('customRequestType', e.target.value);
-                      } else {
-                        onFormDataChange('title', e.target.value);
-                      }
-                    }}
+                    onChange={handleTitleChange}
                     placeholder={getTitlePlaceholder(formData.requestType)}
                     className={errors.title || errors.customRequestType ? 'border-red-500' : ''}
                   />
@@ -351,7 +427,7 @@ export function UnifiedRequestForm({
                 </Label.Root>
                 <Select.Root
                   value={formData.careRecipient}
-                  onValueChange={(value) => onFormDataChange('careRecipient', value)}
+                  onValueChange={handleCareRecipientChange}
                 >
                   <Select.Trigger>
                     <Select.Value placeholder="Select care recipient" />
@@ -375,7 +451,7 @@ export function UnifiedRequestForm({
                 </Label.Root>
                 <Select.Root
                   value={formData.assignedPerson}
-                  onValueChange={(value) => onFormDataChange('assignedPerson', value)}
+                  onValueChange={handleAssignedPersonChange}
                 >
                   <Select.Trigger>
                     <Select.Value placeholder="Select team member" />
@@ -407,7 +483,7 @@ export function UnifiedRequestForm({
                         id="customAssignedPerson"
                         placeholder="Enter their full name"
                         value={formData.customAssignedPerson}
-                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
+                        onChange={handleCustomAssignedPersonChange}
                         className={errors.customAssignedPerson ? 'border-red-500' : ''}
                       />
                     </Input.Wrapper>
@@ -424,7 +500,7 @@ export function UnifiedRequestForm({
                       <Label.Root htmlFor="customPersonContactType">Contact Type</Label.Root>
                       <Select.Root
                         value={formData.customPersonContactType}
-                        onValueChange={(value: 'phone' | 'email') => onFormDataChange('customPersonContactType', value)}
+                        onValueChange={handleContactTypeChange}
                       >
                         <Select.Trigger>
                           <Select.Value placeholder="Select type" />
@@ -446,7 +522,7 @@ export function UnifiedRequestForm({
                             type={formData.customPersonContactType === 'phone' ? 'tel' : 'email'}
                             placeholder={formData.customPersonContactType === 'phone' ? '(555) 123-4567' : 'person@example.com'}
                             value={formData.customPersonContact}
-                            onChange={(e) => onFormDataChange('customPersonContact', e.target.value)}
+                            onChange={handleCustomPersonContactChange}
                           />
                         </Input.Wrapper>
                       </Input.Root>
@@ -527,7 +603,7 @@ export function UnifiedRequestForm({
                     <Input.Input
                       placeholder="Enter custom location"
                       value={formData.customLocation}
-                      onChange={(e) => onFormDataChange('customLocation', e.target.value)}
+                      onChange={handleCustomLocationChange}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -543,23 +619,7 @@ export function UnifiedRequestForm({
                       id="start-date"
                       type="date"
                       value={format(formData.startDate || selectedDate, 'yyyy-MM-dd')}
-                      onChange={(e) => {
-                        const newDate = new Date(e.target.value);
-                        const newStartDateTime = new Date(
-                          newDate.getFullYear(), 
-                          newDate.getMonth(), 
-                          newDate.getDate(), 
-                          formData.startDate?.getHours() || selectedTime.getHours(), 
-                          formData.startDate?.getMinutes() || selectedTime.getMinutes()
-                        );
-                        onFormDataChange('startDate', newStartDateTime);
-                        
-                        // Maintain duration
-                        const currentDuration = formData.endDate ? 
-                          (formData.endDate.getTime() - formData.startDate!.getTime()) : 
-                          60 * 60 * 1000; // 1 hour default
-                        onFormDataChange('endDate', new Date(newStartDateTime.getTime() + currentDuration));
-                      }}
+                      onChange={handleStartDateChange}
                       className={errors.startDate ? 'border-red-500' : ''}
                     />
                   </Input.Wrapper>
@@ -666,7 +726,7 @@ export function UnifiedRequestForm({
                       <Label.Root>Frequency</Label.Root>
                       <Select.Root
                         value={formData.recurrencePattern.frequency}
-                        onValueChange={(value) => handleRecurringChange('frequency', value)}
+                        onValueChange={handleFrequencyChange}
                       >
                         <Select.Trigger>
                           <Select.Value />
