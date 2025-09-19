@@ -858,16 +858,7 @@ export function UnifiedRequestForm({
             return (
               <React.Fragment key={step.id}>
                 <div className="flex items-center">
-                  <div
-                    className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
-                      isCompleted
-                        ? "bg-primary-600 text-white"
-                        : isCurrent
-                        ? "bg-primary-100 text-primary-600"
-                        : "bg-bg-soft-100 text-text-strong-950"
-                    )}
-                  >
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white text-xs font-medium">
                     <Icon className="w-4 h-4" />
                   </div>
                 </div>
