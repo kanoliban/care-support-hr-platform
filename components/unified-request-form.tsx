@@ -490,6 +490,42 @@ export function UnifiedRequestForm({
       case 'schedule':
         return (
           <div className="space-y-6">
+            <div className="space-y-2">
+              <Label.Root htmlFor="location">Where will this happen?</Label.Root>
+              <Select.Root
+                value={formData.location}
+                onValueChange={(value) => {
+                  onFormDataChange('location', value);
+                  if (value !== 'other') {
+                    onFormDataChange('customLocation', '');
+                  }
+                }}
+              >
+                <Select.Trigger>
+                  <Select.Value placeholder="Select location" />
+                </Select.Trigger>
+                <Select.Content>
+                  {locations.map((location) => (
+                    <Select.Item key={location.id} value={location.id}>
+                      {location.name}
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+              
+              {formData.location === 'other' && (
+                <Input.Root>
+                  <Input.Wrapper>
+                    <Input.Input
+                      placeholder="Enter custom location"
+                      value={formData.customLocation}
+                      onChange={(e) => onFormDataChange('customLocation', e.target.value)}
+                    />
+                  </Input.Wrapper>
+                </Input.Root>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label.Root htmlFor="start-date">Start Date <Label.Asterisk /></Label.Root>
@@ -711,42 +747,6 @@ export function UnifiedRequestForm({
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label.Root htmlFor="location">Where will this happen?</Label.Root>
-              <Select.Root
-                value={formData.location}
-                onValueChange={(value) => {
-                  onFormDataChange('location', value);
-                  if (value !== 'other') {
-                    onFormDataChange('customLocation', '');
-                  }
-                }}
-              >
-                <Select.Trigger>
-                  <Select.Value placeholder="Select location" />
-                </Select.Trigger>
-                <Select.Content>
-                  {locations.map((location) => (
-                    <Select.Item key={location.id} value={location.id}>
-                      {location.name}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-              
-              {formData.location === 'other' && (
-                <Input.Root>
-                  <Input.Wrapper>
-                    <Input.Input
-                      placeholder="Enter custom location"
-                      value={formData.customLocation}
-                      onChange={(e) => onFormDataChange('customLocation', e.target.value)}
-                    />
-                  </Input.Wrapper>
-                </Input.Root>
-              )}
-            </div>
-
           </div>
         );
 
@@ -842,7 +842,7 @@ export function UnifiedRequestForm({
           </div>
           <button
             onClick={onCancel}
-            className="text-text-sub-600 hover:text-text-strong-950"
+            className="text-text-strong-950 hover:text-text-sub-600 text-xl font-medium"
           >
             ×
           </button>
