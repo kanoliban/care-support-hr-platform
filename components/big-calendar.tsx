@@ -205,22 +205,14 @@ function CalendarEventItem({
       )}
     >
       <div className='space-y-1'>
-        <div className="flex items-center gap-2">
-          <div
-            className={cn('text-label-xs flex-1', {
-              truncate: isTiny,
-              'text-text-strong-950': !completed,
-              'text-text-sub-600': completed,
-            })}
-          >
-            {title}
-          </div>
-          {completed && (
-            <RiCheckLine 
-              size={12} 
-              className="text-success-600 flex-shrink-0" 
-            />
-          )}
+        <div
+          className={cn('text-label-xs', {
+            truncate: isTiny,
+            'text-text-strong-950': !completed,
+            'text-text-sub-600': completed,
+          })}
+        >
+          {title}
         </div>
         <div className='text-subheading-2xs text-text-sub-600'>
           {`${format(startDate, 'h:mm')} - ${format(endDate, 'h:mm aa')}`}
@@ -533,32 +525,6 @@ export function BigCalendar({
     setEventToDelete(null);
   };
 
-  const handleEventToggleComplete = (event: CalendarData) => {
-    console.log('Toggle complete for event:', event);
-    
-    // Update the event completion status
-    const updatedEvents = events.map(e => {
-      if (e === event) {
-        return { ...e, completed: !e.completed };
-      }
-      return e;
-    });
-    
-    // In a real app, you'd update the events state here
-    // For now, we'll just show a success message
-    const newStatus = event.completed ? 'pending' : 'completed';
-    console.log(`Event "${event.title}" marked as ${newStatus}`);
-    
-    // Show success feedback
-    const statusMessage = event.completed 
-      ? `Event "${event.title}" marked as pending`
-      : `Event "${event.title}" marked as completed`;
-    
-    alert(statusMessage);
-    
-    // Close the event details modal
-    setIsEventDetailsOpen(false);
-  };
 
 
   // Calculate current time position for the indicator line
@@ -737,7 +703,6 @@ export function BigCalendar({
             event={selectedEvent}
             onEdit={handleEventEdit}
             onDelete={handleEventDelete}
-            onToggleComplete={handleEventToggleComplete}
           />
           
           {/* Delete Confirmation Modal */}

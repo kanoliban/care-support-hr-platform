@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { RiCloseLine, RiEditLine, RiDeleteBinLine, RiCheckLine } from '@remixicon/react';
+import { RiCloseLine, RiEditLine, RiDeleteBinLine } from '@remixicon/react';
 import * as Button from '@/components/ui/button';
 import * as Label from '@/components/ui/label';
 import { CalendarData } from './big-calendar';
@@ -11,7 +11,6 @@ interface EventDetailsModalProps {
   event: CalendarData | null;
   onEdit?: (event: CalendarData) => void;
   onDelete?: (event: CalendarData) => void;
-  onToggleComplete?: (event: CalendarData) => void;
 }
 
 export default function EventDetailsModal({
@@ -20,7 +19,6 @@ export default function EventDetailsModal({
   event,
   onEdit,
   onDelete,
-  onToggleComplete,
 }: EventDetailsModalProps) {
   if (!isOpen || !event) return null;
 
@@ -36,9 +34,6 @@ export default function EventDetailsModal({
     }
   };
 
-  const handleToggleComplete = () => {
-    onToggleComplete?.(event);
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -125,27 +120,6 @@ export default function EventDetailsModal({
               </div>
             )}
 
-            {/* Status */}
-            <div>
-              <Label.Root className="text-sm font-medium text-text-sub-600">Status</Label.Root>
-              <div className={`mt-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                event.completed 
-                  ? 'bg-success-50 text-success-700 border border-success-200' 
-                  : 'bg-warning-50 text-warning-700 border border-warning-200'
-              }`}>
-                {event.completed ? (
-                  <>
-                    <RiCheckLine size={16} />
-                    Completed
-                  </>
-                ) : (
-                  <>
-                    <div className="w-4 h-4 border-2 border-warning-500 border-t-transparent rounded-full animate-spin" />
-                    Pending
-                  </>
-                )}
-              </div>
-            </div>
           </div>
 
           {/* Actions */}
@@ -159,30 +133,6 @@ export default function EventDetailsModal({
             >
               <RiEditLine size={16} className="mr-2" />
               Edit
-            </Button.Root>
-            
-            <Button.Root
-              variant={event.completed ? "neutral" : "primary"}
-              mode={event.completed ? "outline" : "filled"}
-              size="medium"
-              onClick={handleToggleComplete}
-              className={`flex-1 ${
-                event.completed 
-                  ? 'text-warning-700 border-warning-300 hover:bg-warning-50' 
-                  : 'text-white'
-              }`}
-            >
-              {event.completed ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-warning-500 border-t-transparent rounded-full animate-spin mr-2" />
-                  Mark Pending
-                </>
-              ) : (
-                <>
-                  <RiCheckLine size={16} className="mr-2" />
-                  Mark Complete
-                </>
-              )}
             </Button.Root>
             
             <Button.Root
