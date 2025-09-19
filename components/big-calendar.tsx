@@ -262,6 +262,8 @@ export function BigCalendar({
   showAllHours = true, // Default to showing all hours
   className,
 }: BigCalendarProps) {
+  // Debug logging
+  console.log('BigCalendar received events:', events);
   const { events: careEvents, getEventsByDateRange } = useCareEvents();
   const [currentStartDate, setCurrentStartDate] =
     React.useState(defaultStartDate);
@@ -347,7 +349,7 @@ export function BigCalendar({
 
   // Helper function to get events for a specific day and hour
   const getEventsForTimeSlot = (day: Date, hour: Date) => {
-    return events.filter(event => {
+    const matchingEvents = events.filter(event => {
       const eventStart = new Date(event.startDate);
       const eventEnd = new Date(event.endDate);
       const slotStart = new Date(day);
@@ -358,6 +360,13 @@ export function BigCalendar({
       // Check if event overlaps with this time slot
       return eventStart < slotEnd && eventEnd > slotStart;
     });
+    
+    // Debug logging
+    if (matchingEvents.length > 0) {
+      console.log(`Found ${matchingEvents.length} events for ${day.toDateString()} at ${hour.getHours()}:00`, matchingEvents);
+    }
+    
+    return matchingEvents;
   };
 
   const handleCloseDialog = () => {
