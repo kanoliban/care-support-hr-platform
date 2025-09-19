@@ -69,13 +69,17 @@ export function EditDetailsModalContent({
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div className='space-y-2'>
             <Label.Root htmlFor='edit-care-role'>What They Help With *</Label.Root>
-            <Input.Root
-              id='edit-care-role'
-              value={editFormData.careRole}
-              onChange={(e) => handleFormFieldChange('careRole', e.target.value)}
-              placeholder="e.g., Family Coordinator, Primary PCA, Physical Therapist"
-              className={formErrors.careRole ? 'border-red-500' : ''}
-            />
+            <Input.Root>
+              <Input.Wrapper>
+                <Input.Input
+                  id='edit-care-role'
+                  value={editFormData.careRole}
+                  onChange={(e) => handleFormFieldChange('careRole', e.target.value)}
+                  placeholder="e.g., Family Coordinator, Primary PCA, Physical Therapist"
+                  className={formErrors.careRole ? 'border-red-500' : ''}
+                />
+              </Input.Wrapper>
+            </Input.Root>
             {formErrors.careRole && (
               <div className='text-xs text-red-600'>{formErrors.careRole}</div>
             )}
@@ -83,13 +87,17 @@ export function EditDetailsModalContent({
           
           <div className='space-y-2'>
             <Label.Root htmlFor='edit-care-assignment'>Care Focus *</Label.Root>
-            <Input.Root
-              id='edit-care-assignment'
-              value={editFormData.careAssignment}
-              onChange={(e) => handleFormFieldChange('careAssignment', e.target.value)}
-              placeholder="e.g., Rob's Care, Physical Therapy, Medication Management"
-              className={formErrors.careAssignment ? 'border-red-500' : ''}
-            />
+            <Input.Root>
+              <Input.Wrapper>
+                <Input.Input
+                  id='edit-care-assignment'
+                  value={editFormData.careAssignment}
+                  onChange={(e) => handleFormFieldChange('careAssignment', e.target.value)}
+                  placeholder="e.g., Rob's Care, Physical Therapy, Medication Management"
+                  className={formErrors.careAssignment ? 'border-red-500' : ''}
+                />
+              </Input.Wrapper>
+            </Input.Root>
             {formErrors.careAssignment && (
               <div className='text-xs text-red-600'>{formErrors.careAssignment}</div>
             )}
@@ -98,12 +106,16 @@ export function EditDetailsModalContent({
         
         <div className='space-y-2'>
           <Label.Root htmlFor='edit-assignment-description'>Assignment Description</Label.Root>
-          <Input.Root
-            id='edit-assignment-description'
-            value={editFormData.assignmentDescription}
-            onChange={(e) => handleFormFieldChange('assignmentDescription', e.target.value)}
-            placeholder="e.g., Family Administration & General Care"
-          />
+          <Input.Root>
+            <Input.Wrapper>
+              <Input.Input
+                id='edit-assignment-description'
+                value={editFormData.assignmentDescription}
+                onChange={(e) => handleFormFieldChange('assignmentDescription', e.target.value)}
+                placeholder="e.g., Family Administration & General Care"
+              />
+            </Input.Wrapper>
+          </Input.Root>
         </div>
       </div>
 
@@ -116,13 +128,17 @@ export function EditDetailsModalContent({
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div className='space-y-2'>
             <Label.Root htmlFor='edit-schedule'>Schedule Details *</Label.Root>
-            <Input.Root
-              id='edit-schedule'
-              value={editFormData.schedule}
-              onChange={(e) => handleFormFieldChange('schedule', e.target.value)}
-              placeholder="e.g., On-call, Weekdays 9-5"
-              className={formErrors.schedule ? 'border-red-500' : ''}
-            />
+            <Input.Root>
+              <Input.Wrapper>
+                <Input.Input
+                  id='edit-schedule'
+                  value={editFormData.schedule}
+                  onChange={(e) => handleFormFieldChange('schedule', e.target.value)}
+                  placeholder="e.g., On-call, Weekdays 9-5"
+                  className={formErrors.schedule ? 'border-red-500' : ''}
+                />
+              </Input.Wrapper>
+            </Input.Root>
             {formErrors.schedule && (
               <div className='text-xs text-red-600'>{formErrors.schedule}</div>
             )}

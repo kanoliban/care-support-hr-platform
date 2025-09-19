@@ -337,7 +337,7 @@ function InvitationView({
         </Button.Root>
         <Button.Root 
           variant="primary" 
-          mode="solid" 
+          mode="filled" 
           onClick={onAccept}
           className="flex-1"
         >
@@ -509,7 +509,7 @@ function InvitationAccept({
         </Button.Root>
         <Button.Root 
           variant="primary" 
-          mode="solid" 
+          mode="filled" 
           onClick={onAccept}
           disabled={isAccepting}
           className="flex-1"
