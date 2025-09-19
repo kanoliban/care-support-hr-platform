@@ -64,6 +64,16 @@ export default function CalendarFilters({
     setCurrentDateRange(newRange);
     onDateRangeChange?.(newRange.start, newRange.end);
   }, [selectedDaysOption, onDateRangeChange]);
+
+  // Initialize with current week when component mounts
+  React.useEffect(() => {
+    if (!currentDateRange.start) {
+      const today = new Date();
+      const initialRange = { start: startOfWeek(today, { weekStartsOn: 1 }), end: endOfWeek(today, { weekStartsOn: 1 }) };
+      setCurrentDateRange(initialRange);
+      onDateRangeChange?.(initialRange.start, initialRange.end);
+    }
+  }, [onDateRangeChange]);
   
   const handleLastDaysClick = () => {
     const today = new Date();
@@ -83,14 +93,35 @@ export default function CalendarFilters({
     setSelectedDaysOption(options[nextIndex]);
   };
 
+  const [dateRangeIndex, setDateRangeIndex] = React.useState(0);
+  
+  const dateRangeOptions = [
+    // Current week
+    () => {
+      const today = new Date();
+      return { start: startOfWeek(today, { weekStartsOn: 1 }), end: endOfWeek(today, { weekStartsOn: 1 }) };
+    },
+    // Next week
+    () => {
+      const nextWeek = addDays(new Date(), 7);
+      return { start: startOfWeek(nextWeek, { weekStartsOn: 1 }), end: endOfWeek(nextWeek, { weekStartsOn: 1 }) };
+    },
+    // This month
+    () => {
+      const today = new Date();
+      return { start: new Date(today.getFullYear(), today.getMonth(), 1), end: new Date(today.getFullYear(), today.getMonth() + 1, 0) };
+    },
+    // Next month
+    () => {
+      const today = new Date();
+      return { start: new Date(today.getFullYear(), today.getMonth() + 1, 1), end: new Date(today.getFullYear(), today.getMonth() + 2, 0) };
+    }
+  ];
+
   const handleDateRangeClick = () => {
-    // For now, just cycle through different ranges
-    // In a real implementation, this would open a date picker
-    const today = new Date();
-    const nextWeek = addDays(today, 7);
-    const startOfNextWeek = startOfWeek(nextWeek, { weekStartsOn: 1 });
-    const endOfNextWeek = endOfWeek(nextWeek, { weekStartsOn: 1 });
-    const newRange = { start: startOfNextWeek, end: endOfNextWeek };
+    const nextIndex = (dateRangeIndex + 1) % dateRangeOptions.length;
+    setDateRangeIndex(nextIndex);
+    const newRange = dateRangeOptions[nextIndex]();
     
     setCurrentDateRange(newRange);
     onDateRangeChange?.(newRange.start, newRange.end);
