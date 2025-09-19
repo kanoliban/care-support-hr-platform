@@ -249,7 +249,7 @@ export default function PageCalendar() {
             assignedCaregiver: 'Jim Nelson',
             client: 'Rob',
             isRecurring: true,
-            recurrencePattern: 'weekly every 1 on M,T,W,T,F',
+            recurrencePattern: 'weekly every 1 on Mon,Tue,Wed,Thu,Fri',
             status: 'scheduled',
             visibility: 'care-team-only',
             metadata: {
@@ -304,7 +304,7 @@ export default function PageCalendar() {
             assignedCaregiver: 'Jennifer Smith',
             client: 'Rob',
             isRecurring: true,
-            recurrencePattern: 'weekly every 1 on F,Sat,Sun',
+            recurrencePattern: 'weekly every 1 on Fri,Sat,Sun',
             status: 'scheduled',
             visibility: 'care-team-only',
             metadata: {
@@ -332,7 +332,7 @@ export default function PageCalendar() {
             assignedCaregiver: 'Jim Nelson',
             client: 'Rob',
             isRecurring: true,
-            recurrencePattern: 'weekly every 1 on M,T,W,T,F',
+            recurrencePattern: 'weekly every 1 on Mon,Tue,Wed,Thu,Fri',
             status: 'scheduled',
             visibility: 'care-team-only',
             metadata: {
@@ -359,7 +359,7 @@ export default function PageCalendar() {
             assignedCaregiver: 'Jim Nelson',
             client: 'Rob',
             isRecurring: true,
-            recurrencePattern: 'weekly every 1 on M,T,W,T,F',
+            recurrencePattern: 'weekly every 1 on Mon,Tue,Wed,Thu,Fri',
             status: 'scheduled',
             visibility: 'care-team-only',
             metadata: {
@@ -386,7 +386,7 @@ export default function PageCalendar() {
             assignedCaregiver: 'Jennifer Smith',
             client: 'Rob',
             isRecurring: true,
-            recurrencePattern: 'weekly every 1 on F,Sat,Sun',
+            recurrencePattern: 'weekly every 1 on Fri,Sat,Sun',
             status: 'scheduled',
             visibility: 'care-team-only',
             metadata: {
