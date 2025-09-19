@@ -465,7 +465,6 @@ export function UnifiedRequestForm({
                 </div>
               </div>
             )}
-            </div>
           </div>
         );
 
