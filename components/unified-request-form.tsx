@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine, RiEyeLine } from '@remixicon/react';
+import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine } from '@remixicon/react';
 import { cn } from '@/utils/cn';
 import * as Button from '@/components/ui/button';
 import * as Input from '@/components/ui/input';
@@ -74,7 +74,7 @@ const steps = [
     id: 'review',
     title: 'Review',
     description: 'Confirm your request',
-    icon: RiEyeLine
+    icon: RiCheckLine
   }
 ];
 
@@ -862,17 +862,13 @@ export function UnifiedRequestForm({
                     className={cn(
                       "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
                       isCompleted
-                        ? "bg-green-500 text-white"
+                        ? "bg-primary-600 text-white"
                         : isCurrent
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-gray-700"
+                        ? "bg-primary-600 text-white"
+                        : "bg-bg-soft-100 text-text-sub-600"
                     )}
                   >
-                    {isCompleted ? (
-                      <RiCheckLine className="w-4 h-4" />
-                    ) : (
-                      <Icon className="w-4 h-4" />
-                    )}
+                    <Icon className="w-4 h-4" />
                   </div>
                 </div>
                 {index < steps.length - 1 && (
