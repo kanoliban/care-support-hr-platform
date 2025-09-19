@@ -763,7 +763,7 @@ export function BigCalendar({
   // Render month view
   if (view === 'month') {
     const monthDays = getMonthDays(currentStartDate);
-    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     
     return (
       <div className={cnExt('w-full bg-bg-white-0', className)}>
@@ -848,14 +848,11 @@ export function BigCalendar({
         <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
           {/* Left Navigation Panel */}
           <div className='sticky -left-4 z-30 -ml-px w-[104px] shrink-0 overflow-hidden border-x border-stroke-soft-200 bg-bg-white-0 lg:left-0 lg:border-l-0'>
-            {/* Month/Date Display */}
+            {/* Month Display */}
             <div className='h-8 w-full shrink-0 border-b border-stroke-soft-200 bg-bg-weak-50 flex items-center justify-center'>
               <div className='text-center'>
                 <div className='text-label-sm font-medium text-text-strong-950'>
-                  {format(currentStartDate, 'MMM')}
-                </div>
-                <div className='text-label-xs text-text-sub-600'>
-                  {format(currentStartDate, 'd')}
+                  {format(currentStartDate, 'MMM').toUpperCase()}
                 </div>
               </div>
             </div>
@@ -891,7 +888,7 @@ export function BigCalendar({
                         : 'bg-bg-weak-50 text-text-soft-400'
                     }`}
                   >
-                    {format(day, 'EEE, MMM dd').toUpperCase()}
+                    {format(day, 'EEE').toUpperCase()}
                   </div>
                 ))}
               </header>
