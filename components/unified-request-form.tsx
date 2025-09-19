@@ -221,15 +221,12 @@ export function UnifiedRequestForm({
         if (!formData.title.trim()) newErrors.title = 'Request details are required';
         // Description is now optional - removed validation
         if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
+        if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
         break;
       
       case 'schedule':
         if (!formData.startDate) newErrors.startDate = 'Start date is required';
         if (!formData.endDate) newErrors.endDate = 'End date is required';
-        break;
-      
-      case 'review':
-        if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
         break;
     }
 
@@ -367,6 +364,30 @@ export function UnifiedRequestForm({
                 </Select.Root>
                 {errors.careRecipient && (
                   <div className="text-xs text-red-600">{errors.careRecipient}</div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label.Root htmlFor="assigned-person">
+                  Who can help? <Label.Asterisk />
+                </Label.Root>
+                <Select.Root
+                  value={formData.assignedPerson}
+                  onValueChange={(value) => onFormDataChange('assignedPerson', value)}
+                >
+                  <Select.Trigger>
+                    <Select.Value placeholder="Select team member" />
+                  </Select.Trigger>
+                  <Select.Content>
+                    {teamMembers.map((member) => (
+                      <Select.Item key={member.id} value={member.id}>
+                        {member.name}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Root>
+                {errors.assignedPerson && (
+                  <div className="text-xs text-red-600">{errors.assignedPerson}</div>
                 )}
               </div>
 
@@ -676,30 +697,6 @@ export function UnifiedRequestForm({
                   <span className="font-medium">Care Recipient:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label.Root htmlFor="assigned-person">
-                Who can help? <Label.Asterisk />
-              </Label.Root>
-              <Select.Root
-                value={formData.assignedPerson}
-                onValueChange={(value) => onFormDataChange('assignedPerson', value)}
-              >
-                <Select.Trigger>
-                  <Select.Value placeholder="Select team member" />
-                </Select.Trigger>
-                <Select.Content>
-                  {teamMembers.map((member) => (
-                    <Select.Item key={member.id} value={member.id}>
-                      {member.name}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-              {errors.assignedPerson && (
-                <div className="text-xs text-red-600">{errors.assignedPerson}</div>
-              )}
             </div>
 
             <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
