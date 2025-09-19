@@ -757,6 +757,9 @@ export function BigCalendar({
 
   // Render month view differently
   if (view === 'month') {
+    console.log('[MONTH VIEW DEBUG] Rendering month view with', localEvents.length, 'localEvents');
+    console.log('[MONTH VIEW DEBUG] localEvents:', localEvents.map(e => ({ title: e.title, startDate: e.startDate })));
+    
     // For month view, create a proper calendar grid
     const firstDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth(), 1);
     const lastDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth() + 1, 0);
@@ -789,9 +792,14 @@ export function BigCalendar({
                 <div key={weekIndex} className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200'>
                   {Array.from({ length: 7 }, (_, dayIndex) => {
                     const day = monthDays[weekIndex * 7 + dayIndex];
-                    const dayEvents = localEvents.filter(event => 
-                      isSameDay(new Date(event.startDate), day)
-                    );
+                            const dayEvents = localEvents.filter(event => 
+                              isSameDay(new Date(event.startDate), day)
+                            );
+                            
+                            if (dayEvents.length > 0) {
+                              console.log('[MONTH VIEW DEBUG] Day:', format(day, 'yyyy-MM-dd'), 'has', dayEvents.length, 'events');
+                              console.log('[MONTH VIEW DEBUG] Events:', dayEvents.map(e => e.title));
+                            }
                     
                     const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
                     const isToday = isSameDay(day, new Date());
