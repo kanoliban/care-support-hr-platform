@@ -229,53 +229,91 @@ export default function PageCalendar() {
     // Add test events for the current calendar view (September 19, 2025)
     const testDate = new Date(2025, 8, 19); // September 19, 2025 (month is 0-indexed)
     
-    events.push(
-      {
-        startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
-        endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
-        title: 'Jim Nelson - Primary Care Shift',
-        type: 'meeting',
-        completed: false,
-        people: [
+        events.push(
           {
-            alt: 'Jim Nelson',
-            image: '/images/avatar/illustration/james.png',
-            color: 'blue',
+            startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
+            endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
+            title: 'Help with morning routine and medication',
+            type: 'meeting',
+            completed: false,
+            people: [
+              {
+                alt: 'Jim Nelson',
+                image: '/images/avatar/illustration/james.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Rob\'s Home',
+            // Additional fields from create form
+            description: 'Assist with morning routine including medication administration and light housekeeping',
+            assignedCaregiver: 'Jim Nelson',
+            client: 'Rob',
+            isRecurring: true,
+            recurrencePattern: 'weekly every 1 on M,T,W,T,F',
+            status: 'scheduled',
+            visibility: 'care-team-only',
+            metadata: {
+              requestType: 'Personal Care',
+              notes: 'Please arrive 15 minutes early to prepare medications',
+              isOpenToAnyone: false,
+            },
           },
-        ],
-        platform: 'Rob\'s Home',
-      },
-      {
-        startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 14, 0),
-        endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 15, 30),
-        title: 'Doctor Appointment - Dr. Martinez',
-        type: 'event',
-        completed: false,
-        location: 'Medical Center',
-        people: [
           {
-            alt: 'Dr. Martinez',
-            image: '/images/avatar/illustration/emma.png',
-            color: 'yellow',
+            startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 14, 0),
+            endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 15, 30),
+            title: 'Physical therapy session with Dr. Martinez',
+            type: 'event',
+            completed: false,
+            location: 'Medical Center',
+            people: [
+              {
+                alt: 'Dr. Martinez',
+                image: '/images/avatar/illustration/emma.png',
+                color: 'yellow',
+              },
+            ],
+            // Additional fields from create form
+            description: 'Weekly physical therapy session focusing on mobility and strength',
+            assignedCaregiver: 'Open to anyone',
+            client: 'Rob',
+            isRecurring: false,
+            status: 'scheduled',
+            visibility: 'care-team-only',
+            metadata: {
+              requestType: 'Medical Appointment',
+              notes: 'Transportation needed - please coordinate with family',
+              isOpenToAnyone: true,
+            },
           },
-        ],
-      },
-      {
-        startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 20, 0),
-        endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 8, 0),
-        title: 'Jennifer - Overnight Care',
-        type: 'meeting',
-        completed: false,
-        people: [
           {
-            alt: 'Jennifer',
-            image: '/images/avatar/illustration/arthur.png',
-            color: 'blue',
-          },
-        ],
-        platform: 'Rob\'s Home',
-      }
-    );
+            startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 20, 0),
+            endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 8, 0),
+            title: 'Overnight care and safety monitoring',
+            type: 'meeting',
+            completed: false,
+            people: [
+              {
+                alt: 'Jennifer',
+                image: '/images/avatar/illustration/arthur.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Rob\'s Home',
+            // Additional fields from create form
+            description: 'Overnight care including safety checks, medication reminders, and emergency response',
+            assignedCaregiver: 'Jennifer Smith',
+            client: 'Rob',
+            isRecurring: true,
+            recurrencePattern: 'weekly every 1 on F,Sat,Sun',
+            status: 'scheduled',
+            visibility: 'care-team-only',
+            metadata: {
+              requestType: 'Overnight Care',
+              notes: 'Emergency contact numbers posted on refrigerator',
+              isOpenToAnyone: false,
+            },
+          }
+        );
 
     return [...events, ...calendarData]; // Combine with existing static data
   }, []);

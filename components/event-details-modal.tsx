@@ -59,66 +59,69 @@ export default function EventDetailsModal({
             </button>
           </div>
 
-          {/* Event Content */}
+          {/* Event Content - Receipt of Created Event */}
           <div className="space-y-4">
-            {/* Title */}
+            {/* Request Type */}
+            {event.metadata?.requestType && (
+              <div>
+                <Label.Root className="text-sm font-medium text-text-sub-600">What kind of help do you need?</Label.Root>
+                <p className="text-text-strong-950 mt-1 capitalize">{event.metadata.requestType}</p>
+              </div>
+            )}
+
+            {/* Request Details */}
             <div>
-              <Label.Root className="text-sm font-medium text-text-sub-600">Title</Label.Root>
+              <Label.Root className="text-sm font-medium text-text-sub-600">Request Details</Label.Root>
               <p className="text-text-strong-950 mt-1">{event.title}</p>
             </div>
 
-            {/* Time */}
+            {/* Care Recipient */}
+            {event.client && (
+              <div>
+                <Label.Root className="text-sm font-medium text-text-sub-600">Who needs care?</Label.Root>
+                <p className="text-text-strong-950 mt-1">{event.client}</p>
+              </div>
+            )}
+
+            {/* Who can help */}
+            {event.assignedCaregiver && (
+              <div>
+                <Label.Root className="text-sm font-medium text-text-sub-600">Who can help?</Label.Root>
+                <p className="text-text-strong-950 mt-1">{event.assignedCaregiver}</p>
+                {event.metadata?.customPersonContact && (
+                  <p className="text-sm text-text-sub-600 mt-1">
+                    Contact: {event.metadata.customPersonContact} ({event.metadata.customPersonContactType})
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* When */}
             <div>
-              <Label.Root className="text-sm font-medium text-text-sub-600">Time</Label.Root>
+              <Label.Root className="text-sm font-medium text-text-sub-600">When</Label.Root>
               <p className="text-text-strong-950 mt-1">
                 {format(event.startDate, 'MMM dd, yyyy')} • {format(event.startDate, 'h:mm a')} - {format(event.endDate, 'h:mm a')}
               </p>
+              {event.isRecurring && event.recurrencePattern && (
+                <p className="text-sm text-text-sub-600 mt-1">
+                  Recurring: {event.recurrencePattern}
+                </p>
+              )}
             </div>
 
-            {/* Type */}
-            <div>
-              <Label.Root className="text-sm font-medium text-text-sub-600">Type</Label.Root>
-              <p className="text-text-strong-950 mt-1 capitalize">{event.type || 'Event'}</p>
-            </div>
-
-            {/* Location */}
+            {/* Where */}
             {event.location && (
               <div>
-                <Label.Root className="text-sm font-medium text-text-sub-600">Location</Label.Root>
+                <Label.Root className="text-sm font-medium text-text-sub-600">Where will this happen?</Label.Root>
                 <p className="text-text-strong-950 mt-1">{event.location}</p>
               </div>
             )}
 
-            {/* Platform */}
-            {event.platform && (
+            {/* Additional Notes */}
+            {event.metadata?.notes && (
               <div>
-                <Label.Root className="text-sm font-medium text-text-sub-600">Platform</Label.Root>
-                <p className="text-text-strong-950 mt-1">{event.platform}</p>
-              </div>
-            )}
-
-            {/* People */}
-            {event.people && event.people.length > 0 && (
-              <div>
-                <Label.Root className="text-sm font-medium text-text-sub-600">People</Label.Root>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {event.people.map((person, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      {person.image ? (
-                        <img
-                          className="w-6 h-6 rounded-full object-cover"
-                          src={person.image}
-                          alt={person.alt}
-                        />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full bg-bg-soft-200 flex items-center justify-center text-xs font-medium">
-                          {person.alt.charAt(0)}
-                        </div>
-                      )}
-                      <span className="text-sm text-text-strong-950">{person.alt}</span>
-                    </div>
-                  ))}
-                </div>
+                <Label.Root className="text-sm font-medium text-text-sub-600">Additional Notes</Label.Root>
+                <p className="text-text-strong-950 mt-1">{event.metadata.notes}</p>
               </div>
             )}
 

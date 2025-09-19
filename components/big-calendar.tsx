@@ -147,6 +147,21 @@ export type CalendarData = {
   }[];
   completed?: boolean;
   disabled?: boolean;
+  // Additional fields from create form
+  description?: string;
+  assignedCaregiver?: string;
+  client?: string;
+  isRecurring?: boolean;
+  recurrencePattern?: string;
+  status?: string;
+  visibility?: string;
+  metadata?: {
+    notes?: string;
+    isOpenToAnyone?: boolean;
+    requestType?: string;
+    customPersonContact?: string;
+    customPersonContactType?: string;
+  };
 };
 
 type CalendarEventItemProps = CalendarData & {
