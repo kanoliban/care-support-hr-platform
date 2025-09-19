@@ -371,14 +371,7 @@ export default function PageCalendar() {
           onSearchChange={handleSearchChange}
         />
 
-        <CalendarTabs 
-          className='mt-5 lg:mt-3' 
-          events={filteredEvents}
-          onTabChange={(tabValue, filteredTabEvents) => {
-            console.log('Tab changed:', tabValue, filteredTabEvents);
-            // You can add additional logic here if needed
-          }}
-        />
+        <CalendarTabs className='mt-5 lg:mt-3' />
 
         <BigCalendar
           className='mt-4'

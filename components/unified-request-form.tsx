@@ -8,6 +8,7 @@ import * as Label from '@/components/ui/label';
 import * as Select from '@/components/ui/select';
 import * as Textarea from '@/components/ui/textarea';
 import { format, addHours } from 'date-fns';
+import { useCareTeam } from '@/lib/careTeamContext';
 
 export interface RequestFormData {
   // Core Information - Same for all requests
@@ -81,25 +82,7 @@ const careRecipients = [
   { id: 'luann-wudlick', name: 'Luann Wudlick (Mom)', needs: 'Dementia care' },
 ];
 
-const teamMembers = [
-  { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'Team members can claim this slot' },
-  { id: 'marta-snow', name: 'Marta Snow (Sister)', roles: ['Family', 'Scheduler', 'General Administration', 'Backup PCA'], availability: 'On-call' },
-  { id: 'luann-wudlick', name: 'Luann Wudlick (Mom)', roles: ['Family', 'Nurse', 'PCA'], availability: 'All empty time slots' },
-  { id: 'jim-nelson', name: 'Jim Nelson', roles: ['Nurse'], availability: 'M-F 9am-5pm' },
-  { id: 'jennifer', name: 'Jennifer', roles: ['Overnight PCA'], availability: 'M,T 8pm-8am' },
-  { id: 'sarah', name: 'Sarah', roles: ['Overnight PCA'], availability: 'W, Th 8pm-8am' },
-  { id: 'ella', name: 'Ella', roles: ['Overnight PCA'], availability: 'F, Sat, Sun 8pm-9am' },
-  { id: 'alex', name: 'Alex', roles: ['PCA'], availability: 'Random' },
-  { id: 'olena', name: 'Olena', roles: ['PCA'], availability: 'Sat, Sun 9am-1pm' },
-  { id: 'isabela', name: 'Isabela', roles: ['Family', 'PCA'], availability: 'On-call' },
-  { id: 'lucy', name: 'Lucy', roles: ['PCA', 'Family'], availability: 'On-call' },
-  { id: 'grace', name: 'Grace', roles: ['Overnight PCA'], availability: 'On summer break' },
-  { id: 'kathleen', name: 'Kathleen', roles: ['Backup PCA'], availability: 'Random on-call' },
-  { id: 'annie', name: 'Annie', roles: ['Backup PCA'], availability: 'Random on-call' },
-  { id: 'uncle-jim', name: 'Uncle Jim', roles: ['Family', 'Backup PCA'], availability: 'On-call' },
-  { id: 'dan', name: 'Dan (Bro in-law)', roles: ['Family', 'Backup PCA'], availability: 'On-call' },
-  { id: 'other', name: 'Other', roles: ['Outside care team'], availability: 'Custom person' },
-];
+// Team members will be provided by the care team context
 
 const locations = [
   { id: 'rob-home', name: 'Rob\'s Home' },
@@ -151,9 +134,49 @@ export function UnifiedRequestForm({
 }: UnifiedRequestFormProps) {
   const [currentStep, setCurrentStep] = React.useState(steps[0].id);
   const [inviteSent, setInviteSent] = React.useState(false);
-  const [isInviting, setIsInviting] = React.useState(false);
+  const { teamMembers, inviteToTeam } = useCareTeam();
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+
+  // Combine care team members with special options
+  const availableTeamMembers = React.useMemo(() => {
+    const specialOptions = [
+      { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'Team members can claim this slot' },
+      { id: 'other', name: 'Other', roles: ['Outside care team'], availability: 'Custom person' },
+    ];
+    
+    return [
+      ...specialOptions,
+      ...teamMembers.map(member => ({
+        id: member.id,
+        name: member.name,
+        roles: member.roles,
+        availability: member.availability
+      }))
+    ];
+  }, [teamMembers]);
+
+  // Proper callback function to prevent re-renders
+  const handleInviteToTeam = React.useCallback(async () => {
+    if (!formData.customAssignedPerson || !formData.customPersonContact) {
+      return;
+    }
+
+    try {
+      await inviteToTeam({
+        name: formData.customAssignedPerson,
+        email: formData.customPersonContactType === 'email' ? formData.customPersonContact : undefined,
+        phone: formData.customPersonContactType === 'phone' ? formData.customPersonContact : undefined,
+        contactType: formData.customPersonContactType,
+        invitedBy: 'Current User' // TODO: Get from auth context
+      });
+      
+      setInviteSent(true);
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+      // TODO: Show error message to user
+    }
+  }, [formData.customAssignedPerson, formData.customPersonContact, formData.customPersonContactType, inviteToTeam]);
 
   // Notify parent of step changes
   React.useEffect(() => {
@@ -213,74 +236,6 @@ export function UnifiedRequestForm({
       onFormDataChange('endDate', addHours(selectedTime, 1));
     }
   }, [selectedDate, selectedTime, formData.startDate, formData.endDate, onFormDataChange]);
-
-  // Reset inviteSent when assignedPerson changes from 'other'
-  React.useEffect(() => {
-    if (formData.assignedPerson !== 'other') {
-      setInviteSent(false);
-    }
-  }, [formData.assignedPerson]);
-
-  // Proper invitation handler to avoid inline functions and infinite loops
-  const handleInviteToCareTeam = React.useCallback(async () => {
-    if (!formData.customAssignedPerson.trim() || !formData.customPersonContact.trim()) {
-      return;
-    }
-
-    setIsInviting(true);
-    
-    try {
-      // Create new team member with inactive status
-      const newTeamMember = {
-        id: `invited-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: formData.customAssignedPerson.trim(),
-        role: 'backup_caregiver' as const,
-        contactInfo: {
-          [formData.customPersonContactType]: formData.customPersonContact.trim(),
-          preferredContact: formData.customPersonContactType
-        },
-        regularShifts: [],
-        currentAvailability: 'unavailable' as const, // Inactive until they accept
-        blockedDates: [],
-        lastAvailabilityUpdate: new Date().toISOString(),
-        skills: [],
-        certifications: [],
-        canDo: ['personal_care'],
-        relationshipToCareRecipient: 'Invited Caregiver',
-        trustLevel: 'new' as const,
-        reliability: {
-          showUpRate: 0,
-          onTimeRate: 0,
-          lastMinuteCancellations: 0
-        },
-        sourceAgency: 'Direct invitation',
-        hourlyRate: 0,
-        paymentMethod: 'volunteer' as const,
-        invitationStatus: 'pending' as const,
-        invitedAt: new Date().toISOString(),
-        invitedBy: 'Care Coordinator' // Could be dynamic
-      };
-
-      // TODO: In a real implementation, this would:
-      // 1. Add the team member to the care team roster
-      // 2. Send invitation via email/SMS
-      // 3. Store invitation status in database
-      
-      console.log('Adding new team member to roster:', newTeamMember);
-      console.log(`Sending invitation to ${formData.customAssignedPerson} via ${formData.customPersonContactType}: ${formData.customPersonContact}`);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setInviteSent(true);
-      
-    } catch (error) {
-      console.error('Failed to send invitation:', error);
-      // Could show error message to user
-    } finally {
-      setIsInviting(false);
-    }
-  }, [formData.customAssignedPerson, formData.customPersonContact, formData.customPersonContactType]);
 
   const validateStep = (stepId: string): boolean => {
     const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
@@ -439,13 +394,13 @@ export function UnifiedRequestForm({
                   <Select.Trigger>
                     <Select.Value placeholder="Select team member" />
                   </Select.Trigger>
-                  <Select.Content>
-                    {teamMembers.map((member) => (
-                      <Select.Item key={member.id} value={member.id}>
-                        {member.name}
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
+                      <Select.Content>
+                        {availableTeamMembers.map((member) => (
+                          <Select.Item key={member.id} value={member.id}>
+                            {member.name}
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
                 </Select.Root>
                 {errors.assignedPerson && (
                   <div className="text-xs text-red-600">{errors.assignedPerson}</div>
@@ -533,22 +488,14 @@ export function UnifiedRequestForm({
                           variant="primary"
                           mode="filled"
                           size="medium"
-                          onClick={handleInviteToCareTeam}
-                          disabled={isInviting}
+                          onClick={handleInviteToTeam}
                         >
                           <Button.Icon>
-                            {isInviting ? (
-                              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                            ) : (
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                              </svg>
-                            )}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                            </svg>
                           </Button.Icon>
-                          {isInviting ? 'Sending Invite...' : 'Invite to Care Team'}
+                          Invite to Care Team
                         </Button.Root>
                       )}
                     </div>
@@ -843,13 +790,13 @@ export function UnifiedRequestForm({
                 <div>
                   <span className="font-medium">Who needs care:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
-                <div>
-                  <span className="font-medium">Who can help:</span> {
-                    formData.assignedPerson === 'other' 
-                      ? formData.customAssignedPerson 
-                      : teamMembers.find(m => m.id === formData.assignedPerson)?.name
-                  }
-                </div>
+                    <div>
+                      <span className="font-medium">Who can help:</span> {
+                        formData.assignedPerson === 'other'
+                          ? formData.customAssignedPerson
+                          : availableTeamMembers.find(m => m.id === formData.assignedPerson)?.name
+                      }
+                    </div>
                 <div>
                   <span className="font-medium">When:</span> {format(formData.startDate || selectedTime, 'MMM dd, yyyy')} at {format(formData.startDate || selectedTime, 'h:mm a')} - {format(formData.endDate || addHours(selectedTime, 1), 'h:mm a')}
                 </div>
