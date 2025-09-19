@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine } from '@remixicon/react';
 import { cn } from '@/utils/cn';
 import * as Button from '@/components/ui/button';
 import * as Input from '@/components/ui/input';
@@ -61,20 +60,17 @@ const steps = [
   {
     id: 'details',
     title: 'Request Details',
-    description: 'What help do you need?',
-    icon: RiUserLine
+    description: 'What help do you need?'
   },
   {
     id: 'schedule',
     title: 'When & Where',
-    description: 'When and where will this happen?',
-    icon: RiCalendarLine
+    description: 'When and where will this happen?'
   },
   {
     id: 'review',
     title: 'Review',
-    description: 'Confirm your request',
-    icon: RiCheckLine
+    description: 'Confirm your request'
   }
 ];
 
@@ -857,7 +853,16 @@ export function UnifiedRequestForm({
             return (
               <React.Fragment key={step.id}>
                 <div className="flex items-center">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white text-xs font-medium">
+                  <div
+                    className={cn(
+                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
+                      isCompleted
+                        ? "bg-primary-600 text-white"
+                        : isCurrent
+                        ? "bg-primary-100 text-primary-600"
+                        : "bg-bg-soft-100 text-text-sub-600"
+                    )}
+                  >
                     {index + 1}
                   </div>
                 </div>
