@@ -40,11 +40,15 @@ const useBreakpoint = () => {
         {} as Record<BreakpointKeys, boolean>,
       );
 
-      // Check if the current breakpoints are different from the previous ones
-      if (JSON.stringify(prevBreakpoints) !== JSON.stringify(newBreakpoints)) {
-        setCurrentBreakpoints(newBreakpoints);
-        setPrevBreakpoints(newBreakpoints);
-      }
+      // Use functional updates to avoid dependency on prevBreakpoints
+      setCurrentBreakpoints(prev => {
+        // Check if the current breakpoints are different from the previous ones
+        if (JSON.stringify(prev) !== JSON.stringify(newBreakpoints)) {
+          setPrevBreakpoints(newBreakpoints);
+          return newBreakpoints;
+        }
+        return prev;
+      });
     };
 
     handleResize();
@@ -54,7 +58,7 @@ const useBreakpoint = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [prevBreakpoints, isBrowser]);
+  }, [isBrowser]);
 
   return currentBreakpoints;
 };
