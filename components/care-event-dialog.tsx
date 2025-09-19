@@ -31,6 +31,13 @@ export default function CareEventDialog({
   const { createEvent } = useCareEvents();
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrors] = React.useState<Partial<Record<keyof RequestFormData, string>>>({});
+  const [currentStepIndex, setCurrentStepIndex] = React.useState(0);
+
+  const steps = [
+    { title: 'Request Details' },
+    { title: 'When & Where' },
+    { title: 'Review' }
+  ];
   
   const [formData, setFormData] = React.useState<RequestFormData>({
     title: '',
@@ -155,9 +162,11 @@ export default function CareEventDialog({
         <div className="p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-paragraph-sm font-medium text-text-strong-950">
-              Create Request
-            </h3>
+            <div>
+              <p className="text-sm text-text-sub-600">
+                Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
+              </p>
+            </div>
             <button 
               onClick={onClose} 
               className="text-text-soft-400 hover:text-text-sub-600 transition-colors p-2 rounded hover:bg-bg-weak-50 flex items-center justify-center"
@@ -175,6 +184,7 @@ export default function CareEventDialog({
             isSaving={isLoading}
             onSave={handleSave}
             onCancel={onClose}
+            onStepChange={setCurrentStepIndex}
             selectedDate={selectedDate}
             selectedTime={selectedTime}
           />

@@ -52,6 +52,7 @@ export interface UnifiedRequestFormProps {
   isSaving?: boolean;
   onSave?: () => void;
   onCancel: () => void;
+  onStepChange?: (stepIndex: number) => void;
   selectedDate: Date;
   selectedTime: Date;
 }
@@ -144,6 +145,7 @@ export function UnifiedRequestForm({
   isSaving = false,
   onSave,
   onCancel,
+  onStepChange,
   selectedDate,
   selectedTime
 }: UnifiedRequestFormProps) {
@@ -151,6 +153,11 @@ export function UnifiedRequestForm({
   const [inviteSent, setInviteSent] = React.useState(false);
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+
+  // Notify parent of step changes
+  React.useEffect(() => {
+    onStepChange?.(currentStepIndex);
+  }, [currentStepIndex, onStepChange]);
 
   const handleRecurringChange = (field: keyof RequestFormData['recurrencePattern'], value: any) => {
     onFormDataChange('recurrencePattern', {
@@ -827,16 +834,7 @@ export function UnifiedRequestForm({
   };
 
   return (
-    <div className="bg-white border-t border-stroke-soft-200">
-      {/* Wizard Header */}
-      <div className="px-6 py-4">
-        <div>
-          <p className="text-sm text-text-sub-600">
-            Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
-          </p>
-        </div>
-      </div>
-
+    <div className="bg-white">
       {/* Wizard Content */}
       <div className="px-6 py-6">
         {renderStep()}
