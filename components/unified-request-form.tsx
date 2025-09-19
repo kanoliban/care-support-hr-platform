@@ -157,7 +157,7 @@ export function UnifiedRequestForm({
   // Notify parent of step changes
   React.useEffect(() => {
     onStepChange?.(currentStepIndex);
-  }, [currentStepIndex, onStepChange]);
+  }, [currentStepIndex]);
 
   const handleRecurringChange = (field: keyof RequestFormData['recurrencePattern'], value: any) => {
     onFormDataChange('recurrencePattern', {
