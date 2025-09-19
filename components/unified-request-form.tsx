@@ -13,6 +13,8 @@ import { format, addHours } from 'date-fns';
 export interface RequestFormData {
   // Core Information - Same for all requests
   title: string;
+  requestType: string; // New: categorized request type
+  customRequestType: string; // New: custom request type when "Other" is selected
   description: string;
   
   // Who - Who needs help or who's providing it
@@ -34,6 +36,7 @@ export interface RequestFormData {
   
   // Where - Location (if relevant)
   location: string;
+  customLocation: string; // New: custom location when "Other" is selected
   
   // Additional
   notes: string;
@@ -79,7 +82,7 @@ const careRecipients = [
 ];
 
 const teamMembers = [
-  { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'First available' },
+  { id: 'open-to-anyone', name: 'Open to anyone', roles: ['Any available team member'], availability: 'Team members can claim this slot' },
   { id: 'marta-snow', name: 'Marta Snow (Sister)', roles: ['Family', 'Scheduler', 'General Administration', 'Backup PCA'], availability: 'On-call' },
   { id: 'luann-wudlick', name: 'Luann Wudlick (Mom)', roles: ['Family', 'Nurse', 'PCA'], availability: 'All empty time slots' },
   { id: 'jim-nelson', name: 'Jim Nelson', roles: ['Nurse'], availability: 'M-F 9am-5pm' },
@@ -121,6 +124,18 @@ const frequencyOptions = [
   { value: 'monthly', label: 'Monthly' }
 ];
 
+const requestTypeOptions = [
+  { value: 'medication', label: 'Medication Reminder', description: 'Daily medication or treatment reminders' },
+  { value: 'appointment', label: 'Medical Appointment', description: 'Doctor visits, therapy sessions, check-ups' },
+  { value: 'care-shift', label: 'Care Shift', description: 'Personal care, assistance, supervision' },
+  { value: 'transportation', label: 'Transportation', description: 'Rides to appointments, errands, outings' },
+  { value: 'meal-prep', label: 'Meal Preparation', description: 'Cooking, meal planning, dietary needs' },
+  { value: 'housekeeping', label: 'Housekeeping', description: 'Cleaning, laundry, home maintenance' },
+  { value: 'companionship', label: 'Companionship', description: 'Social visits, activities, emotional support' },
+  { value: 'emergency', label: 'Emergency Support', description: 'Urgent care needs, crisis situations' },
+  { value: 'other', label: 'Other', description: 'Custom request type' }
+];
+
 export function UnifiedRequestForm({
   formData,
   onFormDataChange,
@@ -133,7 +148,6 @@ export function UnifiedRequestForm({
   selectedTime
 }: UnifiedRequestFormProps) {
   const [currentStep, setCurrentStep] = React.useState(steps[0].id);
-  const [customLocation, setCustomLocation] = React.useState('');
 
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
 
@@ -172,6 +186,10 @@ export function UnifiedRequestForm({
     switch (stepId) {
       case 'details':
         if (!formData.title.trim()) newErrors.title = 'Title is required';
+        if (!formData.requestType) newErrors.requestType = 'Request type is required';
+        if (formData.requestType === 'other' && !formData.customRequestType.trim()) {
+          newErrors.customRequestType = 'Custom request type is required';
+        }
         // Description is now optional - removed validation
         if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
         if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
@@ -236,6 +254,60 @@ export function UnifiedRequestForm({
                 <div className="text-xs text-red-600">{errors.title}</div>
               )}
             </div>
+
+            <div className="space-y-2">
+              <Label.Root htmlFor="requestType">
+                Request Type <Label.Asterisk />
+              </Label.Root>
+              <Select.Root
+                value={formData.requestType}
+                onValueChange={(value) => {
+                  onFormDataChange('requestType', value);
+                  if (value !== 'other') {
+                    onFormDataChange('customRequestType', '');
+                  }
+                }}
+              >
+                <Select.Trigger>
+                  <Select.Value placeholder="Select request type" />
+                </Select.Trigger>
+                <Select.Content>
+                  {requestTypeOptions.map(option => (
+                    <Select.Item key={option.value} value={option.value}>
+                      <div>
+                        <div className="font-medium">{option.label}</div>
+                        <div className="text-xs text-text-sub-600">{option.description}</div>
+                      </div>
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+              {errors.requestType && (
+                <div className="text-xs text-red-600">{errors.requestType}</div>
+              )}
+            </div>
+
+            {formData.requestType === 'other' && (
+              <div className="space-y-2">
+                <Label.Root htmlFor="customRequestType">
+                  Custom Request Type <Label.Asterisk />
+                </Label.Root>
+                <Input.Root>
+                  <Input.Wrapper>
+                    <Input.Input
+                      id="customRequestType"
+                      placeholder="Describe your custom request type"
+                      value={formData.customRequestType}
+                      onChange={(e) => onFormDataChange('customRequestType', e.target.value)}
+                      className={errors.customRequestType ? 'border-red-500' : ''}
+                    />
+                  </Input.Wrapper>
+                </Input.Root>
+                {errors.customRequestType && (
+                  <div className="text-xs text-red-600">{errors.customRequestType}</div>
+                )}
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label.Root htmlFor="description">
@@ -538,10 +610,8 @@ export function UnifiedRequestForm({
                 value={formData.location}
                 onValueChange={(value) => {
                   onFormDataChange('location', value);
-                  if (value === 'other') {
-                    setCustomLocation('');
-                  } else {
-                    setCustomLocation('');
+                  if (value !== 'other') {
+                    onFormDataChange('customLocation', '');
                   }
                 }}
               >
@@ -561,9 +631,9 @@ export function UnifiedRequestForm({
                 <Input.Root>
                   <Input.Wrapper>
                     <Input.Input
-                      placeholder="Enter location"
-                      value={customLocation}
-                      onChange={(e) => setCustomLocation(e.target.value)}
+                      placeholder="Enter custom location"
+                      value={formData.customLocation}
+                      onChange={(e) => onFormDataChange('customLocation', e.target.value)}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -596,8 +666,17 @@ export function UnifiedRequestForm({
                   <span className="font-medium">Request:</span> {formData.title}
                 </div>
                 <div>
-                  <span className="font-medium">Description:</span> {formData.description}
+                  <span className="font-medium">Type:</span> {
+                    formData.requestType === 'other' 
+                      ? formData.customRequestType 
+                      : requestTypeOptions.find(t => t.value === formData.requestType)?.label
+                  }
                 </div>
+                {formData.description && (
+                  <div>
+                    <span className="font-medium">Description:</span> {formData.description}
+                  </div>
+                )}
                 <div>
                   <span className="font-medium">Care Recipient:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
@@ -624,7 +703,7 @@ export function UnifiedRequestForm({
                 )}
                 {formData.location && (
                   <div>
-                    <span className="font-medium">Where:</span> {formData.location === 'other' ? customLocation : locations.find(l => l.id === formData.location)?.name}
+                    <span className="font-medium">Where:</span> {formData.location === 'other' ? formData.customLocation : locations.find(l => l.id === formData.location)?.name}
                   </div>
                 )}
                 {formData.notes && (

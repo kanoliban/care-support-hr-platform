@@ -34,6 +34,8 @@ export default function CareEventDialog({
   
   const [formData, setFormData] = React.useState<RequestFormData>({
     title: '',
+    requestType: '',
+    customRequestType: '',
     description: '',
     careRecipient: '',
     assignedPerson: '',
@@ -47,6 +49,7 @@ export default function CareEventDialog({
       endDate: ''
     },
     location: '',
+    customLocation: '',
     notes: '',
   });
 
@@ -67,15 +70,19 @@ export default function CareEventDialog({
   };
 
   const handleSave = async () => {
-    // Validate required fields
-    const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
-    
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    // Description is now optional - removed validation
-    if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
-    if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
-    if (!formData.startDate) newErrors.startDate = 'Start date is required';
-    if (!formData.endDate) newErrors.endDate = 'End date is required';
+      // Validate required fields
+      const newErrors: Partial<Record<keyof RequestFormData, string>> = {};
+      
+      if (!formData.title.trim()) newErrors.title = 'Title is required';
+      if (!formData.requestType) newErrors.requestType = 'Request type is required';
+      if (formData.requestType === 'other' && !formData.customRequestType.trim()) {
+        newErrors.customRequestType = 'Custom request type is required';
+      }
+      // Description is now optional - removed validation
+      if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
+      if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
+      if (!formData.startDate) newErrors.startDate = 'Start date is required';
+      if (!formData.endDate) newErrors.endDate = 'End date is required';
 
     setErrors(newErrors);
     
@@ -101,7 +108,7 @@ export default function CareEventDialog({
         type: 'care-shift', // Simplified - all requests are care-shifts
         startDate: formData.startDate,
         endDate: formData.endDate,
-        location: formData.location,
+        location: formData.location === 'other' ? formData.customLocation : formData.location,
         description: formData.description,
         assignedCaregiver: formData.assignedPerson === 'open-to-anyone' ? 'Open to anyone' : formData.assignedPerson,
         client: formData.careRecipient,
@@ -113,6 +120,7 @@ export default function CareEventDialog({
         metadata: {
           notes: formData.notes,
           isOpenToAnyone: formData.assignedPerson === 'open-to-anyone',
+          requestType: formData.requestType === 'other' ? formData.customRequestType : formData.requestType,
         },
       };
 
