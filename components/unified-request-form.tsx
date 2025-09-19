@@ -851,7 +851,6 @@ export function UnifiedRequestForm({
         {/* Progress Steps */}
         <div className="flex items-center mt-4 space-x-2">
           {steps.map((step, index) => {
-            const Icon = step.icon;
             const isCompleted = index < currentStepIndex;
             const isCurrent = index === currentStepIndex;
             
@@ -859,7 +858,9 @@ export function UnifiedRequestForm({
               <React.Fragment key={step.id}>
                 <div className="flex items-center">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-600 text-white text-xs font-medium">
-                    <Icon className="w-4 h-4" />
+                    {step.icon === RiUserLine && <RiUserLine className="w-4 h-4" />}
+                    {step.icon === RiCalendarLine && <RiCalendarLine className="w-4 h-4" />}
+                    {step.icon === RiCheckLine && <RiCheckLine className="w-4 h-4" />}
                   </div>
                 </div>
                 {index < steps.length - 1 && (
