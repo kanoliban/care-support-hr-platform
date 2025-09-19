@@ -20,6 +20,7 @@ export interface RequestFormData {
   // Who - Who needs help or who's providing it
   careRecipient: string;
   assignedPerson: string;
+  customAssignedPerson: string; // New: custom person when "Other" is selected
   
   // When - Date and time
   startDate: Date;
@@ -98,6 +99,7 @@ const teamMembers = [
   { id: 'annie', name: 'Annie', roles: ['Backup PCA'], availability: 'Random on-call' },
   { id: 'uncle-jim', name: 'Uncle Jim', roles: ['Family', 'Backup PCA'], availability: 'On-call' },
   { id: 'dan', name: 'Dan (Bro in-law)', roles: ['Family', 'Backup PCA'], availability: 'On-call' },
+  { id: 'other', name: 'Other', roles: ['Outside care team'], availability: 'Custom person' },
 ];
 
 const locations = [
@@ -218,6 +220,9 @@ export function UnifiedRequestForm({
         // Description is now optional - removed validation
         if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
         if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
+        if (formData.assignedPerson === 'other' && !formData.customAssignedPerson.trim()) {
+          newErrors.customAssignedPerson = 'Custom person is required';
+        }
         break;
       
       case 'schedule':
@@ -292,45 +297,29 @@ export function UnifiedRequestForm({
               )}
             </div>
 
-            {formData.requestType === 'other' && (
-              <div className="space-y-2">
-                <Label.Root htmlFor="customRequestType">
-                  Custom Request Type <Label.Asterisk />
-                </Label.Root>
-                <Input.Root>
-                  <Input.Wrapper>
-                    <Input.Input
-                      id="customRequestType"
-                      placeholder="Describe your custom request type"
-                      value={formData.customRequestType}
-                      onChange={(e) => onFormDataChange('customRequestType', e.target.value)}
-                      className={errors.customRequestType ? 'border-red-500' : ''}
-                    />
-                  </Input.Wrapper>
-                </Input.Root>
-                {errors.customRequestType && (
-                  <div className="text-xs text-red-600">{errors.customRequestType}</div>
-                )}
-              </div>
-            )}
-
             <div className="space-y-2">
               <Label.Root htmlFor="title">
-                Request Details <Label.Asterisk />
+                {formData.requestType === 'other' ? 'Custom Request Type' : 'Request Details'} <Label.Asterisk />
               </Label.Root>
               <Input.Root>
                 <Input.Wrapper>
                   <Input.Input
                     id="title"
-                    value={formData.title}
-                    onChange={(e) => onFormDataChange('title', e.target.value)}
+                    value={formData.requestType === 'other' ? formData.customRequestType : formData.title}
+                    onChange={(e) => {
+                      if (formData.requestType === 'other') {
+                        onFormDataChange('customRequestType', e.target.value);
+                      } else {
+                        onFormDataChange('title', e.target.value);
+                      }
+                    }}
                     placeholder={getTitlePlaceholder(formData.requestType)}
-                    className={errors.title ? 'border-red-500' : ''}
+                    className={errors.title || errors.customRequestType ? 'border-red-500' : ''}
                   />
                 </Input.Wrapper>
               </Input.Root>
-              {errors.title && (
-                <div className="text-xs text-red-600">{errors.title}</div>
+              {(errors.title || errors.customRequestType) && (
+                <div className="text-xs text-red-600">{errors.title || errors.customRequestType}</div>
               )}
             </div>
 
@@ -384,7 +373,12 @@ export function UnifiedRequestForm({
                 </Label.Root>
                 <Select.Root
                   value={formData.assignedPerson}
-                  onValueChange={(value) => onFormDataChange('assignedPerson', value)}
+                  onValueChange={(value) => {
+                    onFormDataChange('assignedPerson', value);
+                    if (value !== 'other') {
+                      onFormDataChange('customAssignedPerson', '');
+                    }
+                  }}
                 >
                   <Select.Trigger>
                     <Select.Value placeholder="Select team member" />
@@ -401,6 +395,28 @@ export function UnifiedRequestForm({
                   <div className="text-xs text-red-600">{errors.assignedPerson}</div>
                 )}
               </div>
+
+              {formData.assignedPerson === 'other' && (
+                <div className="space-y-2">
+                  <Label.Root htmlFor="customAssignedPerson">
+                    Custom Person <Label.Asterisk />
+                  </Label.Root>
+                  <Input.Root>
+                    <Input.Wrapper>
+                      <Input.Input
+                        id="customAssignedPerson"
+                        placeholder="Enter name of person outside care team"
+                        value={formData.customAssignedPerson}
+                        onChange={(e) => onFormDataChange('customAssignedPerson', e.target.value)}
+                        className={errors.customAssignedPerson ? 'border-red-500' : ''}
+                      />
+                    </Input.Wrapper>
+                  </Input.Root>
+                  {errors.customAssignedPerson && (
+                    <div className="text-xs text-red-600">{errors.customAssignedPerson}</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -706,7 +722,11 @@ export function UnifiedRequestForm({
                   <span className="font-medium">Care Recipient:</span> {careRecipients.find(r => r.id === formData.careRecipient)?.name}
                 </div>
                 <div>
-                  <span className="font-medium">Assigned to:</span> {teamMembers.find(m => m.id === formData.assignedPerson)?.name}
+                  <span className="font-medium">Assigned to:</span> {
+                    formData.assignedPerson === 'other' 
+                      ? formData.customAssignedPerson 
+                      : teamMembers.find(m => m.id === formData.assignedPerson)?.name
+                  }
                 </div>
                 <div>
                   <span className="font-medium">When:</span> {format(formData.startDate || selectedTime, 'MMM dd, yyyy')} at {format(formData.startDate || selectedTime, 'h:mm a')} - {format(formData.endDate || addHours(selectedTime, 1), 'h:mm a')}

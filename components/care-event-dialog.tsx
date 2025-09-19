@@ -39,6 +39,7 @@ export default function CareEventDialog({
     description: '',
     careRecipient: '',
     assignedPerson: '',
+    customAssignedPerson: '',
     startDate: selectedTime,
     endDate: addHours(selectedTime, 1),
     isRecurring: false,
@@ -81,6 +82,9 @@ export default function CareEventDialog({
       // Description is now optional - removed validation
       if (!formData.careRecipient) newErrors.careRecipient = 'Care recipient is required';
       if (!formData.assignedPerson) newErrors.assignedPerson = 'Assigned person is required';
+      if (formData.assignedPerson === 'other' && !formData.customAssignedPerson.trim()) {
+        newErrors.customAssignedPerson = 'Custom person is required';
+      }
       if (!formData.startDate) newErrors.startDate = 'Start date is required';
       if (!formData.endDate) newErrors.endDate = 'End date is required';
 
@@ -110,7 +114,11 @@ export default function CareEventDialog({
         endDate: formData.endDate,
         location: formData.location === 'other' ? formData.customLocation : formData.location,
         description: formData.description,
-        assignedCaregiver: formData.assignedPerson === 'open-to-anyone' ? 'Open to anyone' : formData.assignedPerson,
+        assignedCaregiver: formData.assignedPerson === 'open-to-anyone' 
+          ? 'Open to anyone' 
+          : formData.assignedPerson === 'other' 
+            ? formData.customAssignedPerson 
+            : formData.assignedPerson,
         client: formData.careRecipient,
         isRecurring: formData.isRecurring,
         recurrencePattern: recurrencePatternStr,
