@@ -10,6 +10,7 @@ import {
 import CareEventDialog from './care-event-dialog';
 import EventDetailsModal from './event-details-modal';
 import { DeleteConfirmationModal } from './delete-confirmation-modal';
+import { DragConfirmationModal } from './drag-confirmation-modal';
 import { useCareEvents } from '@/hooks/useCareEvents';
 import {
   addDays,
@@ -341,6 +342,8 @@ export function BigCalendar({
   const [draggedEvent, setDraggedEvent] = React.useState<CalendarData | null>(null);
   const [dragOverTimeSlot, setDragOverTimeSlot] = React.useState<{ day: Date; hour: string } | null>(null);
   const [isDragging, setIsDragging] = React.useState(false);
+  const [isDragModalOpen, setIsDragModalOpen] = React.useState(false);
+  const [dragTarget, setDragTarget] = React.useState<{ day: Date; hour: string } | null>(null);
   
   // Local events state for drag and drop updates
   const [localEvents, setLocalEvents] = React.useState<CalendarData[]>(events);
@@ -567,6 +570,21 @@ export function BigCalendar({
     setEventToDelete(null);
   };
 
+  // Drag confirmation modal handlers
+  const handleConfirmDrag = (dragType: 'this' | 'this-and-following' | 'all') => {
+    if (draggedEvent && dragTarget) {
+      performDragUpdate(draggedEvent, dragTarget.day, dragTarget.hour, dragType);
+    }
+  };
+
+  const handleCancelDrag = () => {
+    setIsDragModalOpen(false);
+    setDragTarget(null);
+    setDraggedEvent(null);
+    setDragOverTimeSlot(null);
+    setIsDragging(false);
+  };
+
   // Drag and drop handlers
   const handleDragStart = (e: React.DragEvent, eventData: CalendarData) => {
     setDraggedEvent(eventData);
@@ -601,6 +619,18 @@ export function BigCalendar({
     
     if (!draggedEvent) return;
 
+    // If it's a recurring event, show confirmation modal
+    if (draggedEvent.isRecurring) {
+      setDragTarget({ day, hour });
+      setIsDragModalOpen(true);
+      return;
+    }
+
+    // For non-recurring events, proceed directly
+    performDragUpdate(draggedEvent, day, hour, 'this');
+  };
+
+  const performDragUpdate = (event: CalendarData, day: Date, hour: string, dragType: 'this' | 'this-and-following' | 'all') => {
     try {
       // Parse the hour string to get the target time
       const targetHour = parseInt(hour);
@@ -608,43 +638,74 @@ export function BigCalendar({
       targetDate.setHours(targetHour, 0, 0, 0);
 
       // Calculate the duration of the original event
-      const duration = draggedEvent.endDate.getTime() - draggedEvent.startDate.getTime();
+      const duration = event.endDate.getTime() - event.startDate.getTime();
       const newEndDate = new Date(targetDate.getTime() + duration);
 
-      // Create the updated event
-      const updatedEvent: CalendarData = {
-        ...draggedEvent,
-        startDate: targetDate,
-        endDate: newEndDate,
-      };
-
       console.log('Event rescheduled:', {
-        original: { start: draggedEvent.startDate, end: draggedEvent.endDate },
+        original: { start: event.startDate, end: event.endDate },
         new: { start: targetDate, end: newEndDate },
         duration: duration / (1000 * 60), // duration in minutes
+        dragType,
       });
 
-      // Update the local events state to reflect the change
+      // Update the local events state based on drag type
       setLocalEvents(prevEvents => {
-        const newEvents = prevEvents.map(event => {
-          // Match events by title and original start date to handle recurring events
-          const isMatch = event.title === draggedEvent.title && 
-                         event.startDate.getTime() === draggedEvent.startDate.getTime() &&
-                         event.endDate.getTime() === draggedEvent.endDate.getTime();
-          
-          return isMatch ? updatedEvent : event;
-        });
+        let newEvents = [...prevEvents];
+
+        if (dragType === 'this') {
+          // Update only the specific event instance
+          newEvents = newEvents.map(eventItem => {
+            const isMatch = eventItem.title === event.title && 
+                           eventItem.startDate.getTime() === event.startDate.getTime() &&
+                           eventItem.endDate.getTime() === event.endDate.getTime();
+            
+            return isMatch ? { ...eventItem, startDate: targetDate, endDate: newEndDate } : eventItem;
+          });
+        } else if (dragType === 'this-and-following') {
+          // Update this event and all future occurrences
+          newEvents = newEvents.map(eventItem => {
+            if (eventItem.title === event.title && 
+                eventItem.isRecurring === event.isRecurring && 
+                eventItem.recurrencePattern === event.recurrencePattern) {
+              if (eventItem.startDate.getTime() >= event.startDate.getTime()) {
+                // This is the current or future occurrence
+                const timeDiff = eventItem.startDate.getTime() - event.startDate.getTime();
+                const newStartDate = new Date(targetDate.getTime() + timeDiff);
+                const newEndDate = new Date(newStartDate.getTime() + duration);
+                return { ...eventItem, startDate: newStartDate, endDate: newEndDate };
+              }
+            }
+            return eventItem;
+          });
+        } else if (dragType === 'all') {
+          // Update all occurrences of this recurring event
+          newEvents = newEvents.map(eventItem => {
+            if (eventItem.title === event.title && 
+                eventItem.isRecurring === event.isRecurring && 
+                eventItem.recurrencePattern === event.recurrencePattern) {
+              const timeDiff = eventItem.startDate.getTime() - event.startDate.getTime();
+              const newStartDate = new Date(targetDate.getTime() + timeDiff);
+              const newEndDate = new Date(newStartDate.getTime() + duration);
+              return { ...eventItem, startDate: newStartDate, endDate: newEndDate };
+            }
+            return eventItem;
+          });
+        }
         
         console.log('[DRAG DEBUG] Before update:', prevEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
         console.log('[DRAG DEBUG] After update:', newEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
-        console.log('[DRAG DEBUG] Updated event:', { title: updatedEvent.title, start: updatedEvent.startDate, end: updatedEvent.endDate });
-        console.log('[DRAG DEBUG] Dragged event:', { title: draggedEvent.title, start: draggedEvent.startDate, end: draggedEvent.endDate });
         
         return newEvents;
       });
 
       // Show success message
-      alert(`Event "${draggedEvent.title}" rescheduled to ${targetDate.toLocaleString()}`);
+      const message = dragType === 'this' 
+        ? `Event "${event.title}" rescheduled to ${targetDate.toLocaleString()}`
+        : dragType === 'this-and-following'
+        ? `Event "${event.title}" and all future occurrences rescheduled`
+        : `All occurrences of "${event.title}" rescheduled`;
+      
+      alert(message);
 
     } catch (error) {
       console.error('Error rescheduling event:', error);
@@ -654,6 +715,8 @@ export function BigCalendar({
       setDraggedEvent(null);
       setDragOverTimeSlot(null);
       setIsDragging(false);
+      setIsDragModalOpen(false);
+      setDragTarget(null);
     }
   };
 
@@ -862,6 +925,18 @@ export function BigCalendar({
             isRecurring={eventToDelete?.isRecurring || false}
             recurrencePattern={eventToDelete?.recurrencePattern}
             isDeleting={isDeleting}
+          />
+          
+          {/* Drag Confirmation Modal */}
+          <DragConfirmationModal
+            isOpen={isDragModalOpen}
+            onClose={handleCancelDrag}
+            onConfirm={handleConfirmDrag}
+            eventTitle={draggedEvent?.title || ''}
+            isRecurring={draggedEvent?.isRecurring || false}
+            recurrencePattern={draggedEvent?.recurrencePattern}
+            isDragging={isDragging}
+            newTime={dragTarget ? `${format(new Date(dragTarget.day), 'MMM dd')} at ${parseInt(dragTarget.hour)}:00` : undefined}
           />
         </div>
       );
