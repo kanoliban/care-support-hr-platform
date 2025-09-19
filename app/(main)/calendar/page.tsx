@@ -18,6 +18,33 @@ import { CareNotifications } from '@/components/care-notifications';
 import CareEventDialog from '@/components/care-event-dialog';
 
 const calendarData: CalendarData[] = [
+  // TEST EVENT for today (September 19, 2025) to test week/month view consistency
+  {
+    startDate: new Date('2025-09-19T10:00:00'),
+    endDate: new Date('2025-09-19T11:00:00'),
+    title: 'TEST EVENT - Click Me!',
+    completed: false,
+    type: 'event',
+    people: [
+      {
+        alt: 'Test User',
+        image: '/images/avatar/illustration/james.png',
+        color: 'red',
+      },
+    ],
+    platform: 'Test Location',
+    description: 'This is a test event to verify week/month view consistency',
+    assignedCaregiver: 'Test User',
+    client: 'Test Client',
+    isRecurring: false,
+    status: 'scheduled',
+    visibility: 'care-team-only',
+    metadata: {
+      requestType: 'Test',
+      notes: 'Test event for debugging',
+      isOpenToAnyone: false,
+    },
+  },
   // Rob's Family Care Schedule - Real Data (using current date)
   {
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 9, 0),
