@@ -860,18 +860,21 @@ export function UnifiedRequestForm({
                 <div className="flex items-center">
                   <div
                     className={cn(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors",
+                      "flex items-center justify-center w-8 h-8 rounded-full text-xs font-medium transition-colors border-2",
                       isCompleted
-                        ? "bg-purple-600 text-white"
+                        ? "bg-blue-600 text-white border-blue-600"
                         : isCurrent
-                        ? "bg-purple-100 text-purple-800"
-                        : "bg-gray-100 text-gray-800"
+                        ? "bg-blue-100 text-blue-800 border-blue-300"
+                        : "bg-gray-100 text-gray-600 border-gray-300"
                     )}
                   >
                     {isCompleted ? (
-                      <span className="text-white font-bold">✓</span>
+                      <RiCheckLine className="w-4 h-4 text-white" />
                     ) : (
-                      <span className="font-bold">{index + 1}</span>
+                      <Icon className={cn(
+                        "w-4 h-4",
+                        isCurrent ? "text-blue-800" : "text-gray-600"
+                      )} />
                     )}
                   </div>
                 </div>
