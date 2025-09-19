@@ -93,35 +93,27 @@ export default function CalendarFilters({
     setSelectedDaysOption(options[nextIndex]);
   };
 
-  const [dateRangeIndex, setDateRangeIndex] = React.useState(0);
-  
-  const dateRangeOptions = [
-    // Current week
-    () => {
-      const today = new Date();
-      return { start: startOfWeek(today, { weekStartsOn: 1 }), end: endOfWeek(today, { weekStartsOn: 1 }) };
-    },
-    // Next week
-    () => {
-      const nextWeek = addDays(new Date(), 7);
-      return { start: startOfWeek(nextWeek, { weekStartsOn: 1 }), end: endOfWeek(nextWeek, { weekStartsOn: 1 }) };
-    },
-    // This month
-    () => {
-      const today = new Date();
-      return { start: new Date(today.getFullYear(), today.getMonth(), 1), end: new Date(today.getFullYear(), today.getMonth() + 1, 0) };
-    },
-    // Next month
-    () => {
-      const today = new Date();
-      return { start: new Date(today.getFullYear(), today.getMonth() + 1, 1), end: new Date(today.getFullYear(), today.getMonth() + 2, 0) };
-    }
-  ];
-
   const handleDateRangeClick = () => {
-    const nextIndex = (dateRangeIndex + 1) % dateRangeOptions.length;
-    setDateRangeIndex(nextIndex);
-    const newRange = dateRangeOptions[nextIndex]();
+    console.log('Date range clicked, current range:', currentDateRange);
+    
+    const today = new Date();
+    
+    // Create different date ranges
+    const currentWeek = { start: startOfWeek(today, { weekStartsOn: 1 }), end: endOfWeek(today, { weekStartsOn: 1 }) };
+    const nextWeek = { start: startOfWeek(addDays(today, 7), { weekStartsOn: 1 }), end: endOfWeek(addDays(today, 7), { weekStartsOn: 1 }) };
+    const thisMonth = { start: new Date(today.getFullYear(), today.getMonth(), 1), end: new Date(today.getFullYear(), today.getMonth() + 1, 0) };
+    const nextMonth = { start: new Date(today.getFullYear(), today.getMonth() + 1, 1), end: new Date(today.getFullYear(), today.getMonth() + 2, 0) };
+    
+    // Simple cycling approach - just cycle through the ranges
+    const ranges = [currentWeek, nextWeek, thisMonth, nextMonth];
+    const currentIndex = ranges.findIndex(range => 
+      format(range.start, 'yyyy-MM-dd') === format(currentDateRange.start, 'yyyy-MM-dd')
+    );
+    
+    const nextIndex = (currentIndex + 1) % ranges.length;
+    const newRange = ranges[nextIndex];
+    
+    console.log('Switching to range:', newRange);
     
     setCurrentDateRange(newRange);
     onDateRangeChange?.(newRange.start, newRange.end);
