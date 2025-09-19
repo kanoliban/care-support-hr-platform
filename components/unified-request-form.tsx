@@ -616,8 +616,8 @@ export function UnifiedRequestForm({
               </div>
 
               {formData.isRecurring && (
-                <div className="space-y-4 p-4 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3 p-3 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label.Root>Frequency</Label.Root>
                       <Select.Root
@@ -665,8 +665,8 @@ export function UnifiedRequestForm({
                             className={cn(
                               "w-10 h-10 text-sm font-medium border rounded-lg transition-colors",
                               formData.recurrencePattern.daysOfWeek.includes(day.value)
-                                ? 'bg-primary-600 border-primary-600 text-white'
-                                : 'border-stroke-soft-200 hover:border-stroke-soft-300 hover:bg-bg-soft-50'
+                                ? 'bg-primary-500 border-primary-500 text-white'
+                                : 'bg-white border-stroke-soft-200 hover:border-stroke-soft-300 hover:bg-bg-soft-50 text-text-strong-950'
                             )}
                           >
                             {day.label}
@@ -692,8 +692,8 @@ export function UnifiedRequestForm({
                   </div>
 
                   {/* Summary */}
-                  <div className="p-3 bg-white rounded border border-stroke-soft-200">
-                    <p className="text-sm text-text-sub-600">
+                  <div className="p-2 bg-white rounded border border-stroke-soft-200">
+                    <p className="text-xs text-text-sub-600">
                       {`Repeat ${formData.recurrencePattern.frequency} every ${formData.recurrencePattern.interval} ${
                         formData.recurrencePattern.frequency === 'daily' ? 'day(s)' :
                         formData.recurrencePattern.frequency === 'weekly' ? 'week(s)' :
