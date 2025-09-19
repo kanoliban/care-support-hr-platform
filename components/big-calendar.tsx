@@ -587,6 +587,11 @@ export function BigCalendar({
 
   // Drag and drop handlers
   const handleDragStart = (e: React.DragEvent, eventData: CalendarData) => {
+    console.log('[DRAG DEBUG] handleDragStart called:', { 
+      title: eventData.title, 
+      isRecurring: eventData.isRecurring,
+      recurrencePattern: eventData.recurrencePattern 
+    });
     setDraggedEvent(eventData);
     setIsDragging(true);
     
@@ -617,15 +622,27 @@ export function BigCalendar({
   const handleDrop = (e: React.DragEvent, day: Date, hour: string) => {
     e.preventDefault();
     
-    if (!draggedEvent) return;
-
-    // If it's a recurring event, show confirmation modal
-    if (draggedEvent.isRecurring) {
-      setDragTarget({ day, hour });
-      setIsDragModalOpen(true);
+    console.log('[DRAG DEBUG] handleDrop called:', { 
+      draggedEvent: draggedEvent?.title, 
+      isRecurring: draggedEvent?.isRecurring,
+      hasDraggedEvent: !!draggedEvent 
+    });
+    
+    if (!draggedEvent) {
+      console.log('[DRAG DEBUG] No dragged event, returning');
       return;
     }
 
+    // If it's a recurring event, show confirmation modal
+    if (draggedEvent.isRecurring) {
+      console.log('[DRAG DEBUG] Recurring event detected, showing modal');
+      setDragTarget({ day, hour });
+      setIsDragModalOpen(true);
+      console.log('[DRAG DEBUG] Modal state set:', { isDragModalOpen: true, dragTarget: { day, hour } });
+      return;
+    }
+
+    console.log('[DRAG DEBUG] Non-recurring event, proceeding directly');
     // For non-recurring events, proceed directly
     performDragUpdate(draggedEvent, day, hour, 'this');
   };
@@ -928,6 +945,7 @@ export function BigCalendar({
           />
           
           {/* Drag Confirmation Modal */}
+          {console.log('[DRAG DEBUG] Rendering modal with state:', { isDragModalOpen, draggedEvent: draggedEvent?.title, isRecurring: draggedEvent?.isRecurring })}
           <DragConfirmationModal
             isOpen={isDragModalOpen}
             onClose={handleCancelDrag}
