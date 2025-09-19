@@ -68,9 +68,10 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
       return event;
     }));
 
-    // Create update notification
+    // Create update notification inline
     if (updatedEvent) {
-      await sendNotification({
+      const notification: CareEventNotification = {
+        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         eventId: id,
         type: 'update',
         recipient: updatedEvent.assignedCaregiver || updatedEvent.client || 'care-team',
@@ -78,14 +79,15 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
         scheduledTime: new Date(),
         sent: false,
         deliveryMethod: 'in-app',
-      });
+      };
+      setNotifications(prev => [...prev, notification]);
     }
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
 
     return updatedEvent!;
-  }, [sendNotification]);
+  }, []);
 
   const deleteEvent = useCallback(async (eventId: string): Promise<void> => {
     let deletedEvent: CareEvent | undefined;
@@ -98,9 +100,10 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
     // Remove associated notifications
     setNotifications(prev => prev.filter(notif => notif.eventId !== eventId));
 
-    // Create cancellation notification
+    // Create cancellation notification inline
     if (deletedEvent) {
-      await sendNotification({
+      const notification: CareEventNotification = {
+        id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         eventId: eventId,
         type: 'cancellation',
         recipient: deletedEvent.assignedCaregiver || deletedEvent.client || 'care-team',
@@ -108,12 +111,13 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
         scheduledTime: new Date(),
         sent: false,
         deliveryMethod: 'in-app',
-      });
+      };
+      setNotifications(prev => [...prev, notification]);
     }
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
-  }, [sendNotification]);
+  }, []);
 
   const getEventsByDateRange = useCallback((startDate: Date, endDate: Date): CareEvent[] => {
     return events.filter(event => 
