@@ -637,17 +637,7 @@ export function UnifiedRequestForm({
                       id="end-date"
                       type="date"
                       value={format(formData.endDate || addHours(selectedTime, 1), 'yyyy-MM-dd')}
-                      onChange={(e) => {
-                        const newDate = new Date(e.target.value);
-                        const newEndDateTime = new Date(
-                          newDate.getFullYear(), 
-                          newDate.getMonth(), 
-                          newDate.getDate(), 
-                          formData.endDate?.getHours() || addHours(selectedTime, 1).getHours(), 
-                          formData.endDate?.getMinutes() || addHours(selectedTime, 1).getMinutes()
-                        );
-                        onFormDataChange('endDate', newEndDateTime);
-                      }}
+                      onChange={handleEndDateChange}
                       className={errors.endDate ? 'border-red-500' : ''}
                     />
                   </Input.Wrapper>
@@ -667,18 +657,7 @@ export function UnifiedRequestForm({
                       id="start-time"
                       type="time"
                       value={format(formData.startDate || selectedTime, 'HH:mm')}
-                      onChange={(e) => {
-                        const [hours, minutes] = e.target.value.split(':');
-                        const newStartDateTime = new Date(formData.startDate || selectedTime);
-                        newStartDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-                        onFormDataChange('startDate', newStartDateTime);
-                        
-                        // Maintain duration
-                        const currentDuration = formData.endDate ? 
-                          (formData.endDate.getTime() - formData.startDate!.getTime()) : 
-                          60 * 60 * 1000; // 1 hour default
-                        onFormDataChange('endDate', new Date(newStartDateTime.getTime() + currentDuration));
-                      }}
+                      onChange={handleStartTimeChange}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -692,12 +671,7 @@ export function UnifiedRequestForm({
                       id="end-time"
                       type="time"
                       value={format(formData.endDate || addHours(selectedTime, 1), 'HH:mm')}
-                      onChange={(e) => {
-                        const [hours, minutes] = e.target.value.split(':');
-                        const newEndDateTime = new Date(formData.startDate || selectedTime);
-                        newEndDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-                        onFormDataChange('endDate', newEndDateTime);
-                      }}
+                      onChange={handleEndTimeChange}
                     />
                   </Input.Wrapper>
                 </Input.Root>
@@ -711,7 +685,7 @@ export function UnifiedRequestForm({
                   type="checkbox"
                   id="isRecurring"
                   checked={formData.isRecurring}
-                  onChange={(e) => onFormDataChange('isRecurring', e.target.checked)}
+                  onChange={handleRecurringToggleChange}
                   className="rounded border-stroke-soft-200"
                 />
                 <Label.Root htmlFor="isRecurring">
@@ -749,7 +723,7 @@ export function UnifiedRequestForm({
                             type="number"
                             min="1"
                             value={formData.recurrencePattern.interval}
-                            onChange={(e) => handleRecurringChange('interval', parseInt(e.target.value) || 1)}
+                            onChange={handleIntervalChange}
                           />
                         </Input.Wrapper>
                       </Input.Root>
@@ -788,7 +762,7 @@ export function UnifiedRequestForm({
                         <Input.Input
                           type="date"
                           value={formData.recurrencePattern.endDate || ''}
-                          onChange={(e) => handleRecurringChange('endDate', e.target.value)}
+                          onChange={handleRecurringEndDateChange}
                           min={format(selectedDate, 'yyyy-MM-dd')}
                         />
                       </Input.Wrapper>
@@ -883,7 +857,7 @@ export function UnifiedRequestForm({
                 <textarea
                   id="notes"
                   value={formData.notes}
-                  onChange={(e) => onFormDataChange('notes', e.target.value)}
+                  onChange={handleNotesChange}
                   placeholder="Any additional information, special requirements, or notes..."
                   rows={2}
                 />
