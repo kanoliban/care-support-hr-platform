@@ -61,6 +61,24 @@ export default function CalendarFilters({
     onDateRangeChange?.(newRange.start, newRange.end);
   };
 
+  const handleLast14DaysClick = () => {
+    const today = new Date();
+    const fourteenDaysAgo = subDays(today, 13);
+    const newRange = { start: fourteenDaysAgo, end: today };
+    
+    setCurrentDateRange(newRange);
+    onDateRangeChange?.(newRange.start, newRange.end);
+  };
+
+  const handleLast30DaysClick = () => {
+    const today = new Date();
+    const thirtyDaysAgo = subDays(today, 29);
+    const newRange = { start: thirtyDaysAgo, end: today };
+    
+    setCurrentDateRange(newRange);
+    onDateRangeChange?.(newRange.start, newRange.end);
+  };
+
   const handleDateRangeClick = () => {
     // For now, just cycle through different ranges
     // In a real implementation, this would open a date picker
@@ -92,7 +110,12 @@ export default function CalendarFilters({
         <ButtonGroup.Root size='small' className='min-w-0'>
           <ButtonGroup.Item onClick={handleLast7DaysClick}>
             Last 7 days
-            <ButtonGroup.Icon as={RiArrowDownSLine} />
+          </ButtonGroup.Item>
+          <ButtonGroup.Item onClick={handleLast14DaysClick}>
+            Last 14 days
+          </ButtonGroup.Item>
+          <ButtonGroup.Item onClick={handleLast30DaysClick}>
+            Last 30 days
           </ButtonGroup.Item>
           <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
             <ButtonGroup.Icon as={RiCalendarLine} />
