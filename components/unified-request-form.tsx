@@ -665,7 +665,7 @@ export function UnifiedRequestForm({
                             className={cn(
                               "w-10 h-10 text-sm font-medium border rounded-lg transition-colors",
                               formData.recurrencePattern.daysOfWeek.includes(day.value)
-                                ? 'bg-primary-500 border-primary-500 text-white'
+                                ? 'bg-purple-500 border-purple-500 text-white'
                                 : 'border-stroke-soft-200 hover:border-stroke-soft-300 hover:bg-bg-soft-50 text-text-strong-950'
                             )}
                           >
@@ -747,18 +747,6 @@ export function UnifiedRequestForm({
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label.Root htmlFor="notes">Additional Notes (Optional)</Label.Root>
-              <Textarea.Root simple>
-                <textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => onFormDataChange('notes', e.target.value)}
-                  placeholder="Any additional information, special requirements, or notes..."
-                  rows={2}
-                />
-              </Textarea.Root>
-            </div>
           </div>
         );
 
@@ -818,6 +806,20 @@ export function UnifiedRequestForm({
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Additional Notes */}
+            <div className="space-y-2">
+              <Label.Root htmlFor="notes">Additional Notes (Optional)</Label.Root>
+              <Textarea.Root simple>
+                <textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => onFormDataChange('notes', e.target.value)}
+                  placeholder="Any additional information, special requirements, or notes..."
+                  rows={2}
+                />
+              </Textarea.Root>
             </div>
 
           </div>
