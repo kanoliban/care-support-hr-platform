@@ -577,7 +577,6 @@ export default function PageCalendar() {
           showAllHours={true}
           view={currentView}
         />
-        {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
       </div>
       
       {/* Care Event Notifications */}
