@@ -436,7 +436,7 @@ export default function PageCalendar() {
     console.log('[CALENDAR DEBUG] Generated events:', events.length);
     console.log('[CALENDAR DEBUG] Static calendarData:', calendarData.length);
     return combinedEvents;
-  }, []);
+  }, [calendarData]);
 
   React.useEffect(() => {
     console.log('[CALENDAR DEBUG] useEffect running, calling generateCalendarEvents...');
