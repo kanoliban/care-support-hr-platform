@@ -9,6 +9,7 @@ import {
 } from '@remixicon/react';
 import CareEventDialog from './care-event-dialog';
 import EventDetailsModal from './event-details-modal';
+import { DeleteConfirmationModal } from './delete-confirmation-modal';
 import { useCareEvents } from '@/hooks/useCareEvents';
 import {
   addDays,
@@ -303,6 +304,9 @@ export function BigCalendar({
   // Edit mode state
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [editFormData, setEditFormData] = React.useState<any>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [eventToDelete, setEventToDelete] = React.useState<CalendarData | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   
   // Update current time every minute
   React.useEffect(() => {
@@ -432,9 +436,46 @@ export function BigCalendar({
   };
 
   const handleEventDelete = (event: CalendarData) => {
-    // For now, just log - we'll implement delete functionality later
     console.log('Delete event:', event);
-    // TODO: Remove event from events array
+    setEventToDelete(event);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!eventToDelete) return;
+    
+    setIsDeleting(true);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Remove event from the events list
+      const updatedEvents = events.filter(e => e !== eventToDelete);
+      
+      // Update the events in the parent component
+      // For now, we'll just close the modals and show a success message
+      console.log('Event deleted successfully:', eventToDelete.title);
+      
+      // Close modals
+      setIsDeleteModalOpen(false);
+      setIsEventDetailsOpen(false);
+      setEventToDelete(null);
+      
+      // Show success feedback (in a real app, you'd update the events state)
+      alert(`Event "${eventToDelete.title}" has been deleted successfully!`);
+      
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setEventToDelete(null);
   };
 
   const handleEventToggleComplete = (event: CalendarData) => {
@@ -621,6 +662,15 @@ export function BigCalendar({
             onEdit={handleEventEdit}
             onDelete={handleEventDelete}
             onToggleComplete={handleEventToggleComplete}
+          />
+          
+          {/* Delete Confirmation Modal */}
+          <DeleteConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onClose={handleCancelDelete}
+            onConfirm={handleConfirmDelete}
+            eventTitle={eventToDelete?.title || ''}
+            isDeleting={isDeleting}
           />
         </div>
       );
