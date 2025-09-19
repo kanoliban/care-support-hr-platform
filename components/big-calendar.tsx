@@ -767,15 +767,17 @@ export function BigCalendar({
   if (view === 'month') {
     const monthDays = getMonthDays(currentStartDate);
     const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const currentWeekStart = startOfWeek(currentStartDate, { weekStartsOn: 0 }); // Start from Sunday
+    const weekDates = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
     
     return (
       <div className={cnExt('w-full bg-bg-white-0', className)}>
         <div className='overflow-clip rounded-xl border border-stroke-soft-200'>
           {/* Month Header */}
           <div className='grid grid-cols-7 border-b border-stroke-soft-200 bg-bg-weak-50'>
-            {weekDays.map(day => (
+            {weekDays.map((day, index) => (
               <div key={day} className='p-3 text-center text-sm font-medium text-text-sub-600'>
-                {day}
+                {format(weekDates[index], 'EEE, MMM d').toUpperCase()}
               </div>
             ))}
           </div>
@@ -900,7 +902,7 @@ export function BigCalendar({
                         : 'bg-bg-weak-50 text-text-soft-400'
                     }`}
                   >
-                    {format(day, 'EEE').toUpperCase()}
+                    {format(day, 'EEE, MMM d').toUpperCase()}
                   </div>
                 ))}
               </header>
