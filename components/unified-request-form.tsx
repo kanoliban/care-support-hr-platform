@@ -829,7 +829,7 @@ export function UnifiedRequestForm({
   return (
     <div className="bg-white border-t border-stroke-soft-200">
       {/* Wizard Header */}
-      <div className="px-6 py-4 border-b border-stroke-soft-200">
+      <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-text-sub-600">
