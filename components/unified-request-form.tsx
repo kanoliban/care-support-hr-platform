@@ -198,8 +198,8 @@ export function UnifiedRequestForm({
               <Label.Root htmlFor="description">
                 More details <Label.Asterisk />
               </Label.Root>
-              <Textarea.Root>
-                <Textarea.Input
+              <Textarea.Root simple>
+                <textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => onFormDataChange('description', e.target.value)}
@@ -418,8 +418,8 @@ export function UnifiedRequestForm({
 
             <div className="space-y-2">
               <Label.Root htmlFor="notes">Additional Notes (Optional)</Label.Root>
-              <Textarea.Root>
-                <Textarea.Input
+              <Textarea.Root simple>
+                <textarea
                   id="notes"
                   value={formData.notes}
                   onChange={(e) => onFormDataChange('notes', e.target.value)}
