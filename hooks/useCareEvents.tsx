@@ -59,14 +59,16 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
   const updateEvent = useCallback(async (eventData: CareEventUpdateData): Promise<CareEvent> => {
     const { id, ...updateData } = eventData;
     
-    setEvents(prev => prev.map(event => 
-      event.id === id 
-        ? { ...event, ...updateData, updatedAt: new Date() }
-        : event
-    ));
+    let updatedEvent: CareEvent | undefined;
+    setEvents(prev => prev.map(event => {
+      if (event.id === id) {
+        updatedEvent = { ...event, ...updateData, updatedAt: new Date() };
+        return updatedEvent;
+      }
+      return event;
+    }));
 
     // Create update notification
-    const updatedEvent = events.find(e => e.id === id);
     if (updatedEvent) {
       await sendNotification({
         eventId: id,
@@ -82,24 +84,27 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    return events.find(e => e.id === id)!;
-  }, [events]);
+    return updatedEvent!;
+  }, [sendNotification]);
 
   const deleteEvent = useCallback(async (eventId: string): Promise<void> => {
-    const event = events.find(e => e.id === eventId);
+    let deletedEvent: CareEvent | undefined;
     
-    setEvents(prev => prev.filter(event => event.id !== eventId));
+    setEvents(prev => {
+      deletedEvent = prev.find(e => e.id === eventId);
+      return prev.filter(event => event.id !== eventId);
+    });
     
     // Remove associated notifications
     setNotifications(prev => prev.filter(notif => notif.eventId !== eventId));
 
     // Create cancellation notification
-    if (event) {
+    if (deletedEvent) {
       await sendNotification({
         eventId: eventId,
         type: 'cancellation',
-        recipient: event.assignedCaregiver || event.client || 'care-team',
-        message: `Care event "${event.title}" has been cancelled`,
+        recipient: deletedEvent.assignedCaregiver || deletedEvent.client || 'care-team',
+        message: `Care event "${deletedEvent.title}" has been cancelled`,
         scheduledTime: new Date(),
         sent: false,
         deliveryMethod: 'in-app',
@@ -108,7 +113,7 @@ export function CareEventsProvider({ children }: { children: React.ReactNode }) 
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
-  }, [events]);
+  }, [sendNotification]);
 
   const getEventsByDateRange = useCallback((startDate: Date, endDate: Date): CareEvent[] => {
     return events.filter(event => 

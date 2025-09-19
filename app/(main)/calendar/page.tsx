@@ -258,7 +258,7 @@ export default function PageCalendar() {
 
   React.useEffect(() => {
     setFilteredEvents(generateCalendarEvents);
-  }, [generateCalendarEvents]);
+  }, []);
 
   const handleDateRangeChange = (startDate: Date, endDate: Date) => {
     setCurrentDate(startDate);

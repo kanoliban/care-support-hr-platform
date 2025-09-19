@@ -8,7 +8,7 @@ import {
   RiMapPin2Fill,
 } from '@remixicon/react';
 import CareEventDialog from './care-event-dialog';
-import { useCareEvents } from '@/hooks/useCareEvents';
+// import { useCareEvents } from '@/hooks/useCareEvents';
 import {
   addDays,
   addHours,
@@ -264,7 +264,7 @@ export function BigCalendar({
   className,
   onDateChange,
 }: BigCalendarProps) {
-  const { events: careEvents, getEventsByDateRange } = useCareEvents();
+  // const { events: careEvents, getEventsByDateRange } = useCareEvents();
   const [currentStartDate, setCurrentStartDate] =
     React.useState(defaultStartDate);
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
