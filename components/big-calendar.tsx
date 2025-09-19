@@ -795,19 +795,6 @@ export function BigCalendar({
                 <div key={weekIndex} className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200'>
                   {Array.from({ length: 7 }, (_, dayIndex) => {
                     const day = monthDays[weekIndex * 7 + dayIndex];
-                            const dayEvents = localEvents.filter(event => {
-                              const eventDate = new Date(event.startDate);
-                              const isMatch = isSameDay(eventDate, day);
-                              if (isMatch) {
-                                console.log('[MONTH VIEW DEBUG] Event match found:', event.title, 'on', format(day, 'yyyy-MM-dd'));
-                              }
-                              return isMatch;
-                            });
-                            
-                            if (dayEvents.length > 0) {
-                              console.log('[MONTH VIEW DEBUG] Day:', format(day, 'yyyy-MM-dd'), 'has', dayEvents.length, 'events');
-                              console.log('[MONTH VIEW DEBUG] Events:', dayEvents.map(e => e.title));
-                            }
                     
                     const isCurrentMonth = day.getMonth() === currentStartDate.getMonth();
                     const isToday = isSameDay(day, new Date());
@@ -841,23 +828,30 @@ export function BigCalendar({
                           {format(day, 'd')}
                         </div>
                         <div className='space-y-1'>
-                          {dayEvents.slice(0, 3).map((event, eventIndex) => (
+                          {/* Get all events for this day using the same method as week view */}
+                          {localEvents.filter(event => {
+                            const eventStart = new Date(event.startDate);
+                            return isSameDay(eventStart, day);
+                          }).slice(0, 3).map((event, eventIndex) => (
                             <CalendarEventItem
                               key={`${event.title}-${eventIndex}`}
                               {...event}
                               isTiny={true}
-                              onClick={() => {
-                                console.log('[MONTH VIEW DEBUG] Event clicked:', event.title);
-                                handleEventClick(event);
-                              }}
+                              onClick={() => handleEventClick(event)}
                               onDragStart={handleDragStart}
                               onDragEnd={handleDragEnd}
                               isDragging={isDragging && draggedEvent?.title === event.title}
                             />
                           ))}
-                          {dayEvents.length > 3 && (
+                          {localEvents.filter(event => {
+                            const eventStart = new Date(event.startDate);
+                            return isSameDay(eventStart, day);
+                          }).length > 3 && (
                             <div className='text-xs text-text-soft-600'>
-                              +{dayEvents.length - 3} more
+                              +{localEvents.filter(event => {
+                                const eventStart = new Date(event.startDate);
+                                return isSameDay(eventStart, day);
+                              }).length - 3} more
                             </div>
                           )}
                         </div>
