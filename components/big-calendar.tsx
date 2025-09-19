@@ -253,6 +253,7 @@ type BigCalendarProps = {
   className?: ClassValue;
   events: CalendarData[];
   showAllHours?: boolean;
+  onDateChange?: (date: Date) => void;
 };
 
 export function BigCalendar({
@@ -261,6 +262,7 @@ export function BigCalendar({
   events,
   showAllHours = true, // Default to showing all hours
   className,
+  onDateChange,
 }: BigCalendarProps) {
   const { events: careEvents, getEventsByDateRange } = useCareEvents();
   const [currentStartDate, setCurrentStartDate] =
@@ -298,11 +300,15 @@ export function BigCalendar({
   const groupedEvents = groupEventsByHour(events);
 
   const handlePrevDay = () => {
-    setCurrentStartDate(subDays(currentStartDate, 1));
+    const newDate = subDays(currentStartDate, 1);
+    setCurrentStartDate(newDate);
+    onDateChange?.(newDate);
   };
 
   const handleNextDay = () => {
-    setCurrentStartDate(addDays(currentStartDate, 1));
+    const newDate = addDays(currentStartDate, 1);
+    setCurrentStartDate(newDate);
+    onDateChange?.(newDate);
   };
 
   const handleTimeSlotClick = (day: Date, hour: string) => {

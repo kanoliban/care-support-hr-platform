@@ -250,51 +250,10 @@ export default function PageCalendar() {
   const [selectedDate, setSelectedDate] = React.useState(new Date());
   const [selectedTime, setSelectedTime] = React.useState(new Date());
 
-  // Generate dynamic calendar events (using static data for now)
-  const generateCalendarEvents = React.useCallback((): CalendarData[] => {
-    const events: CalendarData[] = [];
-    const today = new Date();
-    
-    // Add some additional care-related events with current dates
-    events.push(
-      {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
-        title: 'Current Care Shift',
-        type: 'meeting',
-        completed: false,
-        people: [
-          {
-            alt: 'Jennifer Smith',
-            image: '/images/avatar/illustration/arthur.png',
-            color: 'blue',
-          },
-          {
-            alt: 'Elena Chen',
-            image: '/images/avatar/illustration/sophia.png',
-            color: 'purple',
-          },
-        ],
-        platform: 'Care Location',
-      },
-      {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 10, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 11, 0),
-        title: 'Care Plan Review Meeting',
-        type: 'meeting',
-        completed: false,
-      },
-      {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 14, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 15, 30),
-        title: 'Caregiver Training Session',
-        type: 'event',
-        location: 'Training Center',
-        completed: false,
-      }
-    );
-
-    return [...events, ...calendarData]; // Combine with existing static data
+  // Generate calendar events (using static data to avoid infinite loops)
+  const generateCalendarEvents = React.useMemo((): CalendarData[] => {
+    // Return static data only - no dynamic date generation to avoid infinite loops
+    return calendarData;
   }, []);
 
   React.useEffect(() => {
@@ -414,6 +373,7 @@ export default function PageCalendar() {
           defaultStartDate={currentDate}
           events={filteredEvents}
           showAllHours={true}
+          onDateChange={(date) => setCurrentDate(date)}
         />
       </div>
       
