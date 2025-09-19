@@ -175,7 +175,10 @@ function CalendarEventItem({
 }: CalendarEventItemProps) {
   return (
     <div
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent event from bubbling up to time slot
+        onClick?.();
+      }}
       className={cnExt(
         'flex min-h-0 w-full min-w-0 flex-col gap-2 overflow-hidden rounded-lg px-3 py-2',
         'backdrop-blur-xl cursor-pointer hover:opacity-80 transition-opacity',

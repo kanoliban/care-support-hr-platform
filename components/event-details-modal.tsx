@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { RiCloseLine, RiEditLine, RiDeleteBinLine, RiCheckLine } from '@remixicon/react';
 import * as Button from '@/components/ui/button';
+import * as Label from '@/components/ui/label';
 import { CalendarData } from './big-calendar';
 
 interface EventDetailsModalProps {
@@ -41,13 +42,15 @@ export default function EventDetailsModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-bg-white-0 rounded-2xl w-full max-w-md shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200">
-        <div className="p-6">
+      <div className="bg-bg-white-0 rounded-2xl w-full max-w-2xl shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200">
+        <div className="p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-text-strong-950">
-              Event Details
-            </h3>
+            <div>
+              <h3 className="text-lg font-semibold text-text-strong-950">
+                Event Details
+              </h3>
+            </div>
             <button
               onClick={onClose}
               className="text-text-soft-400 hover:text-text-sub-600 transition-colors p-2 rounded hover:bg-bg-weak-50 flex items-center justify-center"
@@ -60,13 +63,13 @@ export default function EventDetailsModal({
           <div className="space-y-4">
             {/* Title */}
             <div>
-              <label className="text-sm font-medium text-text-sub-600">Title</label>
+              <Label.Root className="text-sm font-medium text-text-sub-600">Title</Label.Root>
               <p className="text-text-strong-950 mt-1">{event.title}</p>
             </div>
 
             {/* Time */}
             <div>
-              <label className="text-sm font-medium text-text-sub-600">Time</label>
+              <Label.Root className="text-sm font-medium text-text-sub-600">Time</Label.Root>
               <p className="text-text-strong-950 mt-1">
                 {format(event.startDate, 'MMM dd, yyyy')} • {format(event.startDate, 'h:mm a')} - {format(event.endDate, 'h:mm a')}
               </p>
@@ -74,14 +77,14 @@ export default function EventDetailsModal({
 
             {/* Type */}
             <div>
-              <label className="text-sm font-medium text-text-sub-600">Type</label>
+              <Label.Root className="text-sm font-medium text-text-sub-600">Type</Label.Root>
               <p className="text-text-strong-950 mt-1 capitalize">{event.type || 'Event'}</p>
             </div>
 
             {/* Location */}
             {event.location && (
               <div>
-                <label className="text-sm font-medium text-text-sub-600">Location</label>
+                <Label.Root className="text-sm font-medium text-text-sub-600">Location</Label.Root>
                 <p className="text-text-strong-950 mt-1">{event.location}</p>
               </div>
             )}
@@ -89,7 +92,7 @@ export default function EventDetailsModal({
             {/* Platform */}
             {event.platform && (
               <div>
-                <label className="text-sm font-medium text-text-sub-600">Platform</label>
+                <Label.Root className="text-sm font-medium text-text-sub-600">Platform</Label.Root>
                 <p className="text-text-strong-950 mt-1">{event.platform}</p>
               </div>
             )}
@@ -97,7 +100,7 @@ export default function EventDetailsModal({
             {/* People */}
             {event.people && event.people.length > 0 && (
               <div>
-                <label className="text-sm font-medium text-text-sub-600">People</label>
+                <Label.Root className="text-sm font-medium text-text-sub-600">People</Label.Root>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {event.people.map((person, index) => (
                     <div key={index} className="flex items-center gap-2">
@@ -121,7 +124,7 @@ export default function EventDetailsModal({
 
             {/* Status */}
             <div>
-              <label className="text-sm font-medium text-text-sub-600">Status</label>
+              <Label.Root className="text-sm font-medium text-text-sub-600">Status</Label.Root>
               <p className="text-text-strong-950 mt-1">
                 {event.completed ? '✅ Completed' : '⏳ Pending'}
               </p>
