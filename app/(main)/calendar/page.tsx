@@ -505,11 +505,14 @@ export default function PageCalendar() {
 
   // Calculate dynamic description
   const getTodayDescription = () => {
+    console.log('[CALENDAR DEBUG] getTodayDescription called with filteredEvents:', filteredEvents.length);
     const todayEvents = filteredEvents.filter(event => 
       event.startDate.toDateString() === new Date().toDateString()
     );
+    console.log('[CALENDAR DEBUG] todayEvents:', todayEvents.length);
     const shifts = todayEvents.filter(e => e.type === 'meeting').length;
     const appointments = todayEvents.filter(e => e.type === 'event').length;
+    console.log('[CALENDAR DEBUG] shifts:', shifts, 'appointments:', appointments);
     return `You have ${shifts} care shifts and ${appointments} appointments today 🏥`;
   };
 
@@ -561,6 +564,7 @@ export default function PageCalendar() {
           }}
         />
         {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
+        {console.log('[CALENDAR DEBUG] filteredEvents:', filteredEvents)}
       </div>
       
       {/* Care Event Notifications */}
