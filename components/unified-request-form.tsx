@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine } from '@remixicon/react';
+import { RiCalendarLine, RiTimeLine, RiCheckLine, RiUserLine, RiEyeLine } from '@remixicon/react';
 import { cn } from '@/utils/cn';
 import * as Button from '@/components/ui/button';
 import * as Input from '@/components/ui/input';
@@ -74,7 +74,7 @@ const steps = [
     id: 'review',
     title: 'Review',
     description: 'Confirm your request',
-    icon: RiCheckLine
+    icon: RiEyeLine
   }
 ];
 
