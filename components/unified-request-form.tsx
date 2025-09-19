@@ -281,7 +281,7 @@ export function UnifiedRequestForm({
                   }
                 }}
               >
-                <Select.Trigger>
+                <Select.Trigger className="min-h-[3rem]">
                   <Select.Value placeholder="Select request type" />
                 </Select.Trigger>
                 <Select.Content>
