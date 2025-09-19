@@ -55,9 +55,6 @@ export function DeleteConfirmationModal({
                 <h3 className="text-lg font-semibold text-text-strong-950">
                   Delete Event
                 </h3>
-                <p className="text-sm text-text-sub-600">
-                  This action cannot be undone
-                </p>
               </div>
             </div>
             <button
@@ -71,7 +68,7 @@ export function DeleteConfirmationModal({
           {/* Content */}
           <div className="mb-6">
             <Label.Root className="text-sm font-medium text-text-sub-600 mb-2">
-              {isRecurring ? 'How would you like to delete this recurring event?' : 'Are you sure you want to delete this event?'}
+              Are you sure you want to delete this event?
             </Label.Root>
             <div className="bg-bg-soft-50 rounded-lg p-3 border border-stroke-soft-200 mb-4">
               <p className="text-text-strong-950 font-medium">{eventTitle}</p>
@@ -142,6 +139,11 @@ export function DeleteConfirmationModal({
                 <p className="text-sm text-primary-800">{getDeletionDescription()}</p>
               </div>
             )}
+          </div>
+
+          {/* Warning Message */}
+          <div className="mb-4 p-3 bg-error-50 rounded-lg border border-error-200">
+            <p className="text-sm text-error-800 font-medium">This action cannot be undone</p>
           </div>
 
           {/* Actions */}
