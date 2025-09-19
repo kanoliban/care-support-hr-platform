@@ -336,7 +336,8 @@ export function UnifiedRequestForm({
                   onChange={(e) => onFormDataChange('description', e.target.value)}
                   placeholder="Any additional context or special instructions..."
                   className={errors.description ? 'border-red-500' : ''}
-                  rows={2}
+                  rows={1}
+                  style={{ height: 'auto', minHeight: '2.5rem', maxHeight: '5rem' }}
                 />
               </Textarea.Root>
               {errors.description && (
