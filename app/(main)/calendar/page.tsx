@@ -429,6 +429,7 @@ export default function PageCalendar() {
             },
           }
         );
+    }
 
     return [...events, ...calendarData]; // Combine with existing static data
   };
