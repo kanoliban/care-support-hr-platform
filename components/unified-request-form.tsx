@@ -55,6 +55,7 @@ export interface UnifiedRequestFormProps {
   onStepChange?: (stepIndex: number) => void;
   selectedDate: Date;
   selectedTime: Date;
+  isEditMode?: boolean;
 }
 
 const steps = [
@@ -147,7 +148,8 @@ export function UnifiedRequestForm({
   onCancel,
   onStepChange,
   selectedDate,
-  selectedTime
+  selectedTime,
+  isEditMode = false
 }: UnifiedRequestFormProps) {
   const [currentStep, setCurrentStep] = React.useState(steps[0].id);
   const [inviteSent, setInviteSent] = React.useState(false);
@@ -860,7 +862,7 @@ export function UnifiedRequestForm({
               size="medium"
               disabled={isSaving}
             >
-              {isSaving ? 'Creating Request...' : 'Create Request'}
+              {isSaving ? (isEditMode ? 'Updating Request...' : 'Creating Request...') : (isEditMode ? 'Update Request' : 'Create Request')}
             </Button.Root>
           ) : (
             <Button.Root

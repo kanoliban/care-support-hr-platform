@@ -90,6 +90,19 @@ export default function CareEventDialog({
     }
   }, [isEditMode, initialFormData]);
 
+  // Reset form data when dialog opens in edit mode
+  React.useEffect(() => {
+    if (isOpen && isEditMode && initialFormData) {
+      console.log('Setting form data for edit mode:', initialFormData);
+      setFormData(initialFormData);
+    }
+  }, [isOpen, isEditMode, initialFormData]);
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('CareEventDialog state:', { isOpen, isEditMode, hasInitialData: !!initialFormData, formData });
+  }, [isOpen, isEditMode, initialFormData, formData]);
+
   const handleFormDataChange = (field: keyof RequestFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
@@ -206,6 +219,7 @@ export default function CareEventDialog({
             onStepChange={setCurrentStepIndex}
             selectedDate={selectedDate}
             selectedTime={selectedTime}
+            isEditMode={isEditMode}
           />
         </div>
       </div>

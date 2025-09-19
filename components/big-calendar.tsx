@@ -412,6 +412,7 @@ export function BigCalendar({
     };
 
     // Set edit mode and form data
+    console.log('Converting event to form data:', { event, formData });
     setEditFormData(formData);
     setIsEditMode(true);
     setSelectedDate(event.startDate);
