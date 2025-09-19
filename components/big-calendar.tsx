@@ -758,10 +758,12 @@ export function BigCalendar({
   // Render month view differently
   if (view === 'month') {
     console.log('[MONTH VIEW DEBUG] Rendering month view with', localEvents.length, 'localEvents');
+    console.log('[MONTH VIEW DEBUG] currentStartDate:', currentStartDate);
     console.log('[MONTH VIEW DEBUG] localEvents:', localEvents.map(e => ({ title: e.title, startDate: e.startDate })));
     
     // For month view, create a proper calendar grid
     const firstDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth(), 1);
+    console.log('[MONTH VIEW DEBUG] firstDayOfMonth:', firstDayOfMonth);
     const lastDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth() + 1, 0);
     
     // Get the first day of the week for the calendar grid (Sunday)
