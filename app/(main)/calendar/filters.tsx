@@ -60,14 +60,6 @@ export default function CalendarFilters({
     onTodayClick?.();
   };
 
-  const handleLast7DaysClick = () => {
-    const today = new Date();
-    const sevenDaysAgo = subDays(today, 6);
-    const newRange = { start: sevenDaysAgo, end: today };
-    
-    setCurrentDateRange(newRange);
-    onDateRangeChange?.(newRange.start, newRange.end);
-  };
 
   const handleDateRangeClick = () => {
     // For now, just cycle through different ranges
@@ -150,7 +142,7 @@ export default function CalendarFilters({
   };
   return (
     <div className='-mt-1 flex flex-col justify-between gap-4 lg:mt-0 lg:flex-row lg:flex-wrap lg:gap-3'>
-      {/* Unified Navigation Controls */}
+      {/* Navigation Controls */}
       <div className='flex items-center gap-2'>
         <Button.Root 
           variant='neutral' 
@@ -160,23 +152,6 @@ export default function CalendarFilters({
         >
           <Button.Icon as={RiArrowLeftSLine} />
         </Button.Root>
-        
-        <ButtonGroup.Root size='small'>
-          <ButtonGroup.Item 
-            onClick={() => handleViewChange('week')}
-            className={currentView === 'week' ? 'bg-primary-50 text-primary-600' : ''}
-          >
-            <ButtonGroup.Icon as={RiTimeLine} />
-            Week
-          </ButtonGroup.Item>
-          <ButtonGroup.Item 
-            onClick={() => handleViewChange('month')}
-            className={currentView === 'month' ? 'bg-primary-50 text-primary-600' : ''}
-          >
-            <ButtonGroup.Icon as={RiLayoutGridLine} />
-            Month
-          </ButtonGroup.Item>
-        </ButtonGroup.Root>
         
         <Button.Root 
           variant='neutral' 
@@ -198,16 +173,29 @@ export default function CalendarFilters({
           Today
         </Button.Root>
 
-        <ButtonGroup.Root size='small' className='min-w-0'>
-          <ButtonGroup.Item onClick={handleLast7DaysClick}>
-            Last 7 days
-            <ButtonGroup.Icon as={RiArrowDownSLine} />
-          </ButtonGroup.Item>
-          <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
-            <ButtonGroup.Icon as={RiCalendarLine} />
-            <div className='truncate'>{formatDateRange()}</div>
-          </ButtonGroup.Item>
-        </ButtonGroup.Root>
+          <ButtonGroup.Root size='small'>
+            <ButtonGroup.Item 
+              onClick={() => handleViewChange('week')}
+              className={currentView === 'week' ? 'bg-primary-50 text-primary-600' : ''}
+            >
+              <ButtonGroup.Icon as={RiTimeLine} />
+              Week
+            </ButtonGroup.Item>
+            <ButtonGroup.Item 
+              onClick={() => handleViewChange('month')}
+              className={currentView === 'month' ? 'bg-primary-50 text-primary-600' : ''}
+            >
+              <ButtonGroup.Icon as={RiLayoutGridLine} />
+              Month
+            </ButtonGroup.Item>
+          </ButtonGroup.Root>
+          
+          <ButtonGroup.Root size='small' className='min-w-0'>
+            <ButtonGroup.Item className='min-w-0' onClick={handleDateRangeClick}>
+              <ButtonGroup.Icon as={RiCalendarLine} />
+              <div className='truncate'>{formatDateRange()}</div>
+            </ButtonGroup.Item>
+          </ButtonGroup.Root>
       </div>
 
       <Input.Root className='lg:hidden'>
