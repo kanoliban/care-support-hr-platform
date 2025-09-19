@@ -811,7 +811,7 @@ export function UnifiedRequestForm({
             {/* Additional Notes */}
             <div className="space-y-2">
               <Label.Root htmlFor="notes">Additional Notes (Optional)</Label.Root>
-              <Textarea.Root simple>
+              <Textarea.Root>
                 <textarea
                   id="notes"
                   value={formData.notes}

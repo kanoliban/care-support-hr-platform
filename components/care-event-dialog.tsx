@@ -127,13 +127,9 @@ export default function CareEventDialog({
         notifications: ['30-min-before'],
         status: 'scheduled' as CareEventStatus,
         visibility: 'care-team-only' as CareEventVisibility,
-        metadata: {
-          notes: formData.notes,
-          isOpenToAnyone: formData.assignedPerson === 'open-to-anyone',
-          requestType: formData.requestType === 'other' ? formData.customRequestType : formData.requestType,
-          customPersonContact: formData.assignedPerson === 'other' ? formData.customPersonContact : undefined,
-          customPersonContactType: formData.assignedPerson === 'other' ? formData.customPersonContactType : undefined,
-        },
+            metadata: {
+              notes: formData.notes,
+            },
       };
 
       const newEvent = await createEvent(eventData);

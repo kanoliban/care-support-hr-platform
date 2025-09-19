@@ -1650,7 +1650,7 @@ const columns: ColumnDef<Data>[] = [
                 member.id === selectedMember?.id 
                   ? {
                       ...member,
-                      role: currentRole,
+                      role: currentRole as "admin" | "owner" | "member" | "viewer",
                       permissions: currentPermissions
                     }
                   : member
