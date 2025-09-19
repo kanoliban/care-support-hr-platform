@@ -226,42 +226,54 @@ export default function PageCalendar() {
     const events: CalendarData[] = [];
     const today = new Date();
     
-    // Add some additional care-related events with current dates
+    // Add test events for the current calendar view (September 19, 2025)
+    const testDate = new Date(2025, 8, 19); // September 19, 2025 (month is 0-indexed)
+    
     events.push(
       {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
-        title: 'Current Care Shift',
+        startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 9, 0),
+        endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 17, 0),
+        title: 'Jim Nelson - Primary Care Shift',
         type: 'meeting',
         completed: false,
         people: [
           {
-            alt: 'Jennifer Smith',
+            alt: 'Jim Nelson',
+            image: '/images/avatar/illustration/james.png',
+            color: 'blue',
+          },
+        ],
+        platform: 'Rob\'s Home',
+      },
+      {
+        startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 14, 0),
+        endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 15, 30),
+        title: 'Doctor Appointment - Dr. Martinez',
+        type: 'event',
+        completed: false,
+        location: 'Medical Center',
+        people: [
+          {
+            alt: 'Dr. Martinez',
+            image: '/images/avatar/illustration/emma.png',
+            color: 'yellow',
+          },
+        ],
+      },
+      {
+        startDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate(), 20, 0),
+        endDate: new Date(testDate.getFullYear(), testDate.getMonth(), testDate.getDate() + 1, 8, 0),
+        title: 'Jennifer - Overnight Care',
+        type: 'meeting',
+        completed: false,
+        people: [
+          {
+            alt: 'Jennifer',
             image: '/images/avatar/illustration/arthur.png',
             color: 'blue',
           },
-          {
-            alt: 'Elena Chen',
-            image: '/images/avatar/illustration/sophia.png',
-            color: 'purple',
-          },
         ],
-        platform: 'Care Location',
-      },
-      {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 10, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 11, 0),
-        title: 'Care Plan Review Meeting',
-        type: 'meeting',
-        completed: false,
-      },
-      {
-        startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 14, 0),
-        endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 15, 30),
-        title: 'Caregiver Training Session',
-        type: 'event',
-        location: 'Training Center',
-        completed: false,
+        platform: 'Rob\'s Home',
       }
     );
 
