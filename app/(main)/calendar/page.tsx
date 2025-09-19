@@ -215,6 +215,7 @@ export default function PageCalendar() {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>([]);
+  const [currentView, setCurrentView] = React.useState<'month' | 'week'>('week');
   
   // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
@@ -429,6 +430,10 @@ export default function PageCalendar() {
     setFilteredEvents(filtered);
   };
 
+  const handleViewChange = (view: 'month' | 'week') => {
+    setCurrentView(view);
+  };
+
   // Care Event Dialog handlers
   const handleCreateRequestClick = () => {
     setSelectedDate(new Date());
@@ -484,6 +489,8 @@ export default function PageCalendar() {
           onTodayClick={handleTodayClick}
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
+          currentView={currentView}
+          onViewChange={handleViewChange}
         />
 
         <CalendarTabs className='mt-5 lg:mt-3' />
@@ -493,6 +500,7 @@ export default function PageCalendar() {
           defaultStartDate={currentDate}
           events={filteredEvents}
           showAllHours={true}
+          view={currentView}
         />
         {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
       </div>

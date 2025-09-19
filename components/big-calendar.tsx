@@ -324,6 +324,7 @@ type BigCalendarProps = {
   className?: ClassValue;
   events: CalendarData[];
   showAllHours?: boolean;
+  view?: 'month' | 'week';
 };
 
 export function BigCalendar({
@@ -332,6 +333,7 @@ export function BigCalendar({
   events,
   showAllHours = true, // Default to showing all hours
   className,
+  view = 'week',
 }: BigCalendarProps) {
   // Debug logging
   console.log('BigCalendar received events:', events);
