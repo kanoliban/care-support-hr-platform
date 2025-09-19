@@ -58,11 +58,8 @@ export function DeleteConfirmationModal({
           {/* Content */}
           <div className="mb-6">
             <Label.Root className="text-sm font-medium text-text-sub-600 mb-2">
-              Are you sure you want to delete this event?
+              {isRecurring ? 'Are you sure you want to delete this recurring event?' : 'Are you sure you want to delete this event?'}
             </Label.Root>
-            {isRecurring && (
-              <p className="text-sm text-text-sub-600 mb-4">This is a recurring event:</p>
-            )}
             <div className="bg-bg-soft-50 rounded-lg p-3 border border-stroke-soft-200 mb-4">
               <p className="text-text-strong-950 font-medium">{eventTitle}</p>
               {isRecurring && recurrencePattern && (
