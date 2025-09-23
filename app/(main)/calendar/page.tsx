@@ -613,8 +613,6 @@ export default function PageCalendar() {
             setFilteredEvents(updatedEvents);
           }}
         />
-        {console.log('[CALENDAR DEBUG] Passing to BigCalendar:', filteredEvents.length, 'events')}
-        {console.log('[CALENDAR DEBUG] filteredEvents:', filteredEvents)}
       </div>
       
       {/* Care Event Notifications */}
