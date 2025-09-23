@@ -22,7 +22,22 @@ import * as Label from '@/components/ui/label';
 import * as Select from '@/components/ui/select';
 
 import { CareResponsibilitiesSelector } from './care-responsibilities-selector';
-import type { TeamMemberFormData } from './unified-team-form';
+
+export interface TeamMemberFormData {
+  email: string;
+  phone: string;
+  name: string;
+  teamMemberCategory: 'family' | 'professional' | 'volunteer' | 'organization';
+  careRole: string;
+  careResponsibilities: string;
+  role: 'owner' | 'admin' | 'member' | 'viewer';
+  customMessage: string;
+  // Additional fields for manual mode
+  schedule: string;
+  availabilityType: 'flexible' | 'fixed' | 'on-call';
+  careNotes: string;
+  photo: string;
+}
 
 export interface InlineWizardProps {
   mode: 'invite' | 'manual';
@@ -224,16 +239,24 @@ export function InlineWizard({
   const isLastStep = currentStep === 'review';
 
   return (
-    <div className="bg-white">
+    <div className="bg-white border-t border-stroke-soft-200">
       <Stepper
         value={currentStep}
         onValidate={handleValidate}
         onValueChange={handleValueChange}
       >
         <div className="px-6 py-4 border-b border-stroke-soft-200">
-          <p className="text-sm text-text-sub-600">
-            Step {steps.findIndex((step) => step.id === currentStep) + 1} of {steps.length}
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-text-sub-600">
+              Step {steps.findIndex((step) => step.id === currentStep) + 1} of {steps.length}
+            </p>
+            <button
+              onClick={onCancel}
+              className="text-text-sub-600 hover:text-text-strong-950"
+            >
+              ×
+            </button>
+          </div>
           <StepperList className="mt-4 gap-4 overflow-x-auto">
             {steps.map((step) => (
               <StepperItem key={step.id} value={step.id} className="gap-2">
@@ -448,12 +471,14 @@ export function InlineWizard({
         </div>
 
         <div className="px-6 py-4 border-t border-stroke-soft-200 flex justify-between">
-          {!isFirstStep ? (
+          {isFirstStep ? (
+            <Button.Root variant="neutral" onClick={onCancel}>
+              Cancel
+            </Button.Root>
+          ) : (
             <StepperPrevTrigger asChild>
               <Button.Root variant="neutral">Back</Button.Root>
             </StepperPrevTrigger>
-          ) : (
-            <div></div>
           )}
 
           {isLastStep ? (

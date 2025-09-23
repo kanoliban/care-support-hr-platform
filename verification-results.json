@@ -1,0 +1,91 @@
+{
+  "timestamp": "2025-09-22T19:28:10.528Z",
+  "summary": {
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "successRate": "100%"
+  },
+  "checks": [
+    {
+      "file": "app/onboarding-caresupport/layout.tsx",
+      "status": "EXISTS",
+      "description": "Main Onboarding Layout"
+    },
+    {
+      "file": "app/onboarding-caresupport/components/onboarding-header.tsx",
+      "status": "EXISTS",
+      "description": "Onboarding Header"
+    },
+    {
+      "file": "app/onboarding-caresupport/components/onboarding-footer.tsx",
+      "status": "EXISTS",
+      "description": "Onboarding Footer"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/layout.tsx",
+      "status": "EXISTS",
+      "description": "Steps Layout"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/page.tsx",
+      "status": "EXISTS",
+      "description": "Steps Page"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/store.tsx",
+      "status": "EXISTS",
+      "description": "Steps Store (Jotai)"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/header.tsx",
+      "status": "EXISTS",
+      "description": "Steps Header"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/step-account.tsx",
+      "status": "VALID",
+      "description": "Step 1: Account Setup"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/step-care-recipient.tsx",
+      "status": "VALID",
+      "description": "Step 2: Care Recipient"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/step-care-team.tsx",
+      "status": "VALID",
+      "description": "Step 3: Care Team"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/step-scheduling.tsx",
+      "status": "VALID",
+      "description": "Step 4: Scheduling"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/step-permissions.tsx",
+      "status": "VALID",
+      "description": "Step 5: Permissions"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/step-review.tsx",
+      "status": "VALID",
+      "description": "Step 6: Review"
+    },
+    {
+      "file": "components/ui/tabs.tsx",
+      "status": "EXISTS",
+      "description": "Tabs UI Component"
+    },
+    {
+      "file": "components/recurring-pattern-selector.tsx",
+      "status": "EXISTS",
+      "description": "Recurring Pattern Selector"
+    },
+    {
+      "file": "app/onboarding-caresupport/steps/types/onboarding.ts",
+      "status": "EXISTS",
+      "description": "Onboarding Types"
+    }
+  ]
+}

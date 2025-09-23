@@ -1,19 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { RiUserAddLine, RiMailLine, RiUserLine } from '@remixicon/react';
+import { RiUserAddLine } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
 import * as Divider from '@/components/ui/divider';
-import * as FancyButton from '@/components/ui/fancy-button';
-import * as Input from '@/components/ui/input';
-import * as Label from '@/components/ui/label';
-import * as Select from '@/components/ui/select';
-import * as Textarea from '@/components/ui/textarea';
 import * as Radio from '@/components/ui/radio';
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { CareResponsibilitiesSelector } from './care-responsibilities-selector';
 import { InlineWizard } from './inline-wizard';
 
 export interface TeamMemberFormData {
@@ -38,8 +31,8 @@ interface UnifiedTeamFormProps {
   errors: Partial<Record<keyof TeamMemberFormData, string>>;
   isInviting?: boolean;
   isSaving?: boolean;
-  onSendInvitation?: () => void;
-  onSave?: () => void;
+  onSendInvitation?: (data: TeamMemberFormData) => void;
+  onSave?: (data: TeamMemberFormData) => void;
   onCancel: () => void;
   currentProfile: any;
 }
@@ -47,7 +40,7 @@ interface UnifiedTeamFormProps {
 export function UnifiedTeamForm({
   formData,
   onFormDataChange,
-  errors,
+  errors: _errors,
   isInviting = false,
   isSaving = false,
   onSendInvitation,
@@ -63,16 +56,18 @@ export function UnifiedTeamForm({
     setIsWizardActive(true);
   };
 
-  const handleWizardSave = (wizardData: any) => {
-    // Update form data with wizard data
-    Object.keys(wizardData).forEach(key => {
-      onFormDataChange(key, wizardData[key]);
+  const handleWizardSubmit = (data: TeamMemberFormData, submissionMode: 'invite' | 'manual') => {
+    (Object.entries(data) as [keyof TeamMemberFormData, string][]).forEach(([key, value]) => {
+      onFormDataChange(key, value);
     });
+
     setIsWizardActive(false);
     setMode(null);
-    // Trigger save
-    if (onSave) {
-      onSave();
+
+    if (submissionMode === 'invite') {
+      onSendInvitation?.(data);
+    } else {
+      onSave?.(data);
     }
   };
 
@@ -116,7 +111,7 @@ export function UnifiedTeamForm({
       <div className="space-y-3">
         <div className="text-label-sm text-center">How would you like to add this team member?</div>
         <Radio.Group 
-          value={mode} 
+          value={mode ?? undefined} 
           onValueChange={handleModeChange}
           className="space-y-3"
         >
@@ -126,13 +121,10 @@ export function UnifiedTeamForm({
               mode === 'invite' && 'shadow-none ring-primary-base',
             )}
           >
-            <div className="flex size-10 items-center justify-center rounded-full ring-1 ring-inset ring-stroke-soft-200">
-              <RiMailLine className="size-5 text-text-sub-600" />
-            </div>
             <div className="flex-1 space-y-1">
-              <div className="text-label-sm">Send Invitation</div>
+              <div className="text-label-sm">Invite by Email</div>
               <div className="text-paragraph-xs text-text-sub-600">
-                Invite someone to join the care team via email
+                Email an invitation to join the care team.
               </div>
             </div>
             <Radio.Item value="invite" />
@@ -144,13 +136,10 @@ export function UnifiedTeamForm({
               mode === 'manual' && 'shadow-none ring-primary-base',
             )}
           >
-            <div className="flex size-10 items-center justify-center rounded-full ring-1 ring-inset ring-stroke-soft-200">
-              <RiUserLine className="size-5 text-text-sub-600" />
-            </div>
             <div className="flex-1 space-y-1">
               <div className="text-label-sm">Add Manually</div>
               <div className="text-paragraph-xs text-text-sub-600">
-                Add team member directly without invitation
+                Create a team member without sending an invitation.
               </div>
             </div>
             <Radio.Item value="manual" />
@@ -164,7 +153,7 @@ export function UnifiedTeamForm({
       {!mode && (
         <div className="text-center py-12">
           <div className="text-text-sub-600">
-            Select a method above to start adding a team member.
+            Choose a method above, then follow the steps to add your team member.
           </div>
         </div>
       )}
@@ -172,10 +161,12 @@ export function UnifiedTeamForm({
       {/* Inline Wizard - Shows when mode is selected */}
       {mode && isWizardActive && (
         <InlineWizard
+          key={mode}
           mode={mode}
-          onSave={handleWizardSave}
+          initialData={formData}
+          onFieldChange={onFormDataChange}
+          onSubmit={handleWizardSubmit}
           onCancel={handleWizardCancel}
-          currentProfile={currentProfile}
           isSaving={mode === 'invite' ? isInviting : isSaving}
         />
       )}

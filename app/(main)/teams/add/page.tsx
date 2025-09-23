@@ -48,26 +48,26 @@ export default function AddTeamMemberPage() {
     }
   };
 
-  const validateForm = (): boolean => {
+  const validateForm = (data: TeamMemberFormData): boolean => {
     const newErrors: Partial<Record<keyof TeamMemberFormData, string>> = {};
 
     // Base validation for both modes
-    if (!formData.name.trim()) {
+    if (!data.name.trim()) {
       newErrors.name = 'Name is required';
     }
 
     // Require either email or phone
-    if (!formData.email.trim() && !formData.phone.trim()) {
+    if (!data.email.trim() && !data.phone.trim()) {
       newErrors.email = 'Email or phone number is required';
-    } else if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (data.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    if (!formData.careRole.trim()) {
+    if (!data.careRole.trim()) {
       newErrors.careRole = 'Care role is required';
     }
 
-    if (!formData.careResponsibilities.trim()) {
+    if (!data.careResponsibilities.trim()) {
       newErrors.careResponsibilities = 'Care responsibilities are required';
     }
 
@@ -75,8 +75,10 @@ export default function AddTeamMemberPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = async () => {
-    if (!validateForm()) {
+  const handleSave = async (overrideData?: TeamMemberFormData) => {
+    const payload = overrideData ?? formData;
+
+    if (!validateForm(payload)) {
       return;
     }
 
@@ -86,7 +88,7 @@ export default function AddTeamMemberPage() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('Adding new team member:', formData);
+      console.log('Adding new team member:', payload);
       
       // In real app, this would create the team member via API
       // For now, just redirect back to teams page
@@ -98,8 +100,10 @@ export default function AddTeamMemberPage() {
     }
   };
 
-  const handleSendInvitation = async () => {
-    if (!validateForm()) {
+  const handleSendInvitation = async (overrideData?: TeamMemberFormData) => {
+    const payload = overrideData ?? formData;
+
+    if (!validateForm(payload)) {
       return;
     }
 
@@ -110,7 +114,7 @@ export default function AddTeamMemberPage() {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       console.log('Sending invitation:', {
-        ...formData,
+        ...payload,
         profileId: currentProfile?.id,
         profileName: currentProfile?.name,
         invitedBy: 'Current User', // In real app, get from auth context
@@ -122,7 +126,7 @@ export default function AddTeamMemberPage() {
       // 2. Send email with invitation link
       // 3. Show success message
       
-      alert(`Invitation sent to ${formData.email}! They will receive an email to join ${currentProfile?.name}.`);
+      alert(`Invitation sent to ${payload.email}! They will receive an email to join ${currentProfile?.name}.`);
       
       // Reset form and redirect
       setFormData({

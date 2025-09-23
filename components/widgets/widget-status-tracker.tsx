@@ -2,6 +2,8 @@
 
 import { RiIndeterminateCircleFill, RiTeamLine } from '@remixicon/react';
 
+import { useRouter } from 'next/navigation';
+
 import { cnExt } from '@/utils/cn';
 import * as Avatar from '@/components/ui/avatar';
 import * as Badge from '@/components/ui/badge';
@@ -13,12 +15,19 @@ import * as WidgetBox from '@/components/widget-box';
 export default function WidgetStatusTracker({
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const router = useRouter();
+
   return (
     <WidgetBox.Root className="min-h-[380px]" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiTeamLine} />
         Care Team Status
-        <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+        <Button.Root
+          variant='neutral'
+          mode='stroke'
+          size='xsmall'
+          onClick={() => router.push('/teams')}
+        >
           View Team
         </Button.Root>
       </WidgetBox.Header>

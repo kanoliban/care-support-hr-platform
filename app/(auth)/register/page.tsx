@@ -1,9 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import {
   RiEyeLine,
   RiEyeOffLine,
+  RiHeartLine,
   RiInformationFill,
   RiLock2Line,
   RiMailLine,
@@ -66,16 +68,16 @@ export default function PageRegister() {
           )}
         >
           <div className='relative z-10 flex size-12 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200 lg:size-16'>
-            <RiUserAddLine className='size-6 text-text-sub-600 lg:size-8' />
+            <RiHeartLine className='size-6 text-purple-600 lg:size-8' />
           </div>
         </div>
 
         <div className='space-y-1 text-center'>
           <div className='text-title-h6 lg:text-title-h5'>
-            Create a new account
+            Join CareSupport
           </div>
           <div className='text-paragraph-sm text-text-sub-600 lg:text-paragraph-md'>
-            Enter your details to register.
+            Start coordinating care for your loved ones with confidence.
           </div>
         </div>
       </div>
@@ -125,7 +127,7 @@ export default function PageRegister() {
               <Input.Input
                 id='email'
                 type='email'
-                placeholder='hello@alignui.com'
+                placeholder='coordinator@caresupport.com'
                 required
               />
             </Input.Wrapper>
@@ -139,13 +141,15 @@ export default function PageRegister() {
           <PasswordInput id='password' required />
           <Hint.Root>
             <Hint.Icon as={RiInformationFill} />
-            Must contain 1 uppercase letter, 1 number, min. 8 characters.
+            Must contain 1 uppercase letter, 1 number, min. 8 characters. HIPAA compliant security.
           </Hint.Root>
         </div>
       </div>
 
-      <FancyButton.Root variant='primary' size='medium'>
-        Register
+      <FancyButton.Root variant='primary' size='medium' asChild>
+        <Link href='/onboarding-caresupport/steps'>
+          Create Account & Start Setup
+        </Link>
       </FancyButton.Root>
     </>
   );

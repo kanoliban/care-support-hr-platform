@@ -137,7 +137,7 @@ export type CalendarData = {
   startDate: Date;
   endDate: Date;
   title?: string;
-  type?: 'meeting' | 'event' | 'default';
+  type?: 'meeting' | 'event' | 'appointment' | 'transportation' | 'social' | 'default';
   location?: string;
   link?: string;
   platform?: string;
@@ -154,14 +154,22 @@ export type CalendarData = {
   client?: string;
   isRecurring?: boolean;
   recurrencePattern?: string;
+  recurringSchedule?: string; // Add recurring schedule field
   status?: string;
   visibility?: string;
+  // Split event properties for overnight events
+  isOvernightSplit?: boolean;
+  isFirstPart?: boolean;
+  isLastPart?: boolean;
   metadata?: {
     notes?: string;
     isOpenToAnyone?: boolean;
     requestType?: string;
     customPersonContact?: string;
     customPersonContactType?: string;
+    isConsolidated?: boolean;
+    originalEventCount?: number;
+    originalStartDate?: string;
   };
 };
 
@@ -171,12 +179,29 @@ type CalendarEventItemProps = CalendarData & {
   onDragStart?: (event: React.DragEvent, eventData: CalendarData) => void;
   onDragEnd?: (event: React.DragEvent) => void;
   isDragging?: boolean;
+  // Split event properties
+  isOvernightSplit?: boolean;
+  isFirstPart?: boolean;
+  isLastPart?: boolean;
 };
 
 const bgColors: Partial<Record<NonNullable<CalendarData['type']>, string>> = {
-  meeting: 'bg-information-lighter',
-  event: 'bg-warning-lighter',
-  default: 'bg-away-lighter',
+  meeting: 'bg-sky-100', // Light blue for scheduled caregiver shifts
+  event: 'bg-orange-100', // Orange for coverage gaps
+  appointment: 'bg-purple-100', // Purple for medical appointments
+  transportation: 'bg-yellow-100', // Yellow for transportation
+  social: 'bg-pink-100', // Pink for social visits
+  default: 'bg-green-100', // Light green for today's events
+};
+
+// Z-index mapping for proper layering
+const zIndexMapping: Partial<Record<NonNullable<CalendarData['type']>, string>> = {
+  meeting: 'z-0', // Base layer for caregiver shifts
+  appointment: 'z-10', // On top for medical appointments
+  transportation: 'z-10', // On top for transportation
+  social: 'z-10', // On top for social visits
+  event: 'z-5', // Middle layer for other events
+  default: 'z-0', // Base layer
 };
 
 function CalendarEventItem({
@@ -200,9 +225,14 @@ function CalendarEventItem({
   client,
   isRecurring,
   recurrencePattern,
+  recurringSchedule,
   status,
   visibility,
   metadata,
+  // Split event properties
+  isOvernightSplit,
+  isFirstPart,
+  isLastPart,
 }: CalendarEventItemProps) {
   const eventData: CalendarData = {
     startDate,
@@ -220,10 +250,32 @@ function CalendarEventItem({
     client,
     isRecurring,
     recurrencePattern,
+    recurringSchedule,
     status,
     visibility,
     metadata,
   };
+
+  // Calculate duration in hours for multi-hour events
+  const durationHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+  const isMultiHour = durationHours > 1;
+  
+  // For month view (isTiny=true): use fixed height slivers
+  // For week view (isTiny=false): use dynamic height based on duration
+  const eventHeight = isTiny 
+    ? '32px' // Fixed height for month view slivers
+    : isMultiHour 
+      ? `${Math.max(durationHours * 64, 64)}px` // Dynamic height for week view (64px per hour)
+      : '64px'; // Single hour events should be 64px tall
+
+  // Determine if this event is today or in the future
+  // For split overnight events, use the original event's start date for color consistency
+  const today = new Date();
+  const eventDate = isOvernightSplit ? 
+    new Date(metadata?.originalStartDate || startDate) : 
+    new Date(startDate);
+  const isToday = eventDate.toDateString() === today.toDateString();
+  const isFuture = eventDate > today;
 
   return (
     <div
@@ -234,8 +286,23 @@ function CalendarEventItem({
       }}
       onDragStart={(e) => {
         e.stopPropagation();
-        console.log('[DRAG DEBUG] CalendarEventItem onDragStart called with eventData:', eventData);
-        onDragStart?.(e, eventData);
+        // For split events, we need to reconstruct the original event for proper drag handling
+        const dragEventData = isOvernightSplit && metadata?.originalStartDate ? {
+          ...eventData,
+          startDate: new Date(metadata.originalStartDate),
+          // Calculate the original end date (start + 12 hours for overnight events)
+          endDate: new Date(new Date(metadata.originalStartDate).getTime() + 12 * 60 * 60 * 1000),
+          isOvernightSplit: false,
+          isFirstPart: false,
+          isLastPart: false,
+          metadata: {
+            ...metadata,
+            originalStartDate: undefined // Remove this to avoid confusion
+          }
+        } : eventData;
+        
+        console.log('[DRAG DEBUG] CalendarEventItem onDragStart called with eventData:', dragEventData);
+        onDragStart?.(e, dragEventData);
       }}
       onDragEnd={(e) => {
         e.stopPropagation();
@@ -245,26 +312,93 @@ function CalendarEventItem({
         'flex min-h-0 w-full min-w-0 flex-col gap-2 overflow-hidden rounded-lg px-3 py-2',
         'backdrop-blur-xl cursor-move hover:opacity-80 transition-opacity',
         'select-none', // Prevent text selection during drag
+        // Only use absolute positioning for week view multi-hour events
+        isTiny ? 'relative' : 'absolute', // Month view uses relative, week view uses absolute
+        // Color logic: completed/canceled events are red, today's events are green, future events are light blue
+        completed ? 'bg-red-100' : 
+        isToday ? 'bg-green-100' : 
+        isFuture ? 'bg-sky-100' : 
         bgColors[type],
         {
-          'bg-bg-weak-50': completed,
           'opacity-50 scale-95': isDragging,
         },
       )}
+      style={{
+        height: eventHeight, // Both month and week view use calculated height
+        zIndex: type === 'meeting' ? 0 : 10, // Base layer for caregiver shifts (meeting), on top for requests
+        ...(isTiny ? {} : {
+          top: 0, // Position at the top of the time slot (week view only)
+          left: 0, // Position at the left edge (week view only)
+          right: 0, // Extend to the right edge (week view only)
+        }),
+      }}
     >
       <div className='space-y-1'>
+        {/* Title - always show */}
         <div
-          className={cn('text-label-xs', {
+          className={cn('text-label-xs flex items-center gap-1', {
             truncate: isTiny,
             'text-text-strong-950': !completed,
             'text-text-sub-600': completed,
           })}
         >
+          {isOvernightSplit && isFirstPart && (
+            <span className='text-text-sub-500'>↗</span>
+          )}
+          {isOvernightSplit && isLastPart && (
+            <span className='text-text-sub-500'>↖</span>
+          )}
           {title}
         </div>
-        <div className='text-subheading-2xs text-text-sub-600'>
-          {`${format(startDate, 'h:mm')} - ${format(endDate, 'h:mm aa')}`}
-        </div>
+
+        {/* For month view (isTiny): show minimal info - just time */}
+        {isTiny ? (
+          <div className='text-subheading-2xs text-text-sub-600'>
+            {isOvernightSplit ? (
+              <>
+                {isFirstPart && (
+                  <span>8pm-8am...</span>
+                )}
+                {isLastPart && (
+                  <span>...8pm-8am</span>
+                )}
+              </>
+            ) : (
+              `${format(startDate, 'h:mm')}-${format(endDate, 'h:mm aa')}`
+            )}
+          </div>
+        ) : (
+          /* For week view: show detailed info */
+          <>
+            <div className='text-subheading-2xs text-text-sub-600'>
+              {isOvernightSplit ? (
+                <>
+                  {isFirstPart && (
+                    <span>{format(startDate, 'h:mm')} - 8:00 AM...</span>
+                  )}
+                  {isLastPart && (
+                    <span>...8:00 PM - {format(endDate, 'h:mm aa')}</span>
+                  )}
+                </>
+              ) : (
+                `${format(startDate, 'h:mm')} - ${format(endDate, 'h:mm aa')}`
+              )}
+            </div>
+            {(recurringSchedule || (isOvernightSplit && assignedCaregiver)) && (
+              <>
+                <div className='w-full h-px border-t border-dashed border-stroke-soft-200 my-1'></div>
+                <div className='text-paragraph-xs text-text-sub-500 italic'>
+                  {isOvernightSplit && assignedCaregiver ? assignedCaregiver : recurringSchedule}
+                </div>
+                {recurrencePattern && (
+                  <div className='text-paragraph-xs text-text-sub-500 italic'>
+                    {recurrencePattern}
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
       </div>
       {(location || link || people || platform) && !isTiny && (
         <div className='mt-auto space-y-1'>
@@ -299,8 +433,9 @@ function CalendarEventItem({
                 </div>
               )}
               {platform && (
-                <div className='text-paragraph-xs text-text-sub-600'>
-                  {platform}
+                <div className='flex items-center gap-1.5'>
+                  <RiGlobalLine className='size-4 shrink-0 text-warning-base' />
+                  <div className='truncate text-paragraph-xs'>{platform}</div>
                 </div>
               )}
             </div>
@@ -326,6 +461,7 @@ type BigCalendarProps = {
   showAllHours?: boolean;
   view?: 'week' | 'month';
   onEventDialogOpen?: (date: Date, time: Date) => void;
+  onEventsUpdate?: (events: CalendarData[]) => void;
 };
 
 export function BigCalendar({
@@ -336,6 +472,7 @@ export function BigCalendar({
   className,
   view = 'week',
   onEventDialogOpen,
+  onEventsUpdate,
 }: BigCalendarProps) {
   console.log('[BIGCALENDAR DEBUG] BigCalendar received view:', view);
   // Calculate totalShowingDays based on view
@@ -368,15 +505,7 @@ export function BigCalendar({
   const [dragOverTimeSlot, setDragOverTimeSlot] = React.useState<{ day: Date; hour: string } | null>(null);
   const [isDragging, setIsDragging] = React.useState(false);
   
-  // Local events state for drag and drop updates
-  const [localEvents, setLocalEvents] = React.useState<CalendarData[]>(events);
-  
-  // Update local events when props change
-  React.useEffect(() => {
-    console.log('[BIGCALENDAR DEBUG] useEffect running, events prop changed:', events.length, 'events');
-    console.log('[BIGCALENDAR DEBUG] events:', events);
-    setLocalEvents(events);
-  }, [events]);
+  // Use events directly from props - no local state needed
   
   // Update current time every minute
   React.useEffect(() => {
@@ -569,9 +698,13 @@ export function BigCalendar({
       }
       
       // Update the events in the parent component
-      // For now, we'll just close the modals and show a success message
       console.log(`Event deletion completed (${deletionType}):`, eventToDelete.title);
       console.log(`Remaining events:`, updatedEvents.length);
+      
+      // Sync the updated events back to the parent component
+      if (onEventsUpdate) {
+        onEventsUpdate(updatedEvents);
+      }
       
       // Close modals
       setIsDeleteModalOpen(false);
@@ -608,6 +741,8 @@ export function BigCalendar({
       isRecurring: eventData.isRecurring,
       recurrencePattern: eventData.recurrencePattern 
     });
+    
+    // Set drag state immediately for proper drag handling
     setDraggedEvent(eventData);
     setIsDragging(true);
     
@@ -640,7 +775,9 @@ export function BigCalendar({
     
     console.log('[DRAG DEBUG] handleDrop called:', { 
       draggedEvent: draggedEvent?.title, 
-      hasDraggedEvent: !!draggedEvent
+      hasDraggedEvent: !!draggedEvent,
+      targetDay: day.toDateString(),
+      targetHour: hour
     });
     
     if (!draggedEvent) {
@@ -649,6 +786,7 @@ export function BigCalendar({
     }
 
     // Simple drag and drop - just reschedule the event
+    // Don't clean up drag state here - let handleDragEnd do it
     console.log('[DRAG DEBUG] Rescheduling event directly');
     performDragUpdate(draggedEvent, day, hour);
   };
@@ -678,21 +816,29 @@ export function BigCalendar({
         duration: duration / (1000 * 60), // duration in minutes
       });
 
-      // Update the local events state - simple reschedule
-      setLocalEvents(prevEvents => {
-        const newEvents = prevEvents.map(eventItem => {
-          const isMatch = eventItem.title === event.title && 
-                         eventItem.startDate.getTime() === event.startDate.getTime() &&
-                         eventItem.endDate.getTime() === event.endDate.getTime();
-          
-          return isMatch ? { ...eventItem, startDate: targetDate, endDate: newEndDate } : eventItem;
+      // Update the events through parent callback - simple reschedule
+      if (onEventsUpdate) {
+        const newEvents = events.map((eventItem: CalendarData) => {
+          // For split overnight events, match by title and originalStartDate
+          if (event.isOvernightSplit && event.metadata?.originalStartDate) {
+            const originalStartDate = new Date(event.metadata.originalStartDate);
+            const isMatch = eventItem.title === event.title && 
+                           eventItem.startDate.getTime() === originalStartDate.getTime();
+            return isMatch ? { ...eventItem, startDate: targetDate, endDate: newEndDate } : eventItem;
+          } else {
+            // For regular events, match by title and exact start/end times
+            const isMatch = eventItem.title === event.title && 
+                           eventItem.startDate.getTime() === event.startDate.getTime() &&
+                           eventItem.endDate.getTime() === event.endDate.getTime();
+            return isMatch ? { ...eventItem, startDate: targetDate, endDate: newEndDate } : eventItem;
+          }
         });
         
-        console.log('[DRAG DEBUG] Before update:', prevEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
-        console.log('[DRAG DEBUG] After update:', newEvents.map(e => ({ title: e.title, start: e.startDate, end: e.endDate })));
+        console.log('[DRAG DEBUG] Before update:', events.map((e: CalendarData) => ({ title: e.title, start: e.startDate, end: e.endDate })));
+        console.log('[DRAG DEBUG] After update:', newEvents.map((e: CalendarData) => ({ title: e.title, start: e.startDate, end: e.endDate })));
         
-        return newEvents;
-      });
+        onEventsUpdate(newEvents);
+      }
 
       // Show success message
       alert(`Event "${event.title}" rescheduled to ${targetDate.toLocaleString()}`);
@@ -700,11 +846,6 @@ export function BigCalendar({
     } catch (error) {
       console.error('Error rescheduling event:', error);
       alert('Failed to reschedule event. Please try again.');
-    } finally {
-      // Clean up drag state
-      setDraggedEvent(null);
-      setDragOverTimeSlot(null);
-      setIsDragging(false);
     }
   };
 
@@ -722,9 +863,168 @@ export function BigCalendar({
     return (totalMinutes / totalDayMinutes) * 100;
   };
 
+  // Helper function to consolidate continuous events into single visual cards
+  const consolidateContinuousEvents = (events: CalendarData[]): CalendarData[] => {
+    if (events.length === 0) return [];
+    
+    // Group events by title and assigned caregiver to identify continuous blocks
+    const eventGroups = new Map<string, CalendarData[]>();
+    
+    events.forEach(event => {
+      const key = `${event.title}-${event.assignedCaregiver || 'unknown'}`;
+      if (!eventGroups.has(key)) {
+        eventGroups.set(key, []);
+      }
+      eventGroups.get(key)!.push(event);
+    });
+    
+    const consolidatedEvents: CalendarData[] = [];
+    
+    eventGroups.forEach((groupEvents, key) => {
+      // Sort events by start time
+      const sortedEvents = groupEvents.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+      
+      // Find continuous blocks of the same event
+      let currentBlock: CalendarData[] = [];
+      
+      for (let i = 0; i < sortedEvents.length; i++) {
+        const currentEvent = sortedEvents[i];
+        
+        if (currentBlock.length === 0) {
+          // Start a new block
+          currentBlock.push(currentEvent);
+        } else {
+          const lastEvent = currentBlock[currentBlock.length - 1];
+          const timeDiff = currentEvent.startDate.getTime() - lastEvent.endDate.getTime();
+          
+          // Check if events are on the same day
+          const isSameDay = currentEvent.startDate.getDate() === lastEvent.startDate.getDate() &&
+                           currentEvent.startDate.getMonth() === lastEvent.startDate.getMonth() &&
+                           currentEvent.startDate.getFullYear() === lastEvent.startDate.getFullYear();
+          
+          // Check if the last event ends before midnight (23:59:59)
+          const lastEventEndHour = lastEvent.endDate.getHours();
+          const lastEventEndMinute = lastEvent.endDate.getMinutes();
+          const endsBeforeMidnight = lastEventEndHour < 23 || (lastEventEndHour === 23 && lastEventEndMinute < 59);
+          
+          // Check if this is an overnight event (starts near midnight)
+          const currentEventStartHour = currentEvent.startDate.getHours();
+          const currentEventStartMinute = currentEvent.startDate.getMinutes();
+          const startsNearMidnight = currentEventStartHour === 0 && currentEventStartMinute <= 1; // 12:00 AM to 12:01 AM
+          
+          // Check if the last event ends near midnight (11:59 PM to 11:59:59 PM)
+          const endsNearMidnight = lastEventEndHour === 23 && lastEventEndMinute >= 59;
+          
+          // Special case for overnight events: allow consolidation across midnight
+          const isOvernightConsolidation = endsNearMidnight && startsNearMidnight && timeDiff <= 60 * 60 * 1000;
+          
+          // If events are consecutive (within 1 hour), have same details, and either:
+          // 1. Are on the same day AND end before midnight, OR
+          // 2. Are overnight events spanning across midnight
+          if (timeDiff <= 60 * 60 * 1000 && // Within 1 hour
+              ((isSameDay && endsBeforeMidnight) || isOvernightConsolidation) && // Same day OR overnight consolidation
+              currentEvent.title === lastEvent.title &&
+              currentEvent.assignedCaregiver === lastEvent.assignedCaregiver &&
+              currentEvent.type === lastEvent.type) {
+            currentBlock.push(currentEvent);
+          } else {
+            // End current block and start new one
+            consolidatedEvents.push(createConsolidatedEvent(currentBlock));
+            currentBlock = [currentEvent];
+          }
+        }
+      }
+      
+      // Don't forget the last block
+      if (currentBlock.length > 0) {
+        consolidatedEvents.push(createConsolidatedEvent(currentBlock));
+      }
+    });
+    
+    return consolidatedEvents;
+  };
+  
+  // Helper function to create a consolidated event from a block of continuous events
+  const createConsolidatedEvent = (eventBlock: CalendarData[]): CalendarData => {
+    if (eventBlock.length === 1) {
+      return eventBlock[0];
+    }
+    
+    const firstEvent = eventBlock[0];
+    const lastEvent = eventBlock[eventBlock.length - 1];
+    
+    // For overnight events that span across midnight, preserve the original end time
+    // Only cap events that are NOT overnight (i.e., don't span across midnight)
+    let consolidatedEndDate = lastEvent.endDate;
+    
+    // Check if this is an overnight event (starts on one day, ends on the next)
+    // For overnight events, the end date should be significantly later than start date
+    const timeDiff = lastEvent.endDate.getTime() - firstEvent.startDate.getTime();
+    const isOvernightEvent = timeDiff > 12 * 60 * 60 * 1000; // More than 12 hours apart
+    
+    // Only cap non-overnight events at 11:59 PM
+    if (!isOvernightEvent && lastEvent.endDate.getHours() >= 23 && lastEvent.endDate.getMinutes() >= 59) {
+      consolidatedEndDate = new Date(lastEvent.endDate);
+      consolidatedEndDate.setHours(23, 59, 59, 999); // 11:59:59.999 PM
+    }
+    
+    return {
+      ...firstEvent,
+      startDate: firstEvent.startDate,
+      endDate: consolidatedEndDate,
+      // Mark as consolidated for special rendering
+      metadata: {
+        ...firstEvent.metadata,
+        isConsolidated: true,
+        originalEventCount: eventBlock.length,
+      }
+    };
+  };
+
+  // Helper function to split overnight events into day-specific cards
+  const splitOvernightEvent = (event: CalendarData, targetDay: Date) => {
+    const eventStart = new Date(event.startDate);
+    const eventEnd = new Date(event.endDate);
+    const targetDayStart = new Date(targetDay);
+    targetDayStart.setHours(0, 0, 0, 0);
+    const targetDayEnd = new Date(targetDay);
+    targetDayEnd.setHours(23, 59, 59, 999);
+
+    // Check if event spans across this day
+    if (eventStart < targetDayEnd && eventEnd > targetDayStart) {
+      // Determine the actual start and end times for this day
+      const dayEventStart = new Date(Math.max(eventStart.getTime(), targetDayStart.getTime()));
+      const dayEventEnd = new Date(Math.min(eventEnd.getTime(), targetDayEnd.getTime()));
+      
+      // Create a new event object for this day
+      const splitEvent = {
+        ...event,
+        startDate: dayEventStart,
+        endDate: dayEventEnd,
+        // Add visual indicators for continuation
+        isOvernightSplit: true,
+        isFirstPart: dayEventStart.getDate() === eventStart.getDate(),
+        isLastPart: dayEventEnd.getDate() === eventEnd.getDate(),
+        // Include original start date for color consistency
+        metadata: {
+          ...event.metadata,
+          originalStartDate: eventStart.toISOString()
+        }
+      };
+
+      return splitEvent;
+    }
+    
+    return null;
+  };
+
   // Helper function to get events for a specific day and hour
   const getEventsForTimeSlot = (day: Date, hour: string) => {
-    const matchingEvents = localEvents.filter(event => {
+    // First, get all events that overlap with this time slot
+    const matchingEvents = events.filter(event => {
+      // Don't exclude any events during drag start - let them all render normally
+      // The visual feedback will be handled by the isDragging prop in CalendarEventItem
+
       const eventStart = new Date(event.startDate);
       const eventEnd = new Date(event.endDate);
       const hourDate = new Date(hour); // Convert ISO string to Date
@@ -732,32 +1032,72 @@ export function BigCalendar({
       slotStart.setHours(hourDate.getHours(), 0, 0, 0);
       const slotEnd = new Date(slotStart);
       slotEnd.setHours(hourDate.getHours() + 1, 0, 0, 0);
+
+      // Render each event only once in its starting time slot
+      // This applies to ALL events regardless of duration - no discrimination
+      return eventStart.getHours() === hourDate.getHours() && eventStart.getDate() === day.getDate();
+    });
+    
+    // Consolidate continuous events for this day first
+    const consolidatedEvents = consolidateContinuousEvents(matchingEvents);
+    
+    const eventsToShow = consolidatedEvents.flatMap(event => {
+      const eventStart = new Date(event.startDate);
+      const eventEnd = new Date(event.endDate);
+      const hourDate = new Date(hour);
+      const slotStart = new Date(day);
+      slotStart.setHours(hourDate.getHours(), 0, 0, 0);
+      const slotEnd = new Date(slotStart);
+      slotEnd.setHours(slotStart.getHours() + 1, 0, 0, 0);
       
-      // Check if event overlaps with this time slot
-      return eventStart < slotEnd && eventEnd > slotStart;
+      // Check if this is an overnight event (spans more than 12 hours or crosses midnight)
+      const timeDiff = eventEnd.getTime() - eventStart.getTime();
+      const isOvernightEvent = timeDiff > 12 * 60 * 60 * 1000 || eventStart.getDate() !== eventEnd.getDate();
+      
+      if (isOvernightEvent) {
+        // For overnight events, check if this time slot overlaps with the event on this day
+        const splitEvent = splitOvernightEvent(event, day);
+        if (splitEvent && splitEvent.startDate < slotEnd && splitEvent.endDate > slotStart) {
+          // Only show in the starting hour slot of the split event
+          return splitEvent.startDate.getHours() === slotStart.getHours() ? [splitEvent] : [];
+        }
+        return [];
+      } else {
+        // For regular events, only show them in the hour slot where they start
+        return eventStart.getHours() === slotStart.getHours() ? [event] : [];
+      }
     });
     
     // Debug logging
     const hourDate = new Date(hour);
-    if (matchingEvents.length > 0) {
-      console.log(`Found ${matchingEvents.length} events for ${day.toDateString()} at ${hourDate.getHours()}:00`, matchingEvents);
+    if (eventsToShow.length > 0) {
+      console.log(`Found ${eventsToShow.length} events for ${day.toDateString()} at ${hourDate.getHours()}:00`, eventsToShow);
     }
     
-    // Debug all local events
-    console.log(`[RENDER DEBUG] All local events:`, localEvents.map(e => ({ 
-      title: e.title, 
-      start: e.startDate.toISOString(), 
-      end: e.endDate.toISOString() 
-    })));
-    
-    return matchingEvents;
+    return eventsToShow;
   };
 
   // Helper function to get events for a specific day (for month view)
   const getEventsForDay = (day: Date) => {
-    const matchingEvents = localEvents.filter(event => {
+    const matchingEvents = events.filter(event => {
       const eventStart = new Date(event.startDate);
-      return isSameDay(eventStart, day);
+      const eventEnd = new Date(event.endDate);
+      
+      // Include events that start on this day
+      if (isSameDay(eventStart, day)) {
+        return true;
+      }
+      
+      // For overnight events that span multiple days, include them on both start and end days
+      const timeDiff = eventEnd.getTime() - eventStart.getTime();
+      const isOvernightEvent = timeDiff > 12 * 60 * 60 * 1000; // More than 12 hours apart
+      
+      if (isOvernightEvent) {
+        // Show overnight events on both their start day and end day
+        return isSameDay(eventStart, day) || isSameDay(eventEnd, day);
+      }
+      
+      return false;
     });
     
     return matchingEvents;
@@ -771,9 +1111,9 @@ export function BigCalendar({
 
   // Render month view differently
   if (view === 'month') {
-    console.log('[MONTH VIEW DEBUG] Rendering month view with', localEvents.length, 'localEvents');
+    console.log('[MONTH VIEW DEBUG] Rendering month view with', events.length, 'events');
     console.log('[MONTH VIEW DEBUG] currentStartDate:', currentStartDate);
-    console.log('[MONTH VIEW DEBUG] localEvents:', localEvents.map(e => ({ title: e.title, startDate: e.startDate })));
+    console.log('[MONTH VIEW DEBUG] events:', events.map(e => ({ title: e.title, startDate: e.startDate })));
     
     // For month view, create a proper calendar grid
     const firstDayOfMonth = new Date(currentStartDate.getFullYear(), currentStartDate.getMonth(), 1);
@@ -790,9 +1130,9 @@ export function BigCalendar({
     );
     
     return (
-      <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
+      <div className='relative z-20 -mx-4 overflow-hidden px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
         <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
-          <div className='overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
+          <div className='overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-hidden'>
             {/* Month view header - Fixed width columns */}
             <div className='grid grid-cols-7 divide-x divide-stroke-soft-200 border-b border-stroke-soft-200 bg-bg-weak-50'>
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
@@ -850,7 +1190,12 @@ export function BigCalendar({
                               onClick={() => handleEventClick(event)}
                               onDragStart={handleDragStart}
                               onDragEnd={handleDragEnd}
-                              isDragging={isDragging && draggedEvent?.title === event.title}
+                              isDragging={isDragging && (
+                                draggedEvent?.title === event.title && (
+                                  !event.isOvernightSplit || 
+                                  (draggedEvent?.isOvernightSplit && draggedEvent?.metadata?.originalStartDate === event.metadata?.originalStartDate)
+                                )
+                              )}
                             />
                           ))}
                           {getEventsForDay(day).length > 3 && (
@@ -900,13 +1245,12 @@ export function BigCalendar({
         />
       </div>
     );
-  }
-
-  // Week view (existing implementation)
+  } else {
+    // Week view (existing implementation)
   return (
-    <div className='relative z-20 -mx-4 overflow-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
+    <div className='relative z-20 -mx-4 overflow-hidden px-4 lg:mx-0 lg:overflow-visible lg:px-0'>
       <div className={cnExt('w-fit bg-bg-white-0 lg:w-full', className)}>
-        <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-auto'>
+        <div className='flex overflow-clip rounded-xl border border-stroke-soft-200 lg:overflow-hidden'>
           {/* Left Navigation Panel */}
           <div className='sticky -left-4 z-30 -ml-px w-[104px] shrink-0 overflow-hidden border-x border-stroke-soft-200 bg-bg-white-0 lg:left-0 lg:border-l-0'>
             {/* Navigation Arrows - Now replace the month/year cell */}
@@ -939,8 +1283,6 @@ export function BigCalendar({
                 </div>
               ))}
               
-              {/* Footer spacer */}
-              <div className='h-10'></div>
             </div>
           </div>
 
@@ -1011,11 +1353,16 @@ export function BigCalendar({
                             <CalendarEventItem
                               key={`${event.title}-${eventIndex}`}
                               {...event}
-                              isTiny={true}
+                              isTiny={false}
                               onClick={() => handleEventClick(event)}
                               onDragStart={handleDragStart}
                               onDragEnd={handleDragEnd}
-                              isDragging={isDragging && draggedEvent?.title === event.title}
+                              isDragging={isDragging && (
+                                draggedEvent?.title === event.title && (
+                                  !event.isOvernightSplit || 
+                                  (draggedEvent?.isOvernightSplit && draggedEvent?.metadata?.originalStartDate === event.metadata?.originalStartDate)
+                                )
+                              )}
                             />
                           ))}
                       </div>
@@ -1062,3 +1409,4 @@ export function BigCalendar({
         </div>
       );
     }
+  }

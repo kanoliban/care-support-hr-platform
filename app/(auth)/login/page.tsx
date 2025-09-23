@@ -6,6 +6,7 @@ import * as LabelPrimitive from '@radix-ui/react-label';
 import {
   RiEyeLine,
   RiEyeOffLine,
+  RiHeartLine,
   RiLock2Line,
   RiMailLine,
   RiUserLine,
@@ -68,16 +69,16 @@ export default function PageLogin() {
           )}
         >
           <div className='relative z-10 flex size-12 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200 lg:size-16'>
-            <RiUserLine className='size-6 text-text-sub-600 lg:size-8' />
+            <RiHeartLine className='size-6 text-purple-600 lg:size-8' />
           </div>
         </div>
 
         <div className='space-y-1 text-center'>
           <div className='text-title-h6 lg:text-title-h5'>
-            Login to your account
+            Welcome back to CareSupport
           </div>
           <div className='text-paragraph-sm text-text-sub-600 lg:text-paragraph-md'>
-            Enter your details to login.
+            Sign in to continue coordinating care for your loved ones.
           </div>
         </div>
       </div>
@@ -111,7 +112,7 @@ export default function PageLogin() {
               <Input.Input
                 id='email'
                 type='email'
-                placeholder='hello@alignui.com'
+                placeholder='coordinator@caresupport.com'
                 required
               />
             </Input.Wrapper>

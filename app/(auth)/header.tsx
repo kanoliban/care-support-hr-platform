@@ -55,8 +55,13 @@ export default function AuthHeader() {
 
   return (
     <div className='mx-auto flex w-full items-center justify-between gap-6 pb-3.5 pt-2.5 lg:py-0'>
-      <Link href='/' className='shrink-0'>
-        <img src='/images/placeholder/synergy.svg' alt='' className='size-10' />
+      <Link href='/' className='shrink-0 flex items-center gap-3'>
+        <div className='flex size-10 items-center justify-center rounded-full bg-purple-600'>
+          <span className='text-sm font-semibold text-white'>CS</span>
+        </div>
+        <span className='text-lg font-semibold text-text-strong-950'>
+          CareSupport
+        </span>
       </Link>
       <div className='flex items-center gap-3'>
         <DynamicContent pathname={pathname} />

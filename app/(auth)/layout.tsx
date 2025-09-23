@@ -13,27 +13,27 @@ const slides = [
       default: '/images/auth-slide-img-1.png',
       dark: '/images/auth-slide-img-1-dark.png',
     },
-    title: 'Stay in Control of Your Time Off',
+    title: 'Coordinate Care Seamlessly',
     description:
-      'Track your time off balance and manage requests with the Time Off widget, ensuring a stress-free experience.',
+      'Manage your loved one\'s care schedule with ease, ensuring continuous coverage and peace of mind.',
   },
   {
     image: {
       default: '/images/auth-slide-img-2.png',
       dark: '/images/auth-slide-img-2-dark.png',
     },
-    title: 'Boost Your Productivity',
+    title: 'Connect Your Care Team',
     description:
-      'Use our productivity tools to stay focused and get more done in less time.',
+      'Bring together family, caregivers, and healthcare providers in one secure platform.',
   },
   {
     image: {
       default: '/images/auth-slide-img-3.png',
       dark: '/images/auth-slide-img-3-dark.png',
     },
-    title: 'Collaborate with Your Team',
+    title: 'Stay Informed & Secure',
     description:
-      'Seamlessly collaborate with your team using our intuitive project management features.',
+      'Get real-time updates and maintain HIPAA-compliant communication with your entire care network.',
   },
 ];
 

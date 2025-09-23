@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-09-22T19:28:14.346Z",
+  "summary": {
+    "total": 15,
+    "passed": 7,
+    "failed": 8,
+    "successRate": "47%"
+  },
+  "tests": [
+    {
+      "name": "GET /onboarding-caresupport/steps",
+      "status": "PASSED"
+    },
+    {
+      "name": "GET /onboarding-caresupport",
+      "status": "FAILED",
+      "error": "Expected status 200, got 404"
+    },
+    {
+      "name": "GET /onboarding-caresupport/join-team",
+      "status": "FAILED",
+      "error": "Expected status 200, got 404"
+    },
+    {
+      "name": "GET /onboarding-caresupport/create-team",
+      "status": "FAILED",
+      "error": "Expected status 200, got 404"
+    },
+    {
+      "name": "GET /login",
+      "status": "PASSED"
+    },
+    {
+      "name": "GET /register",
+      "status": "PASSED"
+    },
+    {
+      "name": "GET /",
+      "status": "PASSED"
+    },
+    {
+      "name": "Content: Step 1: Account Setup",
+      "status": "PASSED"
+    },
+    {
+      "name": "Content: Step 2: Care Recipient",
+      "status": "FAILED"
+    },
+    {
+      "name": "Content: Step 3: Care Team",
+      "status": "FAILED"
+    },
+    {
+      "name": "Content: Step 4: Scheduling",
+      "status": "FAILED"
+    },
+    {
+      "name": "Content: Step 5: Permissions",
+      "status": "FAILED"
+    },
+    {
+      "name": "Content: Step 6: Review",
+      "status": "FAILED"
+    },
+    {
+      "name": "React Hydration",
+      "status": "PASSED"
+    },
+    {
+      "name": "CSS Loading",
+      "status": "PASSED"
+    }
+  ],
+  "errors": []
+}
