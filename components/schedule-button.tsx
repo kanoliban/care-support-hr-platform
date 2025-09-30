@@ -6,7 +6,11 @@ import * as Button from '@/components/ui/button';
 
 export function ScheduleButton({ className }: { className?: string }) {
   return (
-    <Button.Root variant='neutral' mode='stroke' className={className}>
+    <Button.Root 
+      variant='neutral' 
+      mode='stroke' 
+      className={`${className} glassmorphic-hover glassmorphic-subtle shadow-glass`}
+    >
       <Button.Icon as={RiCalendarCheckLine} />
       Schedule
     </Button.Root>

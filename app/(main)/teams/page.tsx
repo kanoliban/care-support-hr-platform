@@ -3,7 +3,6 @@
 import {
   RiAddLine,
   RiGroupLine,
-  RiShareForwardBoxLine,
 } from '@remixicon/react';
 
 import * as Button from '@/components/ui/button';
@@ -21,7 +20,7 @@ export default function PageTeams() {
   
   const getHeaderTitle = () => {
     if (!currentProfile) return 'Care Team';
-    return `${currentProfile.name} - Care Team`;
+    return `${currentProfile.name}'s Care Team`;
   };
 
   const getHeaderDescription = () => {
@@ -39,18 +38,18 @@ export default function PageTeams() {
         }
         title={getHeaderTitle()}
         description={getHeaderDescription()}
+        contentClassName='hidden lg:flex'
       >
-        <PermissionGate permission="canExportData">
-          <Button.Root
-            variant='neutral'
-            mode='stroke'
-            className='w-full lg:hidden'
-          >
-            <Button.Icon as={RiShareForwardBoxLine} />
-            Export Care Team
-          </Button.Root>
-        </PermissionGate>
         <PermissionGate permission="canManageTeam">
+          <Button.Root 
+            className='hidden lg:flex' 
+            onClick={() => router.push('/teams/add')}
+            variant='primary'
+            mode='filled'
+          >
+            <Button.Icon as={RiAddLine} />
+            Add Team Member
+          </Button.Root>
           <Button.Root className='w-full lg:hidden' onClick={() => router.push('/teams/add')}>
             <Button.Icon as={RiAddLine} />
             Add Team Member
@@ -63,33 +62,9 @@ export default function PageTeams() {
       </div>
 
       <div className='flex flex-1 flex-col px-4 lg:px-8 lg:pb-6'>
-        <div className='flex items-center gap-3 pb-4 pt-5 lg:pt-4'>
-          <div className='flex-1 space-y-1'>
-            <div className='text-label-lg'>Care Team</div>
-            <div className='text-paragraph-sm text-text-sub-600'>
-              View care team members and their availability.
-            </div>
-          </div>
-
-          <div className='hidden gap-3 lg:flex'>
-            <PermissionGate permission="canExportData">
-              <Button.Root variant='neutral' mode='stroke'>
-                <Button.Icon as={RiShareForwardBoxLine} />
-                Export Care Team
-              </Button.Root>
-            </PermissionGate>
-            <PermissionGate permission="canManageTeam">
-              <Button.Root onClick={() => router.push('/teams/add')}>
-                <Button.Icon as={RiAddLine} />
-                Add Team Member
-              </Button.Root>
-            </PermissionGate>
-          </div>
+        <div className='pt-5 lg:pt-4'>
+          <MembersTable />
         </div>
-
-        <Divider.Root className='hidden lg:flex' />
-
-        <MembersTable className='lg:mt-5' />
       </div>
     </>
   );

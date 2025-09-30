@@ -141,6 +141,45 @@ export function EditDetailsModalContent({
         </div>
       </div>
 
+      <Divider.Root variant='line-spacing' />
+
+      {/* Blocked Dates / Time Off */}
+      <div className='space-y-4'>
+        <div className='text-label-sm'>Time Off & Blocked Dates</div>
+        
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div className='space-y-2'>
+            <Label.Root htmlFor='edit-block-start'>Start Date</Label.Root>
+            <Input.Root
+              id='edit-block-start'
+              type='date'
+              value={editFormData.blockStartDate || ''}
+              onChange={(e) => handleFormFieldChange('blockStartDate', e.target.value)}
+            />
+          </div>
+          
+          <div className='space-y-2'>
+            <Label.Root htmlFor='edit-block-end'>End Date</Label.Root>
+            <Input.Root
+              id='edit-block-end'
+              type='date'
+              value={editFormData.blockEndDate || ''}
+              onChange={(e) => handleFormFieldChange('blockEndDate', e.target.value)}
+            />
+          </div>
+        </div>
+        
+        <div className='space-y-2'>
+          <Label.Root htmlFor='edit-block-reason'>Reason (Optional)</Label.Root>
+          <Input.Root
+            id='edit-block-reason'
+            value={editFormData.blockReason || ''}
+            onChange={(e) => handleFormFieldChange('blockReason', e.target.value)}
+            placeholder="e.g., Summer Break, Vacation, Medical Leave"
+          />
+        </div>
+      </div>
+
     </div>
   );
 }

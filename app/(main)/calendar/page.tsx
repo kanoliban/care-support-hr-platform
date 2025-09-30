@@ -227,11 +227,6 @@ const generateMonthlyCareSchedule = (): CalendarData[] => {
         requestType: 'Personal Care',
         notes: `${title} - ${caregiver.name} provides medication, meals, personal care, and daily activities for Luann`,
         isOpenToAnyone: false
-      },
-      recurrence: {
-        frequency: 'weekly',
-        interval: 1,
-        daysOfWeek: caregiver.schedule?.days || [date.getDay()]
       }
     };
   };

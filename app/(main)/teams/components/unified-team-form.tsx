@@ -18,9 +18,23 @@ export interface TeamMemberFormData {
   careResponsibilities: string;
   role: 'owner' | 'admin' | 'member' | 'viewer';
   customMessage: string;
-  // Additional fields for manual mode
-  schedule: string;
+  // Scheduling fields (matching Create Request pattern)
+  isOnCall: boolean; // true = flexible/on-call, false = regular schedule
+  shiftStartDate: string; // "2024-01-15" format
+  shiftEndDate: string; // "2024-01-15" format
+  shiftStartTime: string; // "20:00" format
+  shiftEndTime: string; // "08:00" format
+  isRecurring: boolean; // true = recurring pattern
+  recurrenceFrequency: 'daily' | 'weekly' | 'monthly';
+  recurrenceInterval: number; // every N days/weeks/months
+  shiftDays: number[]; // [0,1,2,3,4,5,6] for days of week
+  recurrenceEndDate: string; // "2024-12-31" format
   availabilityType: 'flexible' | 'fixed' | 'on-call';
+  // Time off
+  blockStartDate: string;
+  blockEndDate: string;
+  blockReason: string;
+  // Legacy/additional
   careNotes: string;
   photo: string;
 }

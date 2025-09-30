@@ -168,10 +168,7 @@ export default function CareEventDialog({
         visibility: 'care-team-only' as CareEventVisibility,
         metadata: {
           notes: formData.notes,
-          isOpenToAnyone: formData.assignedPerson === 'open-to-anyone',
-          requestType: formData.requestType === 'other' ? formData.customRequestType : formData.requestType,
-          customPersonContact: formData.assignedPerson === 'other' ? formData.customPersonContact : undefined,
-          customPersonContactType: formData.assignedPerson === 'other' ? formData.customPersonContactType : undefined,
+          tags: [formData.requestType === 'other' ? formData.customRequestType : formData.requestType],
         },
       };
 
@@ -190,13 +187,16 @@ export default function CareEventDialog({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-bg-white-0 rounded-2xl w-full max-w-2xl shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200">
+      <div className="bg-bg-weak-50 rounded-2xl w-full max-w-2xl shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200">
         <div className="p-4">
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-sm text-text-sub-600">
-                {isEditMode ? 'Edit Request' : 'Create Request'} • Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
+              <h2 className="text-xl font-semibold text-text-strong-950">
+                {isEditMode ? 'Edit Request' : 'Create Request'}
+              </h2>
+              <p className="text-sm text-text-sub-600 mt-1">
+                Step {currentStepIndex + 1} of {steps.length}: {steps[currentStepIndex].title}
               </p>
             </div>
             <button 

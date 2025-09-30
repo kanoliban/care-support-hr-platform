@@ -21,7 +21,9 @@ export default function Header({
   return (
     <header
       className={cnExt(
-        'flex min-h-[88px] flex-col gap-4 px-4 py-5 md:flex-row md:items-center md:justify-between md:gap-3 lg:px-8',
+        'relative flex min-h-[88px] flex-col gap-4 px-4 py-5 md:flex-row md:items-center md:justify-between md:gap-3 lg:px-8',
+        'glassmorphic-subtle glassmorphic-hover shadow-glass-lg',
+        'mx-4 lg:mx-8 rounded-2xl mb-6', // Add glassmorphic styling and spacing
         className,
       )}
       {...rest}
@@ -29,7 +31,7 @@ export default function Header({
       <div className='flex flex-1 gap-4 lg:gap-3.5'>
         {icon}
         <div className='space-y-1'>
-          <div className='text-label-md lg:text-label-lg'>{title}</div>
+          <div className='text-label-md lg:text-label-lg font-medium'>{title}</div>
           <div className='text-paragraph-sm text-text-sub-600'>
             {description}
           </div>

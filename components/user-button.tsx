@@ -63,7 +63,7 @@ export function UserButton({ className }: { className?: string }) {
           }}
         >
           <Dropdown.ItemIcon as={RiMoonLine} />
-          Dark Mode
+          Theme Options
           <span className='flex-1' />
           <Switch.Root checked={theme === 'dark'} />
         </Dropdown.Item>
@@ -71,22 +71,16 @@ export function UserButton({ className }: { className?: string }) {
         <Dropdown.Group>
           <Dropdown.Item>
             <Dropdown.ItemIcon as={RiPulseLine} />
-            Activity
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <Dropdown.ItemIcon as={RiLayoutGridLine} />
-            Integrations
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <Dropdown.ItemIcon as={RiSettings2Line} />
-            Settings
+            Activity (coming soon)
           </Dropdown.Item>
         </Dropdown.Group>
         <Divider.Root variant='line-spacing' />
         <Dropdown.Group>
-          <Dropdown.Item>
-            <Dropdown.ItemIcon as={RiAddLine} />
-            Add Account
+          <Dropdown.Item asChild>
+            <Link href='/register'>
+              <Dropdown.ItemIcon as={RiAddLine} />
+              Add Account
+            </Link>
           </Dropdown.Item>
           <Dropdown.Item asChild>
             <Link href='/login'>
@@ -96,7 +90,7 @@ export function UserButton({ className }: { className?: string }) {
           </Dropdown.Item>
         </Dropdown.Group>
         <div className='p-2 text-paragraph-sm text-text-soft-400'>
-          v.1.5.69 · Terms & Conditions
+          v.1.3.69 · Terms & Conditions
         </div>
       </Dropdown.Content>
     </Dropdown.Root>
@@ -144,7 +138,7 @@ export function UserButtonMobile({ className }: { className?: string }) {
           }}
         >
           <Dropdown.ItemIcon as={RiMoonLine} />
-          Dark Mode
+          Theme Options
           <span className='flex-1' />
           <Switch.Root checked={theme === 'dark'} />
         </Dropdown.Item>
@@ -152,22 +146,16 @@ export function UserButtonMobile({ className }: { className?: string }) {
         <Dropdown.Group>
           <Dropdown.Item>
             <Dropdown.ItemIcon as={RiPulseLine} />
-            Activity
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <Dropdown.ItemIcon as={RiLayoutGridLine} />
-            Integrations
-          </Dropdown.Item>
-          <Dropdown.Item>
-            <Dropdown.ItemIcon as={RiSettings2Line} />
-            Settings
+            Activity (coming soon)
           </Dropdown.Item>
         </Dropdown.Group>
         <Divider.Root variant='line-spacing' />
         <Dropdown.Group>
-          <Dropdown.Item>
-            <Dropdown.ItemIcon as={RiAddLine} />
-            Add Account
+          <Dropdown.Item asChild>
+            <Link href='/register'>
+              <Dropdown.ItemIcon as={RiAddLine} />
+              Add Account
+            </Link>
           </Dropdown.Item>
           <Dropdown.Item asChild>
             <Link href='/login'>

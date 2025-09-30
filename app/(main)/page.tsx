@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import * as Avatar from '@/components/ui/avatar';
 import { CreateRequestButton } from '@/components/create-request-button';
 import { ScheduleButton } from '@/components/schedule-button';
@@ -17,6 +18,8 @@ import { CareNotifications } from '@/components/care-notifications';
 import Header from './header';
 
 export default function PageHome() {
+  const router = useRouter();
+  
   // Care Event Dialog state
   const [isEventDialogOpen, setIsEventDialogOpen] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState(new Date());
@@ -35,6 +38,8 @@ export default function PageHome() {
 
   const handleEventCreated = (eventId: string) => {
     console.log('Care event created:', eventId);
+    // Navigate to activities page to show the created event
+      router.push('/tasks');
   };
 
   return (
@@ -58,7 +63,7 @@ export default function PageHome() {
       </Header>
 
       <div className='flex flex-col gap-6 px-4 pb-6 lg:px-8 lg:pt-1'>
-        <div className='grid grid-cols-[repeat(auto-fill,minmax(344px,1fr))] items-stretch justify-center gap-6'>
+        <div className='grid grid-cols-[repeat(auto-fill,minmax(344px,1fr))] items-stretch justify-center gap-6 animate-float'>
           {/* Core Care Coordination Widgets */}
           <WidgetTimeOff />
           <WidgetCurrentProject />

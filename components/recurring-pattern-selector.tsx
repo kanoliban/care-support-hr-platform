@@ -131,7 +131,7 @@ export function RecurringPatternSelector({
       </div>
 
       {/* Summary */}
-      <div className="p-3 bg-white rounded border border-stroke-soft-200">
+      <div className="p-3 bg-bg-soft-50 rounded border border-stroke-soft-200">
         <p className="text-sm text-text-sub-600">
           {`Repeat ${pattern.frequency} every ${pattern.interval} ${
             pattern.frequency === 'daily' ? 'day(s)' :

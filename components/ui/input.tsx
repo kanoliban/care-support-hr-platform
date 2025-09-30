@@ -20,7 +20,7 @@ export const inputVariants = tv({
   slots: {
     root: [
       // base
-      'group relative flex w-full overflow-hidden bg-bg-white-0 text-text-strong-950 shadow-regular-xs',
+      'group relative flex w-full overflow-hidden bg-bg-soft-50 text-text-strong-950 shadow-regular-xs',
       'transition duration-200 ease-out',
       'divide-x divide-stroke-soft-200',
       // before
@@ -36,7 +36,7 @@ export const inputVariants = tv({
     ],
     wrapper: [
       // base
-      'group/input-wrapper flex w-full cursor-text items-center bg-bg-white-0',
+      'group/input-wrapper flex w-full cursor-text items-center bg-bg-soft-50',
       'transition duration-200 ease-out',
       // hover
       'hover:[&:not(&:has(input:focus))]:bg-bg-weak-50',
@@ -75,7 +75,7 @@ export const inputVariants = tv({
     ],
     affix: [
       // base
-      'shrink-0 bg-bg-white-0 text-paragraph-sm text-text-sub-600',
+      'shrink-0 bg-bg-soft-50 text-paragraph-sm text-text-sub-600',
       'flex items-center justify-center truncate',
       'transition duration-200 ease-out',
       // placeholder state

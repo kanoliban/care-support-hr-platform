@@ -226,25 +226,25 @@ const mockCareTeam: TeamMember[] = [
 const mockCurrentCoverage: CoverageWindow[] = [
   {
     id: 'coverage-today-morning',
-    date: '2024-08-29',
+    date: '2025-01-12',
     startTime: '09:00',
     endTime: '17:00',
     requiredCareTypes: ['personal_care', 'medical', 'household'],
     status: 'confirmed',
     assignedTeamMember: 'jim-nelson',
     backupOptions: ['marta-snow'],
-    lastStatusUpdate: '2024-08-29T08:00:00Z'
+    lastStatusUpdate: '2025-01-12T08:00:00Z'
   },
   {
     id: 'coverage-today-evening',
-    date: '2024-08-29',
+    date: '2025-01-12',
     startTime: '20:00',
     endTime: '08:00',
     requiredCareTypes: ['personal_care', 'medical'],
     status: 'confirmed',
     assignedTeamMember: 'jennifer-pca',
     backupOptions: ['marta-snow'],
-    lastStatusUpdate: '2024-08-28T20:00:00Z'
+    lastStatusUpdate: '2025-01-11T20:00:00Z'
   }
 ];
 

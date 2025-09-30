@@ -12,7 +12,10 @@ export function CreateRequestButton({
   onClick?: () => void;
 }) {
   return (
-    <Button.Root className={className} onClick={onClick}>
+    <Button.Root 
+      className={`${className} glassmorphic-hover shadow-glass-lg animate-glow`} 
+      onClick={onClick}
+    >
       <Button.Icon as={RiAddLine} />
       Create Request
     </Button.Root>

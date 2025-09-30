@@ -301,7 +301,7 @@ export default function WidgetCurrentProject({
                     onChange={(e) => handleEditFormChange('description', e.target.value)}
                     placeholder="Enter shift description"
                     rows={6}
-                    className="flex-1 p-3 border border-bg-soft-200 rounded-lg bg-bg-soft-50 text-paragraph-sm placeholder:text-text-sub-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-vertical min-h-[140px]"
+                    className="flex-1 p-3 border border-bg-soft-200 rounded-lg bg-bg-soft-50 text-paragraph-sm placeholder:text-text-sub-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none min-h-[140px]"
                   />
               </div>
             </div>

@@ -733,7 +733,7 @@ export function UnifiedRequestForm({
                   </div>
 
                   {/* Summary */}
-                  <div className="p-3 bg-white rounded border border-stroke-soft-200">
+                  <div className="p-3 bg-bg-soft-50 rounded border border-stroke-soft-200">
                     <p className="text-sm text-text-sub-600">
                       {`Repeat ${formData.recurrencePattern.frequency} every ${formData.recurrencePattern.interval} ${
                         formData.recurrencePattern.frequency === 'daily' ? 'day(s)' :
@@ -758,10 +758,7 @@ export function UnifiedRequestForm({
       case 'review':
         return (
           <div className="space-y-6">
-            <div className="bg-bg-soft-50 p-4 rounded-lg border border-stroke-soft-200">
-              <h3 className="font-medium text-text-strong-950 mb-3">Review Request Details</h3>
-              
-              <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-sm">
                 <div>
                   <span className="font-medium">What kind of help:</span> {
                     formData.requestType === 'other' 
@@ -811,20 +808,18 @@ export function UnifiedRequestForm({
                   </div>
                 )}
               </div>
-            </div>
 
             {/* Additional Notes */}
             <div className="space-y-2">
               <Label.Root htmlFor="notes">Additional Notes (Optional)</Label.Root>
-              <Textarea.Root simple>
-                <textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => onFormDataChange('notes', e.target.value)}
-                  placeholder="Any additional information, special requirements, or notes..."
-                  rows={2}
-                />
-              </Textarea.Root>
+              <textarea
+                id="notes"
+                value={formData.notes}
+                onChange={(e) => onFormDataChange('notes', e.target.value)}
+                placeholder="Any additional information, special requirements, or notes..."
+                rows={2}
+                className="w-full p-3 border border-stroke-soft-200 rounded-lg bg-bg-soft-50 text-paragraph-sm placeholder:text-text-sub-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+              />
             </div>
 
           </div>
@@ -836,7 +831,7 @@ export function UnifiedRequestForm({
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-bg-weak-50">
       {/* Wizard Content */}
       <div className="px-6 py-6">
         {renderStep()}

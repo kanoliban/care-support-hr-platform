@@ -1,28 +1,109 @@
 'use client';
 
 import * as React from 'react';
-
-import {
-  Stepper,
-  StepperContent,
-  StepperDescription,
-  StepperIndicator,
-  StepperItem,
-  StepperList,
-  StepperNextTrigger,
-  StepperPrevTrigger,
-  StepperTitle,
-  StepperTrigger,
-  StepperSeparator,
-  type StepperChangeDetails,
-} from '@/components/ui/stepper';
+import { cn } from '@/utils/cn';
 import * as Button from '@/components/ui/button';
 import * as Input from '@/components/ui/input';
 import * as Label from '@/components/ui/label';
 import * as Select from '@/components/ui/select';
+import * as Textarea from '@/components/ui/textarea';
+import * as Radio from '@/components/ui/radio';
+import * as Divider from '@/components/ui/divider';
 
 import { CareResponsibilitiesSelector } from './care-responsibilities-selector';
 import type { TeamMemberFormData } from './unified-team-form';
+
+// Step definitions - matching Create Request pattern
+const steps = [
+  {
+    id: 'mode',
+    title: 'Add Team Member',
+    description: 'Choose how to add this team member'
+  },
+  {
+    id: 'basic',
+    title: 'Basic Information',
+    description: 'Contact and profile details'
+  },
+  {
+    id: 'care',
+    title: 'Care Role & Schedule',
+    description: 'Define responsibilities and availability'
+  },
+  {
+    id: 'review',
+    title: 'Review',
+    description: 'Confirm team member details'
+  }
+];
+
+// Day options - matching Create Request wizard
+const dayOptions = [
+  { label: 'S', value: 0, name: 'Sun' },
+  { label: 'M', value: 1, name: 'Mon' },
+  { label: 'T', value: 2, name: 'Tue' },
+  { label: 'W', value: 3, name: 'Wed' },
+  { label: 'T', value: 4, name: 'Thu' },
+  { label: 'F', value: 5, name: 'Fri' },
+  { label: 'S', value: 6, name: 'Sat' }
+];
+
+// Helper: Format time from 24h to 12h
+const formatTime = (time24: string): string => {
+  const [hours, minutes] = time24.split(':').map(Number);
+  const period = hours >= 12 ? 'pm' : 'am';
+  const hours12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+  return `${hours12}${minutes > 0 ? ':' + minutes.toString().padStart(2, '0') : ''}${period}`;
+};
+
+// Helper: Format days array to readable string
+const formatDays = (days: number[]): string => {
+  if (days.length === 0) return '';
+  if (days.length === 7) return 'Every day';
+  if (days.length === 5 && !days.includes(0) && !days.includes(6)) return 'Mon-Fri';
+  if (days.length === 2 && days.includes(0) && days.includes(6)) return 'Weekends';
+  
+  const sortedDays = [...days].sort();
+  const dayNames = sortedDays.map(d => dayOptions[d].name);
+  
+  // Check for consecutive days
+  const isConsecutive = sortedDays.every((day, i) => i === 0 || day === sortedDays[i - 1] + 1);
+  if (isConsecutive && sortedDays.length > 1) {
+    return `${dayNames[0]}-${dayNames[dayNames.length - 1]}`;
+  }
+  
+  return dayNames.join(', ');
+};
+
+// Helper: Detect availability type from shift times
+const detectAvailabilityType = (startTime: string, endTime: string, days: number[]): string => {
+  const start = parseInt(startTime.split(':')[0]);
+  const end = parseInt(endTime.split(':')[0]);
+  
+  // Overnight shift (crosses midnight)
+  if (start >= 20 || (start > end)) return 'Overnight';
+  
+  // Weekend only
+  if (days.length === 2 && days.includes(0) && days.includes(6)) return 'Weekend';
+  
+  // Regular business hours
+  if (start >= 8 && start <= 10 && end >= 16 && end <= 18) return 'Regular';
+  
+  return 'Flexible';
+};
+
+// Helper: Generate schedule preview string
+const generateSchedulePreview = (isOnCall: boolean, days: number[], startTime: string, endTime: string): string => {
+  if (isOnCall) return 'On-call';
+  if (days.length === 0) return 'No schedule set';
+  
+  const daysStr = formatDays(days);
+  const startStr = formatTime(startTime);
+  const endStr = formatTime(endTime);
+  const typeStr = detectAvailabilityType(startTime, endTime, days);
+  
+  return `${daysStr} ${startStr}-${endStr} (${typeStr})`;
+};
 
 export interface InlineWizardProps {
   mode: 'invite' | 'manual';
@@ -33,30 +114,6 @@ export interface InlineWizardProps {
   isSaving?: boolean;
 }
 
-type WizardStep = 'basic' | 'care' | 'review';
-
-const steps: Array<{
-  id: WizardStep;
-  title: string;
-  description: string;
-}> = [
-  {
-    id: 'basic',
-    title: 'Basic Information',
-    description: 'Contact and profile details.',
-  },
-  {
-    id: 'care',
-    title: 'Care Role',
-    description: 'Define responsibilities and scope.',
-  },
-  {
-    id: 'review',
-    title: 'Review & Submit',
-    description: 'Confirm everything looks correct.',
-  },
-];
-
 type WizardFormData = {
   name: string;
   email: string;
@@ -66,6 +123,14 @@ type WizardFormData = {
   careRole: string;
   careResponsibilities: string;
   personalMessage: string;
+  isOnCall: boolean;
+  shiftDays: number[];
+  shiftStartTime: string;
+  shiftEndTime: string;
+  availabilityType: string;
+  blockStartDate: string;
+  blockEndDate: string;
+  blockReason: string;
 };
 
 const defaultWizardState: WizardFormData = {
@@ -77,6 +142,14 @@ const defaultWizardState: WizardFormData = {
   careRole: '',
   careResponsibilities: '',
   personalMessage: '',
+  isOnCall: true,
+  shiftDays: [],
+  shiftStartTime: '09:00',
+  shiftEndTime: '17:00',
+  availabilityType: 'Flexible',
+  blockStartDate: '',
+  blockEndDate: '',
+  blockReason: '',
 };
 
 export function InlineWizard({
@@ -87,7 +160,7 @@ export function InlineWizard({
   onCancel,
   isSaving = false,
 }: InlineWizardProps) {
-  const [currentStep, setCurrentStep] = React.useState<WizardStep>('basic');
+  const [currentStep, setCurrentStep] = React.useState(steps[0].id);
   const [formData, setFormData] = React.useState<WizardFormData>(() => ({
     ...defaultWizardState,
     name: initialData.name,
@@ -98,40 +171,48 @@ export function InlineWizard({
     careRole: initialData.careRole,
     careResponsibilities: initialData.careResponsibilities,
     personalMessage: initialData.customMessage ?? '',
+    isOnCall: initialData.isOnCall ?? true,
+    shiftDays: initialData.shiftDays || [],
+    shiftStartTime: initialData.shiftStartTime || '09:00',
+    shiftEndTime: initialData.shiftEndTime || '17:00',
+    availabilityType: initialData.availabilityType || 'flexible',
   }));
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
+  const currentStepIndex = steps.findIndex(s => s.id === currentStep);
+
   const handleFieldChange = React.useCallback(
-    (field: keyof WizardFormData, value: string) => {
+    (field: keyof WizardFormData, value: any) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
 
+      // Propagate to parent form data
       switch (field) {
         case 'name':
-          onFieldChange('name', value);
-          break;
         case 'email':
-          onFieldChange('email', value);
-          break;
         case 'phone':
-          onFieldChange('phone', value);
+        case 'careRole':
+        case 'careResponsibilities':
+          onFieldChange(field, value);
           break;
         case 'teamMemberCategory':
-          onFieldChange(
-            'teamMemberCategory',
-            (value as TeamMemberFormData['teamMemberCategory']) ?? 'family',
-          );
+          onFieldChange('teamMemberCategory', value as TeamMemberFormData['teamMemberCategory']);
           break;
         case 'role':
-          onFieldChange('role', (value as TeamMemberFormData['role']) ?? 'member');
-          break;
-        case 'careRole':
-          onFieldChange('careRole', value);
-          break;
-        case 'careResponsibilities':
-          onFieldChange('careResponsibilities', value);
+          onFieldChange('role', value as TeamMemberFormData['role']);
           break;
         case 'personalMessage':
           onFieldChange('customMessage', value);
+          break;
+        case 'isOnCall':
+        case 'shiftStartTime':
+        case 'shiftEndTime':
+        case 'availabilityType':
+          onFieldChange(field, value);
+          break;
+        case 'blockStartDate':
+        case 'blockEndDate':
+        case 'blockReason':
+          onFieldChange(field, value);
           break;
         default:
           break;
@@ -144,20 +225,27 @@ export function InlineWizard({
     [errors, onFieldChange],
   );
 
+  // Handle day toggle - matching Create Request pattern
+  const handleDayToggle = React.useCallback((dayValue: number) => {
+    setFormData(prev => {
+      const currentDays = prev.shiftDays;
+      const newDays = currentDays.includes(dayValue)
+        ? currentDays.filter(d => d !== dayValue)
+        : [...currentDays, dayValue].sort();
+      
+      onFieldChange('shiftDays', newDays as any);
+      return { ...prev, shiftDays: newDays };
+    });
+  }, [onFieldChange]);
+
   const validateStep = React.useCallback(
-    (stepId: WizardStep): boolean => {
+    (stepId: string): boolean => {
       const newErrors: Record<string, string> = {};
 
       if (stepId === 'basic') {
         if (!formData.name.trim()) newErrors.name = 'Name is required.';
-        if (!formData.email.trim() && !formData.phone.trim()) {
-          newErrors.email = 'Email or phone number is required.';
-        } else if (
-          formData.email.trim() &&
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-        ) {
-          newErrors.email = 'Please enter a valid email address.';
-        }
+        if (!formData.email.trim()) newErrors.email = 'Email is required.';
+        if (!formData.phone.trim()) newErrors.phone = 'Phone is required.';
         if (!formData.teamMemberCategory)
           newErrors.teamMemberCategory = 'Category is required.';
         if (!formData.role) newErrors.role = 'Role is required.';
@@ -167,37 +255,43 @@ export function InlineWizard({
         if (!formData.careRole.trim()) newErrors.careRole = 'Care role is required.';
         if (!formData.careResponsibilities.trim())
           newErrors.careResponsibilities = 'Care responsibilities are required.';
+        // Validate schedule only if not on-call
+        if (!formData.isOnCall && formData.shiftDays.length === 0) {
+          newErrors.shiftDays = 'Please select at least one day for regular schedule.';
+        }
       }
 
-      setErrors((prev) => ({ ...prev, ...newErrors }));
+      if (stepId === 'review') {
+        // Validate blocked dates if either is provided
+        if (formData.blockStartDate && !formData.blockEndDate) {
+          newErrors.blockEndDate = 'End date is required when start date is set.';
+        }
+        if (formData.blockEndDate && !formData.blockStartDate) {
+          newErrors.blockStartDate = 'Start date is required when end date is set.';
+        }
+      }
 
+      setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     },
     [formData],
   );
 
-  const handleValidate = React.useCallback(
-    async ({ previousValue, nextValue, direction }: StepperChangeDetails) => {
-      if (direction !== 'forward') return true;
+  const handleNext = () => {
+    if (!validateStep(currentStep)) return;
+    
+    const nextIndex = currentStepIndex + 1;
+    if (nextIndex < steps.length) {
+      setCurrentStep(steps[nextIndex].id);
+    }
+  };
 
-      const prevIndex = previousValue
-        ? steps.findIndex((step) => step.id === (previousValue as WizardStep))
-        : -1;
-      const nextIndex = steps.findIndex((step) => step.id === (nextValue as WizardStep));
-
-      if (prevIndex !== -1 && nextIndex > prevIndex + 1) {
-        return false;
-      }
-
-      const stepToCheck = (previousValue as WizardStep) ?? 'basic';
-      return validateStep(stepToCheck);
-    },
-    [validateStep],
-  );
-
-  const handleValueChange = React.useCallback(({ nextValue }: StepperChangeDetails) => {
-    setCurrentStep(nextValue as WizardStep);
-  }, []);
+  const handlePrevious = () => {
+    const prevIndex = currentStepIndex - 1;
+    if (prevIndex >= 0) {
+      setCurrentStep(steps[prevIndex].id);
+    }
+  };
 
   const normalizeData = React.useCallback(
     (): TeamMemberFormData => ({
@@ -210,6 +304,16 @@ export function InlineWizard({
       careRole: formData.careRole.trim(),
       careResponsibilities: formData.careResponsibilities.trim(),
       customMessage: formData.personalMessage,
+      isOnCall: formData.isOnCall,
+      shiftDays: formData.shiftDays,
+      shiftStartTime: formData.shiftStartTime,
+      shiftEndTime: formData.shiftEndTime,
+      availabilityType: formData.availabilityType as TeamMemberFormData['availabilityType'],
+      blockStartDate: formData.blockStartDate,
+      blockEndDate: formData.blockEndDate,
+      blockReason: formData.blockReason,
+      careNotes: '',
+      photo: '',
     }),
     [formData, initialData],
   );
@@ -218,41 +322,57 @@ export function InlineWizard({
     if (!validateStep(currentStep)) return;
     const payload = normalizeData();
     onSubmit(payload, mode);
-  }, [currentStep, mode, normalizeData, onSubmit, validateStep]);
+  }, [currentStep, validateStep, normalizeData, onSubmit, mode]);
 
-  const isFirstStep = currentStep === 'basic';
-  const isLastStep = currentStep === 'review';
-
+  const renderStep = () => {
+    switch (currentStep) {
+      case 'mode':
   return (
-    <div className="bg-white">
-      <Stepper
-        value={currentStep}
-        onValidate={handleValidate}
-        onValueChange={handleValueChange}
-      >
-        <div className="px-6 py-4 border-b border-stroke-soft-200">
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-xl font-semibold">Add Team Member</h2>
+              <p className="text-text-sub-600">Choose how you'd like to add this team member</p>
+            </div>
+
+            <div className="space-y-4">
+              <Radio.Group
+                value={mode}
+                onValueChange={(value: string) => {
+                  // Mode is controlled by parent, but we can show the options
+                }}
+                className="space-y-3"
+              >
+                <div className="flex items-center space-x-3 p-4 border border-stroke-soft-200 rounded-lg hover:bg-bg-soft-50">
+                  <Radio.Item value="invite" id="invite-mode" />
+                  <div className="flex-1">
+                    <Label.Root htmlFor="invite-mode" className="font-medium">
+                      Invite by email
+                    </Label.Root>
           <p className="text-sm text-text-sub-600">
-            Step {steps.findIndex((step) => step.id === currentStep) + 1} of {steps.length}
-          </p>
-          <StepperList className="mt-4 gap-4 overflow-x-auto">
-            {steps.map((step) => (
-              <StepperItem key={step.id} value={step.id} className="gap-2">
-                <StepperTrigger className="gap-3 rounded-lg px-3 py-2">
-                  <StepperIndicator />
-                  <div className="flex flex-col gap-0.5">
-                    <StepperTitle>{step.title}</StepperTitle>
-                    <StepperDescription>{step.description}</StepperDescription>
+                      Send an invitation email to add them to the team
+                    </p>
                   </div>
-                </StepperTrigger>
-                <StepperSeparator />
-              </StepperItem>
-            ))}
-          </StepperList>
         </div>
 
-        <div className="px-6 py-6 space-y-6">
-          <StepperContent value="basic" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3 p-4 border border-stroke-soft-200 rounded-lg hover:bg-bg-soft-50">
+                  <Radio.Item value="manual" id="manual-mode" />
+                  <div className="flex-1">
+                    <Label.Root htmlFor="manual-mode" className="font-medium">
+                      Add manually
+                    </Label.Root>
+                    <p className="text-sm text-text-sub-600">
+                      Add their information directly without sending an invitation
+                    </p>
+                  </div>
+                </div>
+              </Radio.Group>
+            </div>
+          </div>
+        );
+
+      case 'basic':
+        return (
+          <div className="space-y-6">
               <div className="space-y-2">
                 <Label.Root htmlFor="wizard-name">
                   Full Name <Label.Asterisk />
@@ -263,13 +383,14 @@ export function InlineWizard({
                       id="wizard-name"
                       value={formData.name}
                       onChange={(event) => handleFieldChange('name', event.target.value)}
-                      placeholder="e.g., Sarah Johnson"
+                    placeholder="e.g., Marta Snow (Sister), Sarah Johnson (PCA)"
                     />
                   </Input.Wrapper>
                 </Input.Root>
                 {errors.name && <p className="text-xs text-error-base">{errors.name}</p>}
               </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label.Root htmlFor="wizard-email">
                   Email Address <Label.Asterisk />
@@ -281,15 +402,13 @@ export function InlineWizard({
                       type="email"
                       value={formData.email}
                       onChange={(event) => handleFieldChange('email', event.target.value)}
-                      placeholder="colleague@example.com"
+                      placeholder="marta@example.com"
                     />
                   </Input.Wrapper>
                 </Input.Root>
                 {errors.email && <p className="text-xs text-error-base">{errors.email}</p>}
-              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label.Root htmlFor="wizard-phone">
                   Phone Number <Label.Asterisk />
@@ -298,14 +417,18 @@ export function InlineWizard({
                   <Input.Wrapper>
                     <Input.Input
                       id="wizard-phone"
+                      type="tel"
                       value={formData.phone}
                       onChange={(event) => handleFieldChange('phone', event.target.value)}
-                      placeholder="(555) 123-4567"
+                      placeholder="+1 (555) 123-4567"
                     />
                   </Input.Wrapper>
                 </Input.Root>
+                {errors.phone && <p className="text-xs text-error-base">{errors.phone}</p>}
+              </div>
               </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label.Root htmlFor="wizard-category">
                   Team Member Category <Label.Asterisk />
@@ -329,7 +452,6 @@ export function InlineWizard({
                 {errors.teamMemberCategory && (
                   <p className="text-xs text-error-base">{errors.teamMemberCategory}</p>
                 )}
-              </div>
             </div>
 
             <div className="space-y-2">
@@ -351,9 +473,13 @@ export function InlineWizard({
               </Select.Root>
               {errors.role && <p className="text-xs text-error-base">{errors.role}</p>}
             </div>
-          </StepperContent>
+            </div>
+          </div>
+        );
 
-          <StepperContent value="care" className="space-y-6">
+      case 'care':
+        return (
+          <div className="space-y-6">
             <div className="space-y-2">
               <Label.Root htmlFor="wizard-care-role">
                 Care Role <Label.Asterisk />
@@ -381,22 +507,181 @@ export function InlineWizard({
               <Label.Root htmlFor="wizard-message">
                 Personal Message (optional)
               </Label.Root>
+              <Textarea.Root>
               <textarea
                 id="wizard-message"
                 value={formData.personalMessage}
-                onChange={(event) => handleFieldChange('personalMessage', event.target.value)}
+                  onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => handleFieldChange('personalMessage', event.target.value)}
                 placeholder={
                   mode === 'invite'
                     ? 'Add a personal message to include with the invitation...'
                     : 'Additional notes about this team member...'
                 }
+                  rows={3}
                 className="w-full resize-none rounded-lg border border-stroke-soft-200 px-3 py-2 text-paragraph-sm"
-                rows={3}
               />
+              </Textarea.Root>
             </div>
-          </StepperContent>
 
-          <StepperContent value="review" className="space-y-4">
+            <Divider.Root />
+
+            {/* Schedule Section - Matching Create Request Pattern */}
+            <div className="space-y-4">
+              <div className="text-label-sm">Regular Shift Schedule</div>
+              
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isOnCall"
+                  checked={formData.isOnCall}
+                  onChange={(e) => handleFieldChange('isOnCall', e.target.checked)}
+                  className="rounded border-stroke-soft-200"
+                />
+                <Label.Root htmlFor="isOnCall">
+                  On-call / Flexible schedule (no regular shifts)
+                </Label.Root>
+              </div>
+
+              {!formData.isOnCall && (
+                <div className="space-y-4 p-4 bg-bg-soft-50 rounded-lg border border-stroke-soft-200">
+                  {/* Day Selection - Matching Create Request */}
+                  <div>
+                    <Label.Root>Shift Days <Label.Asterisk /></Label.Root>
+                    <div className="flex gap-1 mt-2">
+                      {dayOptions.map(day => (
+                        <button
+                          key={day.value}
+                          type="button"
+                          onClick={() => handleDayToggle(day.value)}
+                          className={cn(
+                            "w-10 h-10 text-sm font-medium border rounded-lg transition-colors",
+                            formData.shiftDays.includes(day.value)
+                              ? 'bg-purple-500 border-purple-500 text-white'
+                              : 'border-stroke-soft-200 hover:border-stroke-soft-300 hover:bg-bg-soft-50 text-text-strong-950'
+                          )}
+                        >
+                          {day.label}
+                        </button>
+                      ))}
+                    </div>
+                    {errors.shiftDays && <p className="text-xs text-error-base mt-1">{errors.shiftDays}</p>}
+                  </div>
+
+                  {/* Time Pickers - Matching Create Request */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label.Root htmlFor="shift-start-time">Start Time</Label.Root>
+                      <Input.Root>
+                        <Input.Wrapper>
+                          <Input.Input
+                            id="shift-start-time"
+                            type="time"
+                            value={formData.shiftStartTime}
+                            onChange={(e) => handleFieldChange('shiftStartTime', e.target.value)}
+                          />
+                        </Input.Wrapper>
+                      </Input.Root>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label.Root htmlFor="shift-end-time">End Time</Label.Root>
+                      <Input.Root>
+                        <Input.Wrapper>
+                          <Input.Input
+                            id="shift-end-time"
+                            type="time"
+                            value={formData.shiftEndTime}
+                            onChange={(e) => handleFieldChange('shiftEndTime', e.target.value)}
+                          />
+                        </Input.Wrapper>
+                      </Input.Root>
+                    </div>
+                  </div>
+
+                  {/* Preview - Matching Create Request */}
+                  {formData.shiftDays.length > 0 && (
+                    <div className="p-3 bg-white rounded border border-stroke-soft-200">
+                      <p className="text-sm text-text-sub-600">
+                        <span className="font-medium">Schedule Preview: </span>
+                        {generateSchedulePreview(formData.isOnCall, formData.shiftDays, formData.shiftStartTime, formData.shiftEndTime)}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
+      case 'review':
+        return (
+          <div className="space-y-6">
+            {/* Time Off / Blocked Dates Section */}
+            <div className="space-y-4">
+              <div className="text-label-sm">Time Off & Blocked Dates (Optional)</div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label.Root htmlFor="block-start-date">Start Date</Label.Root>
+                  <Input.Root>
+                    <Input.Wrapper>
+                      <Input.Input
+                        id="block-start-date"
+                        type="date"
+                        value={formData.blockStartDate}
+                        onChange={(e) => handleFieldChange('blockStartDate', e.target.value)}
+                      />
+                    </Input.Wrapper>
+                  </Input.Root>
+                  {errors.blockStartDate && <p className="text-xs text-error-base">{errors.blockStartDate}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label.Root htmlFor="block-end-date">End Date</Label.Root>
+                  <Input.Root>
+                    <Input.Wrapper>
+                      <Input.Input
+                        id="block-end-date"
+                        type="date"
+                        value={formData.blockEndDate}
+                        onChange={(e) => handleFieldChange('blockEndDate', e.target.value)}
+                      />
+                    </Input.Wrapper>
+                  </Input.Root>
+                  {errors.blockEndDate && <p className="text-xs text-error-base">{errors.blockEndDate}</p>}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label.Root htmlFor="block-reason">Reason (optional)</Label.Root>
+                <Input.Root>
+                  <Input.Wrapper>
+                    <Input.Input
+                      id="block-reason"
+                      value={formData.blockReason}
+                      onChange={(e) => handleFieldChange('blockReason', e.target.value)}
+                      placeholder="e.g., Vacation, Medical leave, Personal time"
+                    />
+                  </Input.Wrapper>
+                </Input.Root>
+              </div>
+
+              {formData.blockStartDate && formData.blockEndDate && (
+                <div className="bg-blue-50 text-blue-700 p-4 rounded-lg border border-blue-200">
+                  <div className="text-label-sm font-medium mb-1">Time Off Preview:</div>
+                  <div className="text-paragraph-sm">
+                    {formData.name} will be marked as <strong>Unavailable</strong> from{' '}
+                    {new Date(formData.blockStartDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} to{' '}
+                    {new Date(formData.blockEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {formData.blockReason && ` (${formData.blockReason})`}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Divider.Root variant='line-spacing' />
+
+            {/* Review Summary */}
             <div className="rounded-lg border border-stroke-soft-200 bg-bg-soft-50 p-4">
               <h3 className="text-label-md font-medium text-text-strong-950 mb-3">
                 {mode === 'invite'
@@ -421,7 +706,7 @@ export function InlineWizard({
                   <dd className="text-text-strong-950">{formData.teamMemberCategory || '—'}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="text-text-sub-600">Role</dt>
+                  <dt className="text-text-sub-600">Permission Role</dt>
                   <dd className="text-text-strong-950">{formData.role || '—'}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
@@ -434,6 +719,12 @@ export function InlineWizard({
                     {formData.careResponsibilities || '—'}
                   </dd>
                 </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-text-sub-600">Schedule</dt>
+                  <dd className="text-text-strong-950 font-medium">
+                    {generateSchedulePreview(formData.isOnCall, formData.shiftDays, formData.shiftStartTime, formData.shiftEndTime)}
+                  </dd>
+                </div>
                 {formData.personalMessage && (
                   <div className="flex justify-between gap-4">
                     <dt className="text-text-sub-600">Message</dt>
@@ -444,41 +735,56 @@ export function InlineWizard({
                 )}
               </dl>
             </div>
-          </StepperContent>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Step Header - Matching Create Request */}
+      <div className="text-center space-y-2">
+        <h2 className="text-xl font-semibold">{steps[currentStepIndex].title}</h2>
+        <p className="text-text-sub-600">{steps[currentStepIndex].description}</p>
         </div>
 
-        <div className="px-6 py-4 border-t border-stroke-soft-200 flex justify-between">
-          {!isFirstStep ? (
-            <StepperPrevTrigger asChild>
-              <Button.Root variant="neutral">Back</Button.Root>
-            </StepperPrevTrigger>
-          ) : (
-            <div></div>
-          )}
+      {/* Step Content */}
+      {renderStep()}
 
-          {isLastStep ? (
+      {/* Navigation - Matching Create Request */}
+      <div className="flex justify-between pt-6">
+        <Button.Root
+          variant="neutral"
+          mode="stroke"
+          onClick={currentStepIndex === 0 ? onCancel : handlePrevious}
+          disabled={isSaving}
+        >
+          {currentStepIndex === 0 ? 'Cancel' : 'Previous'}
+        </Button.Root>
+
+        <div className="flex gap-2">
+          {currentStepIndex === steps.length - 1 ? (
             <Button.Root
-              variant="primary"
               onClick={handleSubmit}
               disabled={isSaving}
+              className="min-w-[120px]"
             >
-              {isSaving
-                ? mode === 'invite'
-                  ? 'Sending Invitation...'
-                  : 'Adding Member...'
-                : mode === 'invite'
-                  ? 'Send Invitation'
-                  : 'Add Team Member'}
+              {isSaving ? 'Saving...' : mode === 'invite' ? 'Send Invitation' : 'Add Team Member'}
             </Button.Root>
           ) : (
-            <StepperNextTrigger asChild>
-              <Button.Root variant="primary" disabled={isSaving}>
-                Continue
+            <Button.Root
+              onClick={handleNext}
+              disabled={isSaving}
+              className="min-w-[120px]"
+            >
+              Next
               </Button.Root>
-            </StepperNextTrigger>
           )}
         </div>
-      </Stepper>
+      </div>
     </div>
   );
 }

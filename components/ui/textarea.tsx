@@ -26,7 +26,7 @@ const Textarea = React.forwardRef<
             'pointer-events-auto h-full min-h-[82px] bg-transparent pl-3 pr-2.5 pt-2.5',
           ],
           simple && [
-            'min-h-28 rounded-xl bg-bg-white-0 px-3 py-2.5 shadow-regular-xs',
+            'min-h-28 rounded-xl bg-bg-soft-50 px-3 py-2.5 shadow-regular-xs',
             'ring-1 ring-inset ring-stroke-soft-200',
             'transition duration-200 ease-out',
             // hover
@@ -122,7 +122,7 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         className={cnExt(
           [
             // base
-            'group/textarea relative flex w-full flex-col rounded-xl bg-bg-white-0 pb-2.5 shadow-regular-xs',
+            'group/textarea relative flex w-full flex-col rounded-xl bg-bg-soft-50 pb-2.5 shadow-regular-xs',
             'ring-1 ring-inset ring-stroke-soft-200',
             'transition duration-200 ease-out',
             // hover
@@ -150,7 +150,6 @@ const TextareaRoot = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             <Textarea ref={forwardedRef} hasError={hasError} {...rest} />
             <div className='pointer-events-none flex items-center justify-end gap-1.5 pl-3 pr-2.5'>
               {children}
-              <ResizeHandle />
             </div>
           </div>
           <div className='min-h-full resize-y overflow-hidden opacity-0 [grid-area:1/1]' />

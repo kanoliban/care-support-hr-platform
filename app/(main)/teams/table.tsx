@@ -46,9 +46,34 @@ import * as Input from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { ThemedImage } from '@/components/themed-image';
 import { TeamsTableFilters } from '@/app/(main)/teams/filters';
-import { EditDetailsModalContent } from './edit-details-modal-content';
+import { EditTeamMemberWizard, type TeamMemberEditData } from './edit-team-member-wizard';
 import { useSimplePermissions } from '@/lib/simple-permission-context';
 import { PermissionGate } from '@/components/permission-gate';
+import { useCareSupport } from '@/lib/careContext';
+
+// Function to determine if a team member is currently on shift
+const isCurrentlyOnShift = (memberId: string, coverageWindows: any[]) => {
+  const now = new Date();
+  const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
+  const currentDate = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+  
+  return coverageWindows.some(window => {
+    if (window.assignedTeamMember !== memberId) return false;
+    if (window.date !== currentDate) return false;
+    if (window.status !== 'confirmed') return false;
+    
+    const startTime = window.startTime;
+    const endTime = window.endTime;
+    
+    // Handle overnight shifts (e.g., 20:00 to 08:00)
+    if (startTime > endTime) {
+      return currentTime >= startTime || currentTime <= endTime;
+    } else {
+      // Handle same-day shifts (e.g., 09:00 to 17:00)
+      return currentTime >= startTime && currentTime <= endTime;
+    }
+  });
+};
 
 const data: Data[] = [
   {
@@ -57,6 +82,7 @@ const data: Data[] = [
     member: {
       name: 'Marta Snow (Sister)',
       email: 'marta.snow@family.com',
+      phone: '+1 (555) 234-5678',
       image: '/images/avatar/illustration/james.png',
     },
     title: {
@@ -78,7 +104,7 @@ const data: Data[] = [
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'admin',
     permissions: {
@@ -99,6 +125,7 @@ const data: Data[] = [
     member: {
       name: 'Luann Wudlick (Mom)',
       email: 'luann.wudlick@family.com',
+      phone: '+1 (555) 345-6789',
       image: '/images/avatar/illustration/sophia.png',
     },
     title: {
@@ -118,7 +145,7 @@ const data: Data[] = [
       size: '2.1 MB',
     },
     availability: {
-      schedule: 'All empty time slots',
+      schedule: 'On-call',
       type: 'Flexible',
     },
     status: {
@@ -144,6 +171,7 @@ const data: Data[] = [
     member: {
       name: 'Jim Nelson',
       email: 'jim.nelson@caresupport.com',
+      phone: '+1 (555) 456-7890',
       image: '/images/avatar/illustration/arthur.png',
     },
     title: {
@@ -160,7 +188,7 @@ const data: Data[] = [
       size: '1.9 MB',
     },
     availability: {
-      schedule: 'M-F 9am-5pm',
+      schedule: 'Mon-Fri 9am-5pm',
       type: 'Regular',
     },
     status: {
@@ -186,6 +214,7 @@ const data: Data[] = [
     member: {
       name: 'Jennifer',
       email: 'jennifer@caresupport.com',
+      phone: '+1 (555) 567-8901',
       image: '/images/avatar/illustration/emma.png',
     },
     title: {
@@ -202,12 +231,12 @@ const data: Data[] = [
       size: '2.3 MB',
     },
     availability: {
-      schedule: 'M,T 8pm-8am',
+      schedule: 'Mon-Tue 8pm-8am',
       type: 'Overnight',
     },
     status: {
-      variant: 'on-shift',
-      label: 'On Shift',
+      variant: 'completed',
+      label: 'Available',
     },
   },
   {
@@ -216,6 +245,7 @@ const data: Data[] = [
     member: {
       name: 'Sarah',
       email: 'sarah@caresupport.com',
+      phone: '+1 (555) 678-9012',
       image: '/images/avatar/illustration/matthew.png',
     },
     title: {
@@ -232,7 +262,7 @@ const data: Data[] = [
       size: '2.2 MB',
     },
     availability: {
-      schedule: 'W, Th 8pm-8am',
+      schedule: 'Wed-Thu 8pm-8am',
       type: 'Overnight',
     },
     status: {
@@ -258,6 +288,7 @@ const data: Data[] = [
     member: {
       name: 'Ella',
       email: 'ella@caresupport.com',
+      phone: '+1 (555) 789-0123',
       image: '/images/avatar/illustration/laura.png',
     },
     title: {
@@ -277,7 +308,7 @@ const data: Data[] = [
       size: '2.0 MB',
     },
     availability: {
-      schedule: 'F, Sat, Sun 8pm-9am',
+      schedule: 'Fri-Sun 8pm-9am',
       type: 'Weekend Overnight',
     },
     status: {
@@ -303,6 +334,7 @@ const data: Data[] = [
     member: {
       name: 'Alex',
       email: 'alex@caresupport.com',
+      phone: '+1 (555) 890-1234',
       image: '/images/avatar/illustration/wei.png',
     },
     title: {
@@ -319,7 +351,7 @@ const data: Data[] = [
       size: '2.4 MB',
     },
     availability: {
-      schedule: 'Random',
+      schedule: 'On-call',
       type: 'Flexible',
     },
     status: {
@@ -411,7 +443,7 @@ const data: Data[] = [
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'member',
     permissions: {
@@ -453,7 +485,7 @@ const data: Data[] = [
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'member',
     permissions: {
@@ -490,12 +522,19 @@ const data: Data[] = [
       size: '2.3 MB',
     },
     availability: {
-      schedule: 'Summer Break',
+      schedule: 'On-call',
       type: 'Temporary Leave',
     },
+    blockedDates: [
+      {
+        startDate: '2025-06-01',
+        endDate: '2025-08-31',
+        reason: 'Summer Break'
+      }
+    ],
     status: {
-      variant: 'disabled',
-      label: 'Summer Break',
+      variant: 'failed',
+      label: 'Unavailable',
     },
     role: 'member',
     permissions: {
@@ -532,12 +571,12 @@ const data: Data[] = [
       size: '2.2 MB',
     },
     availability: {
-      schedule: 'Random On-call',
+      schedule: 'On-call',
       type: 'Backup',
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'member',
     permissions: {
@@ -577,12 +616,12 @@ const data: Data[] = [
       size: '2.0 MB',
     },
     availability: {
-      schedule: 'Random On-call',
+      schedule: 'On-call',
       type: 'Backup',
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'member',
     permissions: {
@@ -624,7 +663,7 @@ const data: Data[] = [
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'member',
     permissions: {
@@ -666,7 +705,7 @@ const data: Data[] = [
     },
     status: {
       variant: 'completed',
-      label: 'On-call',
+      label: 'Available',
     },
     role: 'member',
     permissions: {
@@ -703,12 +742,12 @@ const data: Data[] = [
       size: '3.2 MB',
     },
     availability: {
-      schedule: '24/7 Care Recipient',
+      schedule: 'On-call',
       type: 'Primary',
     },
     status: {
       variant: 'completed',
-      label: 'Active',
+      label: 'Available',
     },
     role: 'owner',
     permissions: {
@@ -746,7 +785,7 @@ const data: Data[] = [
       size: '1.8 MB',
     },
     availability: {
-      schedule: 'Weekdays 9-5',
+      schedule: 'Mon-Fri 9am-5pm',
       type: 'Fixed',
     },
     status: {
@@ -788,7 +827,7 @@ const data: Data[] = [
       size: '1.5 MB',
     },
     availability: {
-      schedule: 'Weekends',
+      schedule: 'Sat-Sun (Flexible)',
       type: 'Flexible',
     },
     status: {
@@ -816,6 +855,7 @@ type Data = {
   member: {
     name: string;
     email: string;
+    phone?: string;
     image: string;
   };
   title: {
@@ -835,6 +875,11 @@ type Data = {
     schedule: string;
     type: string;
   };
+  blockedDates?: {
+    startDate: string;
+    endDate: string;
+    reason?: string;
+  }[];
   status: {
     variant: 'completed' | 'pending' | 'failed' | 'disabled' | 'on-shift';
     label: string;
@@ -865,6 +910,7 @@ const getSortingIcon = (state: 'asc' | 'desc' | false) => {
 export function MembersTable({ className }: { className?: string }) {
   const router = useRouter();
   const { currentProfile, userPermissions } = useSimplePermissions();
+  const { careContext } = useCareSupport(); // Get real coverage data
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
@@ -874,10 +920,31 @@ export function MembersTable({ className }: { className?: string }) {
   const [selectedMember, setSelectedMember] = React.useState<Data | null>(null);
   const [currentRole, setCurrentRole] = React.useState<string>('');
   const [currentPermissions, setCurrentPermissions] = React.useState<any>(null);
-  const [editFormData, setEditFormData] = React.useState<any>(null);
-  const [formErrors, setFormErrors] = React.useState<any>({});
+  const [editFormData, setEditFormData] = React.useState<TeamMemberEditData | null>(null);
+  const [formErrors, setFormErrors] = React.useState<Partial<Record<keyof TeamMemberEditData, string>>>({});
   const [isSaving, setIsSaving] = React.useState(false);
-  const [teamMembers, setTeamMembers] = React.useState<Data[]>(data);
+  
+  // Process team members to determine their current status based on real schedule data
+  const processedTeamMembers = React.useMemo(() => {
+    return data.map(member => {
+      const isOnShift = isCurrentlyOnShift(member.id, careContext?.coverageWindows || []);
+      
+      // If they're currently on shift, override their status
+      if (isOnShift) {
+        return {
+          ...member,
+          status: {
+            variant: 'on-shift' as const,
+            label: 'On Shift'
+          }
+        };
+      }
+      
+      return member;
+    });
+  }, [careContext?.coverageWindows]);
+  
+  const [teamMembers, setTeamMembers] = React.useState<Data[]>(processedTeamMembers);
 
   // Filter team members by current profile
   const profileFilteredMembers = React.useMemo(() => {
@@ -955,17 +1022,28 @@ export function MembersTable({ className }: { className?: string }) {
 
   const handleEditDetails = (member: Data) => {
     setSelectedMember(member);
+    // Get the first blocked date if it exists
+    const firstBlock = member.blockedDates?.[0];
+    
     // Initialize form data with current member data
     setEditFormData({
       name: member.member.name,
       email: member.member.email,
+      phone: member.member.phone || '',
       careRole: member.title.name,
       careAssignment: member.project.name,
       assignmentDescription: member.project.description,
       schedule: member.availability.schedule,
       availabilityType: member.availability.type,
+      blockStartDate: firstBlock?.startDate || '',
+      blockEndDate: firstBlock?.endDate || '',
+      blockReason: firstBlock?.reason || '',
     });
     setEditDetailsModalOpen(true);
+  };
+
+  const handleFormFieldChange = (field: keyof TeamMemberEditData, value: any) => {
+    setEditFormData(prev => prev ? ({ ...prev, [field]: value }) : null);
   };
 
   const handleRoleChange = (newRole: string) => {
@@ -973,50 +1051,9 @@ export function MembersTable({ className }: { className?: string }) {
     setCurrentPermissions(getPermissionsForRole(newRole));
   };
 
-  // Form validation functions
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePhone = (phone: string) => {
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
-  };
-
-  const validateForm = () => {
-    const errors: any = {};
-    
-    if (!editFormData.name.trim()) {
-      errors.name = 'Caregiver name is required';
-    }
-    
-    if (!editFormData.email.trim()) {
-      errors.email = 'Email is required';
-    } else if (!validateEmail(editFormData.email)) {
-      errors.email = 'Please enter a valid email address';
-    }
-    
-    if (!editFormData.careRole.trim()) {
-      errors.careRole = 'Care role is required';
-    }
-    
-    if (!editFormData.careAssignment.trim()) {
-      errors.careAssignment = 'Care assignment is required';
-    }
-    
-    if (!editFormData.schedule.trim()) {
-      errors.schedule = 'Schedule details are required';
-    }
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
 
   const handleSaveDetails = async () => {
-    if (!validateForm()) {
-      return;
-    }
+    if (!editFormData) return;
     
     setIsSaving(true);
     
@@ -1033,6 +1070,7 @@ export function MembersTable({ className }: { className?: string }) {
                 ...member.member,
                 name: editFormData.name,
                 email: editFormData.email,
+                phone: editFormData.phone,
               },
               title: {
                 ...member.title,
@@ -1047,7 +1085,16 @@ export function MembersTable({ className }: { className?: string }) {
                 ...member.availability,
                 schedule: editFormData.schedule,
                 type: editFormData.availabilityType,
-              }
+              },
+              blockedDates: editFormData.blockStartDate && editFormData.blockEndDate ? [{
+                startDate: editFormData.blockStartDate,
+                endDate: editFormData.blockEndDate,
+                reason: editFormData.blockReason
+              }] : member.blockedDates,
+              status: editFormData.blockStartDate && editFormData.blockEndDate ? {
+                variant: 'failed',
+                label: 'Unavailable'
+              } : member.status
             }
           : member
       ));
@@ -1067,14 +1114,6 @@ export function MembersTable({ className }: { className?: string }) {
     }
   };
 
-  const handleFormFieldChange = (field: string, value: string) => {
-    setEditFormData((prev: any) => ({ ...prev, [field]: value }));
-    
-    // Clear error when user starts typing
-    if (formErrors[field]) {
-      setFormErrors((prev: any) => ({ ...prev, [field]: '' }));
-    }
-  };
 
   // Define columns inside component to access handleManagePermissions
 const columns: ColumnDef<Data>[] = [
@@ -1135,11 +1174,11 @@ const columns: ColumnDef<Data>[] = [
     ),
   },
   {
-    id: 'title',
-    accessorKey: 'title.name',
+    id: 'contact',
+    accessorKey: 'member.phone',
     header: ({ column }) => (
       <div className='flex items-center gap-0.5'>
-          Contact Info
+        Contact Info
         <button
           type='button'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -1151,20 +1190,20 @@ const columns: ColumnDef<Data>[] = [
     cell: ({ row }) => (
       <div className='flex min-w-[180px] flex-col gap-0.5'>
         <span className='text-label-sm text-text-strong-950'>
-          {row.original.member.email}
+          {row.original.member.phone || '+1 (555) 000-0000'}
         </span>
         <span className='text-paragraph-xs text-text-sub-600'>
-          {row.original.title.name} • {row.original.title.date}
+          {row.original.member.email}
         </span>
       </div>
     ),
   },
   {
-    id: 'project',
-    accessorKey: 'project.name',
+    id: 'role',
+    accessorKey: 'title.name',
     header: ({ column }) => (
       <div className='flex items-center gap-0.5'>
-          Care Responsibilities
+        Role
         <button
           type='button'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -1174,59 +1213,22 @@ const columns: ColumnDef<Data>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className='flex w-[232px] items-center gap-3'>
-        <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-          <ThemedImage
-            src={row.original.project.image[0]}
-            srcDark={row.original.project.image[1]}
-            alt=''
-            width={28}
-            height={28}
-          />
-        </div>
-        <div className='flex min-w-0 flex-col gap-0.5'>
-          <span className='text-label-sm text-text-strong-950'>
-            {row.original.project.name}
-          </span>
-          <span className='truncate text-paragraph-xs text-text-sub-600'>
-            {row.original.project.description}
-          </span>
-        </div>
+      <div className='flex min-w-[140px] flex-col gap-0.5'>
+        <span className='text-label-sm text-text-strong-950'>
+          {row.original.title.name}
+        </span>
       </div>
     ),
+    enableSorting: true,
+    size: 140,
+    minSize: 120,
   },
   {
-      id: 'availability',
-      accessorKey: 'availability.schedule',
+    id: 'schedule',
+    accessorKey: 'availability.schedule',
     header: ({ column }) => (
-        <div className='flex min-w-32 items-center gap-0.5'>
-          Availability
-        <button
-          type='button'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          {getSortingIcon(column.getIsSorted())}
-        </button>
-      </div>
-    ),
-    cell: ({ row }) => (
-        <div className='flex min-w-32 flex-col gap-0.5'>
-          <span className='text-label-sm text-text-strong-950'>
-            {row.original.availability.schedule}
-          </span>
-          <span className='text-paragraph-xs text-text-sub-600'>
-            {row.original.availability.type}
-          </span>
-      </div>
-    ),
-  },
-  {
-    id: 'status',
-    accessorKey: 'status.label',
-      filterFn: 'includesString',
-    header: ({ column }) => (
-      <div className='flex min-w-24 items-center gap-0.5'>
-        Status
+      <div className='flex items-center gap-0.5'>
+        Schedule
         <button
           type='button'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -1236,12 +1238,124 @@ const columns: ColumnDef<Data>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const isAvailable = row.original.status.variant === 'completed' || row.original.status.label === 'Available' || row.original.status.label === 'On-call';
+      // Check if this member is currently on shift
+      const isOnShift = isCurrentlyOnShift(row.original.id, careContext?.coverageWindows || []);
+      
+      // Check for active blocked dates
+      const now = new Date();
+      const activeBlock = row.original.blockedDates?.find(block => {
+        const start = new Date(block.startDate);
+        const end = new Date(block.endDate);
+        return now >= start && now <= end;
+      });
+      
+      // Check for upcoming blocked dates
+      const upcomingBlock = row.original.blockedDates?.find(block => {
+        const start = new Date(block.startDate);
+        return start > now;
+      });
+      
+      const blockToShow = activeBlock || upcomingBlock;
+      
       return (
-        <StatusBadge.Root status={isAvailable ? "completed" : "pending"}>
-        <StatusBadge.Icon as={RiCheckboxCircleFill} />
-          {isAvailable ? 'Available' : 'Unavailable'}
-      </StatusBadge.Root>
+        <div className='flex min-w-32 flex-col gap-0.5'>
+          <span className={`text-label-sm ${isOnShift ? 'text-blue-600 font-medium' : 'text-text-strong-950'}`}>
+            {isOnShift ? 'Currently On Shift' : row.original.availability.schedule}
+          </span>
+          {blockToShow && !isOnShift && (
+            <span className='text-paragraph-xs text-text-sub-600'>
+              {activeBlock 
+                ? `Unavailable until ${new Date(blockToShow.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                : `Blocked ${new Date(blockToShow.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(blockToShow.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+              }
+            </span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
+    id: 'status',
+    accessorKey: 'status.label',
+      filterFn: 'includesString',
+    header: ({ column }) => (
+      <div className='flex min-w-24 items-center gap-0.5'>
+        Availability
+        <button
+          type='button'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {getSortingIcon(column.getIsSorted())}
+        </button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const isAvailable = row.original.status.label === 'Available';
+      const isBusy = row.original.status.label === 'Busy';
+      const isUnavailable = row.original.status.label === 'Unavailable';
+      
+      const handleStatusChange = () => {
+        console.log('🔄 Care Team status change clicked!', { 
+          id: row.original.id, 
+          currentStatus: row.original.status.label 
+        });
+        
+        // Cycle through care team statuses: Available -> Busy -> Unavailable -> Available
+        const statusCycle = [
+          { label: 'Available', variant: 'completed' },
+          { label: 'Busy', variant: 'pending' },
+          { label: 'Unavailable', variant: 'pending' }
+        ];
+        
+        const currentStatusIndex = statusCycle.findIndex(s => s.label === row.original.status.label);
+        // If current status is not in cycle, start from 'Available'
+        const nextStatusIndex = currentStatusIndex === -1 ? 0 : (currentStatusIndex + 1) % statusCycle.length;
+        const newStatus = statusCycle[nextStatusIndex];
+        
+        // Update the team member status in the state
+        setTeamMembers(prev => prev.map(member => 
+          member.id === row.original.id 
+            ? { 
+                ...member, 
+                status: { 
+                  ...member.status, 
+                  label: newStatus.label, 
+                  variant: newStatus.variant 
+                } 
+              }
+            : member
+        ));
+        
+        console.log('✅ New status:', newStatus);
+      };
+      
+      // Map care team status to StatusBadge variant
+        const getBadgeVariant = (statusLabel: string) => {
+          switch (statusLabel) {
+            case 'Available': return 'completed';
+            case 'Busy': return 'pending';
+            case 'Unavailable': return 'failed';
+            default: return 'disabled';
+          }
+        };
+
+      return (
+        <StatusBadge.Root 
+          status={getBadgeVariant(row.original.status.label)}
+          variant="light"
+          onClick={(e) => {
+            console.log('🔥 Care Team StatusBadge clicked!', { 
+              memberId: row.original.id, 
+              currentStatus: row.original.status.label
+            });
+            e.preventDefault();
+            e.stopPropagation();
+            handleStatusChange();
+          }}
+          className="cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          {row.original.status.label}
+        </StatusBadge.Root>
       );
     },
   },
@@ -1257,13 +1371,9 @@ const columns: ColumnDef<Data>[] = [
           </Dropdown.Trigger>
           <Dropdown.Content align='end' className='w-48'>
             <PermissionGate permission="canManageTeam">
-              <Dropdown.Item onClick={() => router.push(`/teams/${row.original.id}/edit`)}>
-                <RiEditLine className='mr-2 h-4 w-4' />
-                Comprehensive Edit
-              </Dropdown.Item>
               <Dropdown.Item onClick={() => handleEditDetails(row.original)}>
                 <RiEditLine className='mr-2 h-4 w-4' />
-                Quick Edit
+                Edit Details
               </Dropdown.Item>
             </PermissionGate>
             <PermissionGate permission="canManageTeam">
@@ -1654,43 +1764,31 @@ const columns: ColumnDef<Data>[] = [
         </Modal.Content>
       </Modal.Root>
 
-      {/* Edit Details Modal */}
+      {/* Edit Details Modal - 3 Step Wizard */}
       <Modal.Root open={editDetailsModalOpen} onOpenChange={setEditDetailsModalOpen}>
         <Modal.Content className='max-w-[700px]'>
           <Modal.Header
-            title="Edit Team Member Details"
-            description={`Update personal information and care responsibilities for ${selectedMember?.member.name}`}
+            title="Edit Team Member"
+            description={`Update details for ${selectedMember?.member.name}`}
           />
           
           {selectedMember && editFormData && (
             <Modal.Body>
-              <EditDetailsModalContent
-                editFormData={editFormData}
-                handleFormFieldChange={handleFormFieldChange}
-                formErrors={formErrors}
+              <EditTeamMemberWizard
+                formData={editFormData}
+                onFormDataChange={handleFormFieldChange}
+                errors={formErrors}
+                onErrorsChange={setFormErrors}
+                isSaving={isSaving}
+                onSave={handleSaveDetails}
+                onCancel={() => {
+                  setEditDetailsModalOpen(false);
+                  setFormErrors({});
+                }}
+                memberName={selectedMember.member.name}
               />
             </Modal.Body>
           )}
-
-          <Modal.Footer>
-            <Button.Root 
-              variant='neutral' 
-              mode='stroke' 
-              onClick={() => {
-                setEditDetailsModalOpen(false);
-                setFormErrors({});
-              }}
-              disabled={isSaving}
-            >
-              Cancel
-            </Button.Root>
-            <Button.Root 
-              onClick={handleSaveDetails}
-              disabled={isSaving}
-            >
-              {isSaving ? 'Saving...' : 'Save Changes'}
-            </Button.Root>
-          </Modal.Footer>
         </Modal.Content>
       </Modal.Root>
     </div>

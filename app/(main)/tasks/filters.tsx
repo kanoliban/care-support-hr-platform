@@ -8,9 +8,9 @@ import * as Kbd from '@/components/ui/kbd';
 import * as SegmentedControl from '@/components/ui/segmented-control';
 import * as Select from '@/components/ui/select';
 
-import IconCmd from '~/icons/icon-cmd.svg';
+// import IconCmd from '~/icons/icon-cmd.svg';
 
-interface TeamsTableFiltersProps {
+interface TasksTableFiltersProps {
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
   statusFilter: string;
@@ -18,20 +18,20 @@ interface TeamsTableFiltersProps {
   table: any;
 }
 
-export function TeamsTableFilters({ 
+export function TasksTableFilters({ 
   globalFilter, 
   setGlobalFilter, 
   statusFilter, 
   setStatusFilter, 
   table 
-}: TeamsTableFiltersProps) {
+}: TasksTableFiltersProps) {
   return (
     <div className='flex flex-col justify-between gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-3'>
       <Input.Root className='lg:hidden'>
         <Input.Wrapper>
           <Input.Icon as={RiSearch2Line} />
           <Input.Input 
-            placeholder='Search caregivers...' 
+            placeholder='Search activities...' 
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
           />
@@ -47,21 +47,25 @@ export function TeamsTableFilters({
           setStatusFilter(value);
           if (value === 'all') {
             table.getColumn('status')?.setFilterValue(undefined);
-          } else if (value === 'active') {
-            table.getColumn('status')?.setFilterValue('Available');
-          } else if (value === 'absent') {
-            table.getColumn('status')?.setFilterValue('Unavailable');
+          } else {
+            table.getColumn('status')?.setFilterValue(value);
           }
         }} 
-        className='lg:w-80'
+        className='lg:w-[500px]'
       >
-        <SegmentedControl.List>
-          <SegmentedControl.Trigger value='all'>All Caregivers</SegmentedControl.Trigger>
-          <SegmentedControl.Trigger value='active'>
-            Available
+        <SegmentedControl.List className='gap-2'>
+            <SegmentedControl.Trigger value='all' className='px-3'>All Tasks</SegmentedControl.Trigger>
+          <SegmentedControl.Trigger value='in_progress' className='px-3'>
+            In Progress
           </SegmentedControl.Trigger>
-          <SegmentedControl.Trigger value='absent'>
-            Unavailable
+          <SegmentedControl.Trigger value='scheduled' className='px-3'>
+            Scheduled
+          </SegmentedControl.Trigger>
+          <SegmentedControl.Trigger value='completed' className='px-3'>
+            Completed
+          </SegmentedControl.Trigger>
+          <SegmentedControl.Trigger value='overdue' className='px-3'>
+            Overdue
           </SegmentedControl.Trigger>
         </SegmentedControl.List>
       </SegmentedControl.Root>
@@ -70,12 +74,12 @@ export function TeamsTableFilters({
         <Input.Wrapper>
           <Input.Icon as={RiSearch2Line} />
           <Input.Input 
-            placeholder='Search caregivers...' 
+            placeholder='Search tasks...' 
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
           />
           <Kbd.Root>
-            <IconCmd className='size-2.5' />1
+            ⌘1
           </Kbd.Root>
         </Input.Wrapper>
       </Input.Root>

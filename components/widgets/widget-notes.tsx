@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import {
   RiAddLine,
@@ -37,7 +38,7 @@ function NoteItem({ title, description, date, badges }: NoteItemProps) {
     <CheckboxPrimitive.Root
       checked={checked}
       onCheckedChange={setChecked}
-      className='group flex w-full items-start gap-2.5 text-left'
+      className='group flex w-full items-start gap-2.5 text-left rounded-lg p-3 glassmorphic-hover glassmorphic-subtle transition-all duration-300 ease-out hover:shadow-glass'
     >
       <div className='grid shrink-0'>
         <RiCheckboxBlankCircleLine className='size-6 text-text-soft-400 transition duration-200 ease-out [grid-area:1/1] group-data-[state=checked]:scale-75 group-data-[state=checked]:opacity-0' />
@@ -62,6 +63,7 @@ function NoteItem({ title, description, date, badges }: NoteItemProps) {
                 variant='lighter'
                 color={badge.color}
                 disabled={!!checked}
+                className='glassmorphic-subtle'
               >
                 {badge.label}
               </Badge.Root>
@@ -80,12 +82,18 @@ function NoteItem({ title, description, date, badges }: NoteItemProps) {
 export default function WidgetNotes({
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const router = useRouter();
+
+  const handleAddItem = () => {
+    router.push('/tasks');
+  };
+
   return (
     <WidgetBox.Root className="min-h-[380px]" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiStickyNoteLine} />
         Care Activities
-        <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+        <Button.Root variant='neutral' mode='stroke' size='xsmall' onClick={handleAddItem}>
           <Button.Icon as={RiAddLine} />
           Add Item
         </Button.Root>
@@ -136,6 +144,12 @@ export function WidgetNotesEmpty({
   className,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const router = useRouter();
+
+  const handleAddItem = () => {
+    router.push('/tasks');
+  };
+
   return (
     <WidgetBox.Root
       className={cnExt('flex h-[380px] flex-col', className)}
@@ -154,7 +168,7 @@ export function WidgetNotesEmpty({
           <div className='text-center text-paragraph-sm text-text-soft-400'>
             No care activities scheduled yet. <br /> Please check back later.
           </div>
-          <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+          <Button.Root variant='neutral' mode='stroke' size='xsmall' onClick={handleAddItem}>
             <Button.Icon as={RiAddLine} />
             Add Item
           </Button.Root>

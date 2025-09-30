@@ -8,7 +8,8 @@ function WidgetBox({
   return (
     <div
       className={cnExt(
-        'w-full rounded-2xl bg-bg-white-0 p-4 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
+        'w-full rounded-2xl glassmorphic glassmorphic-hover p-4 shadow-glass',
+        'border-0 ring-0', // Remove old border and ring styles
         className,
       )}
       {...rest}

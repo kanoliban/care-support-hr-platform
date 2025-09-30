@@ -10,6 +10,7 @@ import {
   RiHeadphoneLine,
   RiLayoutGridLine,
   RiSettings2Line,
+  RiStickyNoteLine,
 } from '@remixicon/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -29,6 +30,7 @@ type NavigationLink = {
 export const navigationLinks: NavigationLink[] = [
   { icon: RiLayoutGridLine, label: 'Command Center', href: '/' },
   { icon: RiCalendarLine, label: 'Schedule', href: '/calendar' },
+  { icon: RiStickyNoteLine, label: 'Tasks', href: '/tasks' },
   { icon: RiGroupLine, label: 'Care Team', href: '/teams' },
 ];
 
@@ -131,9 +133,10 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
             aria-current={pathname === href ? 'page' : undefined}
             aria-disabled={disabled}
             className={cn(
-              'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-text-sub-600 hover:bg-bg-weak-50',
-              'transition duration-200 ease-out',
-              'aria-[current=page]:bg-bg-weak-50',
+              'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-text-sub-600',
+              'transition-all duration-300 ease-out glassmorphic-hover',
+              'hover:bg-gradient-primary hover:shadow-glass',
+              'aria-[current=page]:bg-gradient-primary aria-[current=page]:shadow-glass',
               'aria-[disabled]:pointer-events-none aria-[disabled]:opacity-50',
               {
                 'w-9 px-2': collapsed,
@@ -203,8 +206,10 @@ function SettingsAndSupport({ collapsed }: { collapsed: boolean }) {
             aria-current={pathname.startsWith(href) ? 'page' : undefined}
             aria-disabled={disabled}
             className={cn(
-              'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-label-sm text-text-sub-600 transition duration-200 ease-out hover:bg-bg-weak-50',
-              'aria-[current=page]:bg-bg-weak-50',
+              'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-label-sm text-text-sub-600',
+              'transition-all duration-300 ease-out glassmorphic-hover',
+              'hover:bg-gradient-primary hover:shadow-glass',
+              'aria-[current=page]:bg-gradient-primary aria-[current=page]:shadow-glass',
               'aria-[disabled]:pointer-events-none aria-[disabled]:opacity-50',
               {
                 'w-9 px-2': collapsed,
@@ -280,7 +285,8 @@ export default function Sidebar() {
     <>
       <div
         className={cn(
-          'fixed left-0 top-0 z-40 hidden h-full overflow-hidden border-r border-stroke-soft-200 bg-bg-white-0 transition-all duration-300 ease-out lg:block',
+          'fixed left-0 top-0 z-40 hidden h-full overflow-hidden glassmorphic-subtle transition-all duration-300 ease-out lg:block',
+          'border-r-0 shadow-glass-lg', // Remove old border, add glass shadow
           {
             'w-20': collapsed,
             'w-[272px]': !collapsed,
