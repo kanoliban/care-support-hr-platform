@@ -29,6 +29,7 @@ import IllustrationEmptyScheduleEvents from '@/components/empty-state-illustrati
 import IllustrationEmptyScheduleHoliday from '@/components/empty-state-illustrations/schedule-holiday';
 import IllustrationEmptyScheduleMeetings from '@/components/empty-state-illustrations/schedule-meetings';
 import * as WidgetBox from '@/components/widget-box';
+import { useSimplePermissions } from '@/lib/simple-permission-context';
 
 import IconCmd from '~/icons/icon-cmd.svg';
 
@@ -692,13 +693,129 @@ export default function WidgetSchedule({
 }: React.HTMLAttributes<HTMLDivElement> & {
   emptyState?: boolean;
 }) {
+  const { currentProfile } = useSimplePermissions();
+  
+  // Dynamic data based on current profile
+  const getDynamicData = () => {
+    if (currentProfile?.id === 'luanns-care-team') {
+      return {
+        meetings: [
+          {
+            id: '1',
+            title: 'Dementia Day Care - Jim Nelson',
+            date: '9:00 AM - 5:00 PM',
+            people: [
+              {
+                alt: 'Jim Nelson',
+                image: '/images/avatar/illustration/james.png',
+                color: 'purple',
+              },
+            ],
+            platform: 'Dementia Care',
+            badges: [
+              {
+                label: 'Confirmed',
+                color: 'blue',
+              },
+            ],
+          },
+          {
+            id: '2',
+            title: 'Dementia Overnight Care - Jennifer',
+            date: '8:00 PM - 8:00 AM',
+            people: [
+              {
+                alt: 'Jennifer',
+                image: '/images/avatar/illustration/emma.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Dementia Overnight',
+            badges: [
+              {
+                label: 'PCA',
+                color: 'blue',
+              },
+            ],
+          },
+          {
+            id: '3',
+            title: 'Dementia Weekend Care - Olena',
+            date: '9:00 AM - 1:00 PM',
+            people: [
+              {
+                alt: 'Olena',
+                image: '/images/avatar/illustration/natalia.png',
+                color: 'purple',
+              },
+            ],
+            platform: 'Weekend Care',
+            badges: [
+              {
+                label: 'Weekend',
+                color: 'yellow',
+              },
+            ],
+          }
+        ],
+        events: [
+          {
+            id: '1',
+            title: 'Neurology Appointment - Dr. Martinez',
+            date: '2:00 - 3:00 PM',
+            location: 'Minneapolis Medical Center',
+            by: 'by Jim Nelson',
+            quota: {
+              current: 1,
+              max: 1,
+            },
+          },
+          {
+            id: '2',
+            title: 'Cognitive Assessment',
+            date: '10:00 AM - 11:00 AM',
+            location: 'Memory Care Clinic',
+            by: 'by Marta Snow',
+            quota: {
+              current: 1,
+              max: 1,
+            },
+          },
+          {
+            id: '3',
+            title: 'Family Meeting - Marta & Rob',
+            date: '6:00 - 8:00 PM',
+            location: '456 Oak Street, Minneapolis',
+            by: 'by Marta Snow',
+            quota: {
+              current: 2,
+              max: 3,
+            },
+          }
+        ]
+      };
+    } else {
+      return { meetings, events };
+    }
+  };
+
+  const dynamicData = getDynamicData();
+  const dynamicMeetings = dynamicData.meetings;
+  const dynamicEvents = dynamicData.events;
+
   const [selectedDay, setSelectedDay] = React.useState<Date>(new Date());
   const [openedMeetings, setOpenedMeetings] = React.useState([
-    ...meetings.map((p) => p.id),
+    ...dynamicMeetings.map((p) => p.id),
   ]);
   const [openedEvents, setOpenedEvents] = React.useState([
-    ...events.map((p) => p.id),
+    ...dynamicEvents.map((p) => p.id),
   ]);
+
+  // Update state when profile changes
+  React.useEffect(() => {
+    setOpenedMeetings(dynamicMeetings.map((p) => p.id));
+    setOpenedEvents(dynamicEvents.map((p) => p.id));
+  }, [currentProfile?.id]);
 
   // Check if currently selected day is today
   const isToday = React.useMemo(() => {
@@ -791,7 +908,7 @@ export default function WidgetSchedule({
                 onValueChange={(value) => setOpenedMeetings(value)}
                 className='space-y-2'
               >
-                {meetings.map((meeting) => (
+                {dynamicMeetings.map((meeting) => (
                   <MeetingItem key={meeting.id} {...meeting} />
                 ))}
               </AccordionPrimitive.Root>
@@ -827,7 +944,7 @@ export default function WidgetSchedule({
                 onValueChange={(value) => setOpenedEvents(value)}
                 className='space-y-2'
               >
-                {events.map((event, i) => (
+                {dynamicEvents.map((event, i) => (
                   <EventItem key={event.id} index={i} {...event} />
                 ))}
               </AccordionPrimitive.Root>

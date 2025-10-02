@@ -25,59 +25,114 @@ import * as Textarea from '@/components/ui/textarea';
 import IllustrationEmptyCurrentProject from '@/components/empty-state-illustrations/current-project';
 import * as WidgetBox from '@/components/widget-box';
 import { useCurrentProject, useInteractiveActions, useTeamMembers } from '@/lib/careContext';
+import { useSimplePermissions } from '@/lib/simple-permission-context';
 
 export default function WidgetCurrentProject({
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const { currentProfile } = useSimplePermissions();
+  
   // Get interactive data and actions with error handling
   let currentProject: any = null;
   let updateProject: any;
 
-  // Complete care team data with avatars
-  const teamMembers = [
-    {
-      id: 'jim-nelson',
-      name: 'Jim Nelson',
-      role: 'Primary Caregiver',
-      avatar: '/images/avatar/illustration/james.png'
-    },
-    {
-      id: 'jennifer-smith',
-      name: 'Jennifer Smith',
-      role: 'PCA - Overnight Care',
-      avatar: '/images/avatar/illustration/sophia.png'
-    },
-    {
-      id: 'alaina-shen',
-      name: 'Alaina Shen',
-      role: 'Family Backup',
-      avatar: '/images/avatar/illustration/arthur.png'
-    },
-    {
-      id: 'sarah-martinez',
-      name: 'Sarah Martinez',
-      role: 'Medical Assistant',
-      avatar: '/images/avatar/illustration/sophia.png'
-    },
-    {
-      id: 'grace-thompson',
-      name: 'Grace Thompson',
-      role: 'Physical Therapist',
-      avatar: '/images/avatar/illustration/arthur.png'
-    },
-    {
-      id: 'alex-rodriguez',
-      name: 'Alex Rodriguez',
-      role: 'Transportation Specialist',
-      avatar: '/images/avatar/illustration/james.png'
-    },
-    {
-      id: 'maria-santos',
-      name: 'Maria Santos',
-      role: 'Household Support',
-      avatar: '/images/avatar/illustration/sophia.png'
+  // Dynamic care team data based on current profile
+  const getTeamMembers = () => {
+    if (currentProfile?.id === 'luanns-care-team') {
+      return [
+        {
+          id: 'marta-snow-luann',
+          name: 'Marta Snow',
+          role: 'Primary Care Coordinator',
+          avatar: '/images/avatar/illustration/james.png'
+        },
+        {
+          id: 'rob-wudlick-luann',
+          name: 'Rob Wudlick',
+          role: 'Care Coordinator',
+          avatar: '/images/avatar/illustration/arthur.png'
+        },
+        {
+          id: 'jim-nelson-luann',
+          name: 'Jim Nelson',
+          role: 'Dementia Specialist',
+          avatar: '/images/avatar/illustration/james.png'
+        },
+        {
+          id: 'jennifer-luann',
+          name: 'Jennifer',
+          role: 'Dementia PCA - Overnight',
+          avatar: '/images/avatar/illustration/emma.png'
+        },
+        {
+          id: 'sarah-luann',
+          name: 'Sarah',
+          role: 'Dementia PCA - Overnight',
+          avatar: '/images/avatar/illustration/matthew.png'
+        },
+        {
+          id: 'ella-luann',
+          name: 'Ella',
+          role: 'Dementia PCA - Weekend',
+          avatar: '/images/avatar/illustration/laura.png'
+        },
+        {
+          id: 'olena-luann',
+          name: 'Olena',
+          role: 'Weekend PCA',
+          avatar: '/images/avatar/illustration/natalia.png'
+        }
+      ];
+    } else {
+      // Rob's care team
+      return [
+        {
+          id: 'jim-nelson',
+          name: 'Jim Nelson',
+          role: 'Primary Caregiver',
+          avatar: '/images/avatar/illustration/james.png'
+        },
+        {
+          id: 'jennifer-smith',
+          name: 'Jennifer Smith',
+          role: 'PCA - Overnight Care',
+          avatar: '/images/avatar/illustration/sophia.png'
+        },
+        {
+          id: 'alaina-shen',
+          name: 'Alaina Shen',
+          role: 'Family Backup',
+          avatar: '/images/avatar/illustration/arthur.png'
+        },
+        {
+          id: 'sarah-martinez',
+          name: 'Sarah Martinez',
+          role: 'Medical Assistant',
+          avatar: '/images/avatar/illustration/sophia.png'
+        },
+        {
+          id: 'grace-thompson',
+          name: 'Grace Thompson',
+          role: 'Physical Therapist',
+          avatar: '/images/avatar/illustration/arthur.png'
+        },
+        {
+          id: 'alex-rodriguez',
+          name: 'Alex Rodriguez',
+          role: 'Transportation Specialist',
+          avatar: '/images/avatar/illustration/james.png'
+        },
+        {
+          id: 'maria-santos',
+          name: 'Maria Santos',
+          role: 'Household Support',
+          avatar: '/images/avatar/illustration/sophia.png'
+        }
+      ];
     }
-  ];
+  };
+
+  const teamMembers = getTeamMembers();
 
   try {
     currentProject = useCurrentProject();
@@ -98,7 +153,9 @@ export default function WidgetCurrentProject({
     endTime: '17:00',
     date: currentProject?.deadline ? new Date(currentProject.deadline).toISOString().split('T')[0] : '',
     team: currentProject?.team || [],
-    description: currentProject?.description || 'Good morning! Starting my shift with Rob at 9 AM. He\'s had his morning medication and seems to be in good spirits today. Planning to help with light breakfast and then assist with his daily exercises. His daughter mentioned he had some trouble sleeping last night, so I\'ll keep an eye on his energy levels. Will coordinate with the physical therapist who\'s scheduled for 2 PM and update the family on his progress. Weather is nice today, so hoping to get some fresh air in the afternoon if he\'s feeling up to it.'
+    description: currentProject?.description || (currentProfile?.id === 'luanns-care-team' 
+      ? 'Good morning! Starting my shift with Luann at 9 AM. She\'s had her morning medication and seems to be in good spirits today. Planning to help with gentle breakfast and then assist with her cognitive exercises. Marta mentioned she had some confusion last night, so I\'ll keep an eye on her orientation and safety. Will coordinate with the dementia specialist who\'s scheduled for 2 PM and update the family on her progress. Weather is nice today, so hoping to get some fresh air in the afternoon if she\'s feeling up to it.'
+      : 'Good morning! Starting my shift with Rob at 9 AM. He\'s had his morning medication and seems to be in good spirits today. Planning to help with light breakfast and then assist with his daily exercises. His daughter mentioned he had some trouble sleeping last night, so I\'ll keep an eye on his energy levels. Will coordinate with the physical therapist who\'s scheduled for 2 PM and update the family on his progress. Weather is nice today, so hoping to get some fresh air in the afternoon if he\'s feeling up to it.')
   });
 
   // Handle status updates
