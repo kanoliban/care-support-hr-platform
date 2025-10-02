@@ -24,12 +24,13 @@ export default function PageTeams() {
   
   const getHeaderTitle = () => {
     if (!currentProfile) return 'Care Team';
-    return `${currentProfile.name}'s Care Team`;
+    // Use the primary care recipient's name instead of the care team name
+    return `${currentProfile.primaryCareRecipient.name}'s Care Team`;
   };
 
   const getHeaderDescription = () => {
     if (!currentProfile) return "Coordinate care schedules and availability across your care network.";
-    return `Manage ${currentProfile.name.toLowerCase()} care team and coordinate schedules.`;
+    return "Coordinate care schedules and manage team availability.";
   };
 
   return (

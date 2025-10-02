@@ -16,6 +16,7 @@ import CalendarTabs from './tabs';
 import { CareEventsProvider } from '@/hooks/useCareEvents';
 import { CareNotifications } from '@/components/care-notifications';
 import CareEventDialog from '@/components/care-event-dialog';
+import { useSimplePermissions } from '@/lib/simple-permission-context';
 
 // Rob's Realistic Monthly Caregiving Schedule - September 2025
 // This schedule follows proper caregiving logic:
@@ -25,14 +26,14 @@ import CareEventDialog from '@/components/care-event-dialog';
 // 4. Only one person per shift is needed
 // 5. Covers one full month with realistic availability patterns
 
-const generateMonthlyCareSchedule = (): CalendarData[] => {
+const generateMonthlyCareSchedule = (careRecipient: 'rob' | 'luann' = 'rob'): CalendarData[] => {
   const events: CalendarData[] = [];
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   
-  // Define Rob's care team with realistic availability patterns
-  const careTeam = {
+  // Define care teams with realistic availability patterns
+  const robCareTeam = {
     // Primary Caregivers with Regular Schedules
     primary: {
             jim: {
@@ -166,6 +167,84 @@ const generateMonthlyCareSchedule = (): CalendarData[] => {
     }
   };
 
+  // Define Luann's care team with dementia-specific care patterns
+  const luannCareTeam = {
+    // Primary Caregivers with Regular Schedules
+    primary: {
+      jim: {
+        name: 'Jim Nelson (Dementia Specialist)',
+        schedule: { days: [1, 2, 3, 4, 5], startHour: 9, endHour: 17 }, // M-F 9am-5pm
+        status: 'primary',
+        color: 'blue' as const,
+        image: '/images/avatar/illustration/james.png',
+        alt: 'Jim Nelson'
+      },
+      jennifer: {
+        name: 'Jennifer (Dementia PCA)',
+        schedule: { days: [1, 2], startHour: 20, endHour: 8 }, // M,T 8pm-8am (overnight)
+        status: 'primary',
+        color: 'green' as const,
+        image: '/images/avatar/illustration/emma.png',
+        alt: 'Jennifer'
+      },
+      sarah: {
+        name: 'Sarah (Dementia PCA)',
+        schedule: { days: [3, 4], startHour: 20, endHour: 8 }, // W,Th 8pm-8am (overnight)
+        status: 'primary',
+        color: 'purple' as const,
+        image: '/images/avatar/illustration/laura.png',
+        alt: 'Sarah'
+      },
+      ella: {
+        name: 'Ella (Dementia PCA)',
+        schedule: { days: [5, 6, 0], startHour: 20, endHour: 9 }, // F,Sat,Sun 8pm-9am (overnight)
+        status: 'primary',
+        color: 'orange' as const,
+        image: '/images/avatar/illustration/sophia.png',
+        alt: 'Ella'
+      },
+      olena: {
+        name: 'Olena (Weekend PCA)',
+        schedule: { days: [6, 0], startHour: 9, endHour: 13 }, // Sat,Sun 9am-1pm
+        status: 'primary',
+        color: 'pink' as const,
+        image: '/images/avatar/illustration/natalia.png',
+        alt: 'Olena'
+      }
+    },
+    
+    // On-Call Caregivers (Available for Coverage)
+    onCall: {
+      marta: {
+        name: 'Marta Snow (Primary Coordinator)',
+        availability: 'all-slots', // Available for any empty time slots
+        status: 'on-call',
+        color: 'teal' as const,
+        image: '/images/avatar/illustration/james.png',
+        alt: 'Marta Snow'
+      },
+      rob: {
+        name: 'Rob Wudlick (Coordinator)',
+        availability: 'on-call',
+        status: 'on-call',
+        color: 'gray' as const,
+        image: '/images/avatar/illustration/arthur.png',
+        alt: 'Rob Wudlick'
+      },
+      isabela: {
+        name: 'Isabela (Family PCA)',
+        availability: 'on-call',
+        status: 'on-call',
+        color: 'yellow' as const,
+        image: '/images/avatar/illustration/lena.png',
+        alt: 'Isabela'
+      }
+    }
+  };
+
+  // Select the appropriate care team
+  const careTeam = careRecipient === 'luann' ? luannCareTeam : robCareTeam;
+
   // Generate events for the current month
   const startOfMonth = new Date(currentYear, currentMonth, 1);
   const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
@@ -193,14 +272,26 @@ const generateMonthlyCareSchedule = (): CalendarData[] => {
     
     // Determine shift type and title
     let title: string;
-    if (startHour >= 9 && endHour <= 17) {
-      title = 'Regular Scheduled Care';
-    } else if (startHour >= 20 || endHour <= 8) {
-      title = 'Overnight Care';
-    } else if (startHour >= 9 && startHour < 17) {
-      title = 'Weekend Day Care';
+    if (careRecipient === 'luann') {
+      if (startHour >= 9 && endHour <= 17) {
+        title = 'Dementia Day Care';
+      } else if (startHour >= 20 || endHour <= 8) {
+        title = 'Dementia Overnight Care';
+      } else if (startHour >= 9 && startHour < 17) {
+        title = 'Dementia Weekend Care';
+      } else {
+        title = 'Dementia On-call Coverage';
+      }
     } else {
-      title = 'On-call Coverage';
+      if (startHour >= 9 && endHour <= 17) {
+        title = 'Regular Scheduled Care';
+      } else if (startHour >= 20 || endHour <= 8) {
+        title = 'Overnight Care';
+      } else if (startHour >= 9 && startHour < 17) {
+        title = 'Weekend Day Care';
+      } else {
+        title = 'On-call Coverage';
+      }
     }
     
     return {
@@ -468,14 +559,19 @@ const generateCalendarEvents = (): CalendarData[] => {
 };
 
 export default function PageCalendar() {
-  // const { currentProject } = useCareSupport();
+  const { currentProfile } = useSimplePermissions();
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [searchQuery, setSearchQuery] = React.useState('');
-  // Initialize with static calendar data for now
+  
+  // Determine care recipient based on current profile
+  const careRecipient = currentProfile?.id === 'luanns-care-team' ? 'luann' : 'rob';
+  
+  // Initialize with dynamic calendar data based on current profile
   const [filteredEvents, setFilteredEvents] = React.useState<CalendarData[]>(() => {
-    console.log('[CALENDAR DEBUG] Initializing filteredEvents with static calendarData...');
-    console.log('[CALENDAR DEBUG] Static calendarData length:', calendarData.length);
-    return calendarData;
+    console.log('[CALENDAR DEBUG] Initializing filteredEvents for care recipient:', careRecipient);
+    const generatedEvents = generateMonthlyCareSchedule(careRecipient);
+    console.log('[CALENDAR DEBUG] Generated events length:', generatedEvents.length);
+    return generatedEvents;
   });
   const [currentView, setCurrentView] = React.useState<'week' | 'month'>('week');
   

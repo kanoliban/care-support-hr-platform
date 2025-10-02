@@ -17,6 +17,7 @@ import {
   NetworkHealthMetrics 
 } from './careTypes';
 import { CareSupportTranslationService, Employee, TimeOffRequest, Project } from './careSupportTranslation';
+import { useSimplePermissions } from './simple-permission-context';
 
 // ============================================================================
 // ROB'S CARE DATA (Mock data for initial implementation)
@@ -288,6 +289,259 @@ const mockNetworkHealth: NetworkHealthMetrics = {
 };
 
 // ============================================================================
+// LUANN'S CARE DATA (Mock data for dementia care coordination)
+// ============================================================================
+
+const luannCareRecipient: CareRecipient = {
+  id: 'luann-001',
+  name: 'Luann Snow',
+  primaryCoordinator: 'Marta Snow',
+  backupCoordinator: 'Rob Wudlick',
+  careNeeds: [
+    {
+      id: 'need-luann-001',
+      category: 'cognitive_care',
+      description: 'Dementia care, cognitive stimulation, memory support, orientation assistance',
+      requiredSkills: ['dementia_care', 'cognitive_assessment', 'behavioral_support'],
+      frequency: 'daily',
+      priority: 'high'
+    },
+    {
+      id: 'need-luann-002',
+      category: 'personal_care',
+      description: 'Personal hygiene, dressing assistance, meal preparation, medication management',
+      requiredSkills: ['personal_care', 'medication_administration', 'meal_preparation'],
+      frequency: 'daily',
+      priority: 'high'
+    },
+    {
+      id: 'need-luann-003',
+      category: 'safety_monitoring',
+      description: 'Wandering prevention, fall risk management, home safety, emergency response',
+      requiredSkills: ['safety_monitoring', 'fall_prevention', 'emergency_response'],
+      frequency: 'continuous',
+      priority: 'critical'
+    }
+  ],
+  preferences: {
+    preferredCaregivers: ['marta-snow', 'jim-nelson', 'jennifer-pca'],
+    routinePreferences: {
+      morningRoutine: 'Gentle wake-up, prefers familiar faces and routines',
+      eveningRoutine: 'Early bedtime routine, medication at 7pm',
+      medicationTimes: ['08:00', '13:00', '19:00']
+    },
+    communicationPreferences: {
+      preferredContactMethod: 'family_coordinator',
+      updateFrequency: 'real_time'
+    }
+  },
+  emergencyContacts: [
+    {
+      id: 'emergency-luann-001',
+      name: 'Marta Snow',
+      relationship: 'Daughter',
+      phone: '+1-555-234-5678',
+      priority: 1,
+      canMakeMedicalDecisions: true
+    },
+    {
+      id: 'emergency-luann-002',
+      name: 'Rob Wudlick',
+      relationship: 'Son',
+      phone: '+1-555-345-6789',
+      priority: 2,
+      canMakeMedicalDecisions: true
+    }
+  ],
+  location: {
+    address: '456 Oak Street, Minneapolis, MN 55402'
+  }
+};
+
+const luannCareTeam: TeamMember[] = [
+  {
+    id: 'marta-snow-luann',
+    name: 'Marta Snow',
+    role: 'family_coordinator',
+    contactInfo: {
+      phone: '+1-555-234-5678',
+      email: 'marta.snow@family.com',
+      preferredContact: 'phone'
+    },
+    regularShifts: [],
+    currentAvailability: 'available',
+    blockedDates: [],
+    lastAvailabilityUpdate: '2024-08-29T09:00:00Z',
+    skills: [
+      { name: 'Dementia Care Coordination', level: 'advanced' },
+      { name: 'Family Communication', level: 'advanced' },
+      { name: 'Medical Advocacy', level: 'advanced' }
+    ],
+    certifications: [],
+    canDo: ['coordination', 'communication', 'advocacy', 'personal_care'],
+    relationshipToCareRecipient: 'Primary Care Coordinator (Daughter)',
+    trustLevel: 'highest',
+    reliability: {
+      showUpRate: 1.0,
+      onTimeRate: 1.0,
+      lastMinuteCancellations: 0
+    },
+    sourceAgency: 'Family',
+    hourlyRate: 0,
+    paymentMethod: 'volunteer'
+  },
+  {
+    id: 'rob-wudlick-luann',
+    name: 'Rob Wudlick',
+    role: 'family_coordinator',
+    contactInfo: {
+      phone: '+1-555-345-6789',
+      email: 'rob.wudlick@family.com',
+      preferredContact: 'app'
+    },
+    regularShifts: [],
+    currentAvailability: 'available',
+    blockedDates: [],
+    lastAvailabilityUpdate: '2024-08-29T09:00:00Z',
+    skills: [
+      { name: 'Care Coordination', level: 'intermediate' },
+      { name: 'Technology Support', level: 'advanced' },
+      { name: 'Family Liaison', level: 'advanced' }
+    ],
+    certifications: [],
+    canDo: ['coordination', 'technology', 'communication'],
+    relationshipToCareRecipient: 'Care Coordinator (Son)',
+    trustLevel: 'high',
+    reliability: {
+      showUpRate: 0.95,
+      onTimeRate: 0.90,
+      lastMinuteCancellations: 1
+    },
+    sourceAgency: 'Family',
+    hourlyRate: 0,
+    paymentMethod: 'volunteer'
+  },
+  {
+    id: 'jim-nelson-luann',
+    name: 'Jim Nelson',
+    role: 'professional_nurse',
+    contactInfo: {
+      phone: '+1-555-456-7890',
+      email: 'jim.nelson@caresupport.com',
+      preferredContact: 'phone'
+    },
+    regularShifts: [{
+      id: 'shift-jim-luann-regular',
+      daysOfWeek: [1,2,3,4,5], // M-F
+      startTime: '09:00',
+      endTime: '17:00',
+      recurrencePattern: 'weekly' as any,
+      effectiveDate: '2024-01-01',
+      isActive: true
+    }],
+    currentAvailability: 'available',
+    blockedDates: [],
+    lastAvailabilityUpdate: '2024-08-29T09:00:00Z',
+    skills: [
+      { name: 'Dementia Care', level: 'advanced' },
+      { name: 'Cognitive Assessment', level: 'advanced' },
+      { name: 'Behavioral Support', level: 'advanced' },
+      { name: 'Medication Management', level: 'advanced' }
+    ],
+    certifications: [
+      {
+        type: 'Dementia Care Specialist',
+        number: 'DCS-789123',
+        issuingOrganization: 'Alzheimer\'s Association',
+        issueDate: '2021-03-15',
+        expirationDate: '2027-03-15',
+        status: 'valid'
+      }
+    ],
+    canDo: ['medical', 'dementia_care', 'cognitive_assessment', 'behavioral_support'],
+    relationshipToCareRecipient: 'Dementia Care Specialist (Nurse)',
+    trustLevel: 'high',
+    reliability: {
+      showUpRate: 0.98,
+      onTimeRate: 0.95,
+      lastMinuteCancellations: 1
+    },
+    sourceAgency: 'Professional Care Services',
+    hourlyRate: 38,
+    paymentMethod: 'direct'
+  }
+];
+
+const luannCurrentCoverage: CoverageWindow[] = [
+  {
+    id: 'coverage-luann-today-morning',
+    date: '2025-01-12',
+    startTime: '09:00',
+    endTime: '17:00',
+    requiredCareTypes: ['dementia_care', 'cognitive_stimulation', 'personal_care'],
+    status: 'confirmed',
+    assignedTeamMember: 'jim-nelson-luann',
+    backupOptions: ['marta-snow-luann'],
+    lastStatusUpdate: '2025-01-12T08:00:00Z'
+  },
+  {
+    id: 'coverage-luann-today-evening',
+    date: '2025-01-12',
+    startTime: '20:00',
+    endTime: '08:00',
+    requiredCareTypes: ['safety_monitoring', 'dementia_care', 'personal_care'],
+    status: 'confirmed',
+    assignedTeamMember: 'jennifer-pca',
+    backupOptions: ['marta-snow-luann'],
+    lastStatusUpdate: '2025-01-11T20:00:00Z'
+  }
+];
+
+const luannCoverageGaps: CoverageGap[] = [
+  {
+    id: 'gap-luann-saturday-evening',
+    coverageWindowId: 'coverage-luann-saturday-evening',
+    date: '2024-08-31',
+    startTime: '20:00',
+    endTime: '09:00',
+    reason: 'caregiver_sick',
+    severity: 'critical',
+    detectedAt: '2024-08-29T14:00:00Z',
+    backupRequestsSent: [
+      {
+        id: 'request-luann-001',
+        gapId: 'gap-luann-saturday-evening',
+        teamMemberId: 'marta-snow-luann',
+        requestedAt: '2024-08-29T14:15:00Z',
+        method: 'phone',
+        status: 'sent'
+      }
+    ],
+    resolvedAt: '2024-08-29T16:30:00Z',
+    resolutionMethod: 'backup_coverage',
+    notes: 'Marta stepped in for overnight dementia care coverage'
+  }
+];
+
+const luannNetworkHealth: NetworkHealthMetrics = {
+  overallScore: 85,
+  coverageReliability: 0.88,
+  teamResponseTime: 2.5,
+  communicationEffectiveness: 0.92,
+  careQualityRating: 4.3,
+  familySatisfaction: 4.5,
+  trends: {
+    coverageReliability: 5,
+    teamResponseTime: -15,
+    communicationEffectiveness: 8,
+    careQualityRating: 3,
+    familySatisfaction: 2,
+    gapReduction: -25,
+    teamGrowth: 1
+  }
+};
+
+// ============================================================================
 // CARE SUPPORT CONTEXT
 // ============================================================================
 
@@ -363,16 +617,25 @@ interface CareSupportProviderProps {
 }
 
 export function CareSupportProvider({ children }: CareSupportProviderProps) {
+  const { currentProfile } = useSimplePermissions();
+  
+  // Select appropriate data based on current profile
+  const selectedCareRecipient = currentProfile?.id === 'luanns-care-team' ? luannCareRecipient : mockCareRecipient;
+  const selectedCareTeam = currentProfile?.id === 'luanns-care-team' ? luannCareTeam : mockCareTeam;
+  const selectedCurrentCoverage = currentProfile?.id === 'luanns-care-team' ? luannCurrentCoverage : mockCurrentCoverage;
+  const selectedCoverageGaps = currentProfile?.id === 'luanns-care-team' ? luannCoverageGaps : mockCoverageGaps;
+  const selectedNetworkHealth = currentProfile?.id === 'luanns-care-team' ? luannNetworkHealth : mockNetworkHealth;
+  
   const [careContext, setCareContext] = useState<CareCoordinationContext>({
-    careRecipient: mockCareRecipient,
-    careTeam: mockCareTeam,
-    currentCoverage: mockCurrentCoverage,
+    careRecipient: selectedCareRecipient,
+    careTeam: selectedCareTeam,
+    currentCoverage: selectedCurrentCoverage,
     activeShifts: [],
-    coverageGaps: mockCoverageGaps,
-    networkHealth: mockNetworkHealth,
+    coverageGaps: selectedCoverageGaps,
+    networkHealth: selectedNetworkHealth,
     quickActions: {
       findCoverage: async (gapId: string) => {
-        return mockCareTeam.filter(member => member.currentAvailability === 'available');
+        return selectedCareTeam.filter(member => member.currentAvailability === 'available');
       },
       sendUpdate: async (message: string, recipients: string[]) => {
         console.log(`Sending "${message}" to:`, recipients);

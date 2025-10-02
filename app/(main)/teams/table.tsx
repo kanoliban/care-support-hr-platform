@@ -192,10 +192,10 @@ const data: Data[] = [
       type: 'Regular',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -266,10 +266,10 @@ const data: Data[] = [
       type: 'Overnight',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -312,10 +312,10 @@ const data: Data[] = [
       type: 'Weekend Overnight',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -355,10 +355,10 @@ const data: Data[] = [
       type: 'Flexible',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -397,10 +397,10 @@ const data: Data[] = [
       type: 'Weekend Day',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -442,10 +442,10 @@ const data: Data[] = [
       type: 'Flexible',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -484,10 +484,10 @@ const data: Data[] = [
       type: 'Flexible',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -575,10 +575,10 @@ const data: Data[] = [
       type: 'Backup',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -620,10 +620,10 @@ const data: Data[] = [
       type: 'Backup',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -662,10 +662,10 @@ const data: Data[] = [
       type: 'Family Backup',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -704,10 +704,10 @@ const data: Data[] = [
       type: 'Family Backup',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,
@@ -831,10 +831,358 @@ const data: Data[] = [
       type: 'Flexible',
     },
     status: {
-      variant: 'completed',
+      variant: 'completed' as const,
       label: 'Available',
     },
-    role: 'member',
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: false,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  
+  // ============================================================================
+  // LUANN'S CARE TEAM MEMBERS
+  // ============================================================================
+  
+  {
+    id: 'marta-snow-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Marta Snow (Daughter)',
+      email: 'marta.snow@family.com',
+      phone: '+1 (555) 234-5678',
+      image: '/images/avatar/illustration/james.png',
+    },
+    title: {
+      name: 'Primary Care Coordinator',
+      date: 'Since Jan, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'Dementia care coordination, medication management, daily activities, safety monitoring, family communication, medical appointments, meal planning, personal care assistance',
+      image: ['/images/major-brands/monday.svg'],
+    },
+    doc: {
+      name: 'snow-marta-coordinator.pdf',
+      size: '1.8 MB',
+    },
+    availability: {
+      schedule: 'On-call',
+      type: 'Flexible',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'admin' as const,
+    permissions: {
+      canManageTeam: true,
+      canViewSensitive: true,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: true,
+      canExportData: true,
+      canManageOrganization: true,
+      canManageIntegrations: true,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'rob-wudlick-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Rob Wudlick (Son)',
+      email: 'rob.wudlick@family.com',
+      phone: '+1 (555) 345-6789',
+      image: '/images/avatar/illustration/arthur.png',
+    },
+    title: {
+      name: 'Care Coordinator',
+      date: 'Since Jan, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'Care coordination support, family liaison, backup scheduling, medical advocacy, technology assistance, family meetings coordination',
+      image: ['/images/major-brands/notion.svg'],
+    },
+    doc: {
+      name: 'wudlick-rob-coordinator.pdf',
+      size: '1.5 MB',
+    },
+    availability: {
+      schedule: 'On-call',
+      type: 'Flexible',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: true,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'jim-nelson-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Jim Nelson',
+      email: 'jim.nelson@caresupport.com',
+      phone: '+1 (555) 456-7890',
+      image: '/images/avatar/illustration/arthur.png',
+    },
+    title: {
+      name: 'Nurse - Dementia Specialist',
+      date: 'Since Jan, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'M-F 9am-5pm Dementia care, medication management, cognitive assessments, behavioral support, family education',
+      image: ['/images/major-brands/spotify.svg'],
+    },
+    doc: {
+      name: 'nelson-jim-dementia-cert.pdf',
+      size: '2.1 MB',
+    },
+    availability: {
+      schedule: 'Mon-Fri 9am-5pm',
+      type: 'Regular',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: false,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'jennifer-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Jennifer',
+      email: 'jennifer@caresupport.com',
+      phone: '+1 (555) 567-8901',
+      image: '/images/avatar/illustration/emma.png',
+    },
+    title: {
+      name: 'Overnight PCA - Dementia Care',
+      date: 'Since Feb, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'M,T 8pm-8am Overnight dementia care, safety monitoring, medication reminders, wandering prevention',
+      image: ['/images/major-brands/formcarry.svg'],
+    },
+    doc: {
+      name: 'jennifer-dementia-pca.pdf',
+      size: '2.4 MB',
+    },
+    availability: {
+      schedule: 'Mon-Tue 8pm-8am',
+      type: 'Overnight',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: false,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'sarah-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Sarah',
+      email: 'sarah@caresupport.com',
+      phone: '+1 (555) 678-9012',
+      image: '/images/avatar/illustration/matthew.png',
+    },
+    title: {
+      name: 'Overnight PCA - Dementia Care',
+      date: 'Since Feb, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'W, Th 8pm-8am Overnight dementia care, safety monitoring, medication reminders, wandering prevention',
+      image: ['/images/major-brands/loom.svg'],
+    },
+    doc: {
+      name: 'sarah-dementia-pca.pdf',
+      size: '2.3 MB',
+    },
+    availability: {
+      schedule: 'Wed-Thu 8pm-8am',
+      type: 'Overnight',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: false,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'ella-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Ella',
+      email: 'ella@caresupport.com',
+      phone: '+1 (555) 789-0123',
+      image: '/images/avatar/illustration/laura.png',
+    },
+    title: {
+      name: 'Overnight PCA - Dementia Care',
+      date: 'Since Feb, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'F, Sat, Sun 8pm-9am Overnight dementia care, safety monitoring, medication reminders, wandering prevention',
+      image: ['/images/major-brands/loom.svg'],
+    },
+    doc: {
+      name: 'ella-dementia-pca.pdf',
+      size: '2.2 MB',
+    },
+    availability: {
+      schedule: 'Fri-Sun 8pm-9am',
+      type: 'Overnight',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: false,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'olena-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Olena',
+      email: 'olena@caresupport.com',
+      phone: '+1 (555) 890-1234',
+      image: '/images/avatar/illustration/natalia.png',
+    },
+    title: {
+      name: 'Weekend PCA - Dementia Care',
+      date: 'Since Feb, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'Sat, Sun 9am-1pm Weekend dementia care, activities, meal assistance, medication reminders',
+      image: ['/images/major-brands/loom.svg'],
+    },
+    doc: {
+      name: 'olena-dementia-pca.pdf',
+      size: '2.0 MB',
+    },
+    availability: {
+      schedule: 'Sat-Sun 9am-1pm',
+      type: 'Weekend',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
+    permissions: {
+      canManageTeam: false,
+      canViewSensitive: false,
+      canManageBilling: false,
+      canDeleteProfile: false,
+      canInviteMembers: false,
+      canExportData: false,
+      canManageOrganization: false,
+      canManageIntegrations: false,
+      canManageSecurity: false,
+    },
+  },
+  {
+    id: 'isabela-luann',
+    profileId: 'luanns-care-team',
+    member: {
+      name: 'Isabela',
+      email: 'isabela@family.com',
+      image: '/images/avatar/illustration/sophia.png',
+    },
+    title: {
+      name: 'Family PCA - Dementia Care',
+      date: 'Since Jan, 2023',
+    },
+    project: {
+      name: "Luann's Care",
+      description: 'Family Support & On-call Dementia Care, companionship, activities, meal assistance',
+      image: ['/images/major-brands/notion.svg'],
+    },
+    doc: {
+      name: 'isabela-dementia-pca.pdf',
+      size: '2.1 MB',
+    },
+    availability: {
+      schedule: 'On-call',
+      type: 'Flexible',
+    },
+    status: {
+      variant: 'completed' as const,
+      label: 'Available',
+    },
+    role: 'member' as const,
     permissions: {
       canManageTeam: false,
       canViewSensitive: false,

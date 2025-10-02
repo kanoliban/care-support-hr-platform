@@ -9,6 +9,13 @@ export interface CareProfile {
   subtitle: string;
   userRole: 'owner' | 'admin' | 'member' | 'viewer';
   avatar: string;
+  primaryCareRecipient: {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    relationship: string;
+  };
 }
 
 export interface UserPermissions {
@@ -37,14 +44,28 @@ const mockProfiles: CareProfile[] = [
     name: "Rob's Care Team",
     subtitle: "Primary Care Coordination",
     userRole: 'owner',
-    avatar: '/images/avatar/illustration/james.png' // Rob's avatar
+    avatar: '/images/avatar/illustration/james.png', // Rob's avatar
+    primaryCareRecipient: {
+      id: 'robert-wudlick',
+      name: 'Robert Wudlick',
+      email: 'rwudlick@gmail.com',
+      avatar: '/images/avatar/illustration/james.png',
+      relationship: 'Primary Care Recipient'
+    }
   },
   {
     id: 'luanns-care-team',
     name: "Luann's Care Team",
     subtitle: "Family Care Support",
     userRole: 'admin',
-    avatar: '/images/avatar/illustration/sophia.png' // Luann's avatar
+    avatar: '/images/avatar/illustration/sophia.png', // Luann's avatar
+    primaryCareRecipient: {
+      id: 'marta-snow',
+      name: 'Marta Snow',
+      email: 'marta.snow@gmail.com',
+      avatar: '/images/avatar/illustration/sophia.png',
+      relationship: 'Daughter'
+    }
   }
 ];
 

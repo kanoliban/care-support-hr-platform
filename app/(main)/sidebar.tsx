@@ -19,7 +19,6 @@ import * as Divider from '@/components/ui/divider';
 import { CompanySwitch } from '@/components/company-switch';
 import { UserButton } from '@/components/user-button';
 import { ProfileSwitcher } from '@/components/profile-switcher';
-import { ComprehensiveAccountManager } from '@/components/comprehensive-account-manager';
 
 type NavigationLink = {
   icon: React.ComponentType<{ className?: string }>;
@@ -101,7 +100,15 @@ export function SidebarHeader({ collapsed }: { collapsed?: boolean }) {
         'lg:px-2': collapsed,
       })}
     >
-      <ComprehensiveAccountManager collapsed={collapsed} />
+      {collapsed ? (
+        <CompanySwitch
+          className={cn('transition-all duration-200 ease-out', {
+            'w-16': collapsed,
+          })}
+        />
+      ) : (
+        <ProfileSwitcher />
+      )}
     </div>
   );
 }
