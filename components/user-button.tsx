@@ -77,12 +77,6 @@ export function UserButton({ className }: { className?: string }) {
         <Divider.Root variant='line-spacing' />
         <Dropdown.Group>
           <Dropdown.Item asChild>
-            <Link href='/register'>
-              <Dropdown.ItemIcon as={RiAddLine} />
-              Add Account
-            </Link>
-          </Dropdown.Item>
-          <Dropdown.Item asChild>
             <Link href='/login'>
               <Dropdown.ItemIcon as={RiLogoutBoxRLine} />
               Logout
@@ -151,12 +145,6 @@ export function UserButtonMobile({ className }: { className?: string }) {
         </Dropdown.Group>
         <Divider.Root variant='line-spacing' />
         <Dropdown.Group>
-          <Dropdown.Item asChild>
-            <Link href='/register'>
-              <Dropdown.ItemIcon as={RiAddLine} />
-              Add Account
-            </Link>
-          </Dropdown.Item>
           <Dropdown.Item asChild>
             <Link href='/login'>
               <Dropdown.ItemIcon as={RiLogoutBoxRLine} />
