@@ -95,13 +95,25 @@ export class CareSupportTranslationService {
   /**
    * Transform CoverageWindow to Project format
    */
-  static coverageWindowToProject(window: CoverageWindow, careTeam: TeamMember[]): Project {
+  static coverageWindowToProject(window: CoverageWindow, careTeam: TeamMember[], careRecipient: CareRecipient): Project {
     const assignedMember = careTeam.find(m => m.id === window.assignedTeamMember);
+    
+    // Generate dynamic description based on care recipient
+    const getDynamicDescription = (recipient: CareRecipient) => {
+      const recipientName = recipient.name;
+      const isDementia = recipient.careNeeds.some(need => need.category === 'cognitive_care');
+      
+      if (isDementia) {
+        return `Starting my dementia care shift with ${recipientName} at 9 AM. She's had her morning medications and appears calm today. Will focus on memory activities and cognitive stimulation this morning. The family reported some wandering behavior yesterday evening, so I'll ensure all safety measures are in place and monitor her closely. Planning to engage her with familiar music and photo albums. The dementia specialist arrives at 2 PM for her monthly assessment. Will document any changes in her condition and coordinate with the family about her care plan adjustments.`;
+      } else {
+        return `Beginning my care shift with ${recipientName} at 9 AM. He's completed his morning medication routine and is feeling energetic today. Today's focus will be on mobility exercises and maintaining his independence. His family mentioned he had difficulty with his evening routine last night, so I'll pay extra attention to his comfort and rest patterns. The physical therapist is scheduled for 2 PM to work on his range of motion. Weather looks great, so we'll try to get outside for some light walking if he feels up to it. Will update the family on his progress and any concerns.`;
+      }
+    };
     
     return {
       id: window.id,
       name: `Care Shift - ${assignedMember?.name || 'Unassigned'}`,
-      description: `Good morning! Starting my shift with Rob at 9 AM. He's had his morning medication and seems to be in good spirits today. Planning to help with light breakfast and then assist with his daily exercises. His daughter mentioned he had some trouble sleeping last night, so I'll keep an eye on his energy levels. Will coordinate with the physical therapist who's scheduled for 2 PM and update the family on his progress. Weather is nice today, so hoping to get some fresh air in the afternoon if he's feeling up to it.`,
+      description: getDynamicDescription(careRecipient),
       status: CareSupportTranslationService.mapCoverageStatusToProjectStatus(window.status),
       team: window.assignedTeamMember ? [window.assignedTeamMember] : [],
       deadline: window.date,
@@ -117,10 +129,10 @@ export class CareSupportTranslationService {
       employees: context.careTeam.map(CareSupportTranslationService.teamMemberToEmployee),
       timeOffRequests: context.coverageGaps.map(CareSupportTranslationService.coverageGapToTimeOffRequest),
       currentProject: context.currentCoverage.length > 0 
-        ? CareSupportTranslationService.coverageWindowToProject(context.currentCoverage[0], context.careTeam)
+        ? CareSupportTranslationService.coverageWindowToProject(context.currentCoverage[0], context.careTeam, context.careRecipient)
         : null,
       projects: context.currentCoverage.map(window => 
-        CareSupportTranslationService.coverageWindowToProject(window, context.careTeam)
+        CareSupportTranslationService.coverageWindowToProject(window, context.careTeam, context.careRecipient)
       ),
       // Add more mappings as needed
     };

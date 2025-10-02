@@ -27,7 +27,7 @@ export interface CareRecipient {
 
 export interface CareNeed {
   id: string;
-  category: 'personal_care' | 'medical' | 'household' | 'transportation' | 'companionship';
+  category: 'personal_care' | 'medical' | 'household' | 'transportation' | 'companionship' | 'cognitive_care';
   description: string;
   requiredSkills: string[];
   frequency: 'daily' | 'weekly' | 'as_needed';
