@@ -1,0 +1,130 @@
+# Cursor Rules for Care Support HR Platform
+
+## Git Workflow Rules
+
+### Always Push After Committing
+- **CRITICAL**: After any `git commit`, immediately run `git push origin main`
+- Never leave commits only in local repository - they can be lost
+- Use this pattern: `git add . && git commit -m "message" && git push origin main`
+
+### Feature Development
+- Use feature branches for major changes: `git checkout -b feature/description`
+- Commit frequently with descriptive messages
+- Push feature branches regularly: `git push origin feature/description`
+- Merge back to main when complete
+
+### Before Git Operations
+- Always run `git status` to see current state
+- Check `git log --oneline -5` to see recent commits
+- If you have uncommitted changes, either:
+  - Commit them: `git add . && git commit -m "WIP: description"`
+  - Stash them: `git stash push -m "description"`
+
+### Commit Message Format
+```
+type: brief description
+
+- Use conventional commits: feat, fix, docs, style, refactor, test, chore
+- Be descriptive but concise
+- Include breaking changes in body if applicable
+```
+
+Examples:
+- `feat: add team member modal with dark mode support`
+- `fix: resolve dark mode issue in schedule preview`
+- `refactor: convert add team member from page to modal`
+
+## Code Quality Rules
+
+### React/Next.js Best Practices
+- Use TypeScript for all new files
+- Prefer functional components with hooks
+- Use proper error boundaries and loading states
+- Follow existing component patterns (see Create Request modal for reference)
+
+### UI/UX Consistency
+- Always implement dark mode support
+- Use existing design system components (Input, Label, Button, etc.)
+- Follow modal patterns established in `components/care-event-dialog.tsx`
+- Ensure all interactive elements are properly accessible
+
+### File Organization
+- Keep components in appropriate directories:
+  - `components/` for reusable UI components
+  - `app/(main)/[section]/components/` for section-specific components
+- Use descriptive file names that match component purpose
+- Export components as default exports
+
+## Development Workflow
+
+### Before Starting Work
+1. Check current git status
+2. Pull latest changes: `git pull origin main`
+3. Create feature branch if needed
+4. Ensure dev server is running: `npm run dev`
+
+### During Development
+1. Test changes in browser frequently
+2. Check for linting errors: `npm run lint`
+3. Commit progress regularly with descriptive messages
+4. Push commits immediately to avoid loss
+
+### Before Completing Work
+1. Test all functionality thoroughly
+2. Verify dark mode compatibility
+3. Check responsive design on different screen sizes
+4. Ensure no console errors or warnings
+5. Commit final changes with comprehensive message
+6. Push to GitHub immediately
+
+## Error Prevention
+
+### Git Safety
+- Never force push (`git push --force`) unless absolutely necessary
+- Always backup important work before major git operations
+- Use `git stash` to temporarily save uncommitted changes
+- Check `git reflog` if you need to recover lost commits
+
+### Code Safety
+- Always test changes locally before committing
+- Use TypeScript strict mode to catch errors early
+- Follow existing patterns rather than creating new ones
+- Document complex logic with comments
+
+### UI Safety
+- Test both light and dark modes
+- Verify all form validations work correctly
+- Ensure modals close properly and reset state
+- Check that navigation works as expected
+
+## Emergency Recovery
+
+### If Work is Lost
+1. Check `git reflog` for recent commits
+2. Look for stashed changes: `git stash list`
+3. Check other branches: `git branch -a`
+4. Use `git show <commit-hash>` to inspect lost changes
+5. If screenshots exist in git history, use them as reference to recreate
+
+### If Git Issues Occur
+1. Don't panic - git rarely loses data permanently
+2. Use `git status` to understand current state
+3. Check `git log` to see commit history
+4. Use `git reflog` to see all recent operations
+5. Ask for help before doing destructive operations
+
+## Communication
+
+### When Reporting Issues
+- Include git status and recent commit history
+- Describe what you were trying to do
+- Mention any error messages or unexpected behavior
+- Provide context about recent changes
+
+### When Requesting Features
+- Be specific about requirements
+- Reference existing similar functionality
+- Mention any design patterns to follow
+- Include acceptance criteria
+
+Remember: **Commit early, commit often, push immediately!**
