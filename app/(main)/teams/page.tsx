@@ -13,10 +13,14 @@ import { useSimplePermissions } from '@/lib/simple-permission-context';
 import { PermissionGate } from '@/components/permission-gate';
 
 import { MembersTable } from './table';
+import AddTeamMemberModal from '@/components/add-team-member-modal';
+import { TeamMemberFormData } from './components/unified-team-form';
+import * as React from 'react';
 
 export default function PageTeams() {
   const router = useRouter();
   const { currentProfile, userPermissions } = useSimplePermissions();
+  const [addTeamMemberModalOpen, setAddTeamMemberModalOpen] = React.useState(false);
   
   const getHeaderTitle = () => {
     if (!currentProfile) return 'Care Team';
@@ -43,14 +47,14 @@ export default function PageTeams() {
         <PermissionGate permission="canManageTeam">
           <Button.Root 
             className='hidden lg:flex' 
-            onClick={() => router.push('/teams/add')}
+            onClick={() => setAddTeamMemberModalOpen(true)}
             variant='primary'
             mode='filled'
           >
             <Button.Icon as={RiAddLine} />
             Add Team Member
           </Button.Root>
-          <Button.Root className='w-full lg:hidden' onClick={() => router.push('/teams/add')}>
+          <Button.Root className='w-full lg:hidden' onClick={() => setAddTeamMemberModalOpen(true)}>
             <Button.Icon as={RiAddLine} />
             Add Team Member
           </Button.Root>
@@ -66,6 +70,16 @@ export default function PageTeams() {
           <MembersTable />
         </div>
       </div>
+
+      {/* Add Team Member Modal */}
+      <AddTeamMemberModal
+        isOpen={addTeamMemberModalOpen}
+        onClose={() => setAddTeamMemberModalOpen(false)}
+        onTeamMemberAdded={(memberData) => {
+          console.log('Team member added:', memberData);
+          // In a real app, you'd update the team members list here
+        }}
+      />
     </>
   );
 }

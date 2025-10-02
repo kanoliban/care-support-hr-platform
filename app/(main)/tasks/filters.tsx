@@ -55,14 +55,14 @@ export function TasksTableFilters({
       >
         <SegmentedControl.List className='gap-2'>
             <SegmentedControl.Trigger value='all' className='px-3'>All Tasks</SegmentedControl.Trigger>
-          <SegmentedControl.Trigger value='in_progress' className='px-3'>
-            In Progress
-          </SegmentedControl.Trigger>
           <SegmentedControl.Trigger value='scheduled' className='px-3'>
             Scheduled
           </SegmentedControl.Trigger>
+          <SegmentedControl.Trigger value='in_progress' className='px-3'>
+            In Progress
+          </SegmentedControl.Trigger>
           <SegmentedControl.Trigger value='completed' className='px-3'>
-            Completed
+            Complete
           </SegmentedControl.Trigger>
           <SegmentedControl.Trigger value='overdue' className='px-3'>
             Overdue
