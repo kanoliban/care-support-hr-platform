@@ -234,7 +234,7 @@ export default function WidgetCurrentProject({
     <WidgetBox.Root className="min-h-[380px]" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiFlashlightLine} />
-        {currentProfile?.id === 'luanns-care-team' ? 'Current Dementia Care Shift' : 'Current Shift'}
+        Current Shift
         <Button.Root 
           variant='neutral' 
           mode='stroke' 
@@ -494,9 +494,9 @@ export default function WidgetCurrentProject({
                     scrollbarColor: '#d1d5db #f3f4f6'
                   }}>
                     <div className='leading-relaxed pr-1'>
-                      {currentProject.description || (currentProfile?.id === 'luanns-care-team' 
-                        ? 'Good morning! Starting my shift with Luann at 9 AM. She\'s had her morning medication and seems to be in good spirits today. Planning to help with gentle breakfast and then assist with her cognitive exercises. Marta mentioned she had some confusion last night, so I\'ll keep an eye on her orientation and safety. Will coordinate with the dementia specialist who\'s scheduled for 2 PM and update the family on her progress. Weather is nice today, so hoping to get some fresh air in the afternoon if she\'s feeling up to it.'
-                        : 'Good morning! Starting my shift with Rob at 9 AM. He\'s had his morning medication and seems to be in good spirits today. Planning to help with light breakfast and then assist with his daily exercises. His daughter mentioned he had some trouble sleeping last night, so I\'ll keep an eye on his energy levels. Will coordinate with the physical therapist who\'s scheduled for 2 PM and update the family on his progress. Weather is nice today, so hoping to get some fresh air in the afternoon if he\'s feeling up to it.')}
+                        {currentProject.description || (currentProfile?.id === 'luanns-care-team' 
+                          ? 'Good morning! Starting my shift with Luann at 9 AM. She\'s had her morning medication and seems to be in good spirits today. Planning to help with gentle breakfast and then assist with her cognitive exercises. Marta mentioned she had some confusion last night, so I\'ll keep an eye on her orientation and safety. Will coordinate with the dementia specialist who\'s scheduled for 2 PM and update the family on her progress. Weather is nice today, so hoping to get some fresh air in the afternoon if she\'s feeling up to it.'
+                          : 'Good morning! Starting my shift with Rob at 9 AM. He\'s had his morning medication and seems to be in good spirits today. Planning to help with light breakfast and then assist with his daily exercises. His daughter mentioned he had some trouble sleeping last night, so I\'ll keep an eye on his energy levels. Will coordinate with the physical therapist who\'s scheduled for 2 PM and update the family on his progress. Weather is nice today, so hoping to get some fresh air in the afternoon if he\'s feeling up to it.')}
                     </div>
                   </div>
                   {/* Fade gradient overlay to indicate more content */}
