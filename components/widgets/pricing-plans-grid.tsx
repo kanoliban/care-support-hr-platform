@@ -20,7 +20,7 @@ export default function PricingPlansGrid() {
         </p>
       </div>
 
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-6'>
         {plans.map((plan) => (
           <PricingCard key={plan.name} plan={plan} />
         ))}
@@ -39,39 +39,40 @@ function PricingCard({ plan }: PricingCardProps) {
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border-2 p-6 transition-all duration-200 hover:shadow-lg ${
+      className={`relative flex h-full flex-col rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-lg ${
         isFeatured
           ? 'border-primary-500 bg-gradient-to-br from-primary-50 to-primary-100'
           : 'border-stroke-soft-200 bg-bg-white-0 hover:border-stroke-soft-300'
       }`}
     >
       {isFeatured && (
-        <div className='absolute -top-3 left-1/2 -translate-x-1/2'>
-          <Badge.Root variant='solid' color='blue' size='medium'>
+        <div className='absolute -top-2 left-1/2 -translate-x-1/2'>
+          <Badge.Root variant='solid' color='blue' size='small'>
             <Badge.Icon as={RiSparklingLine} />
             Most Popular
           </Badge.Root>
         </div>
       )}
 
-      <div className='mb-6 text-center'>
-        <h3 className='text-title-h4 text-text-strong-950'>{plan.name}</h3>
-        <p className='mt-2 text-paragraph-sm text-text-sub-600'>
+      {/* Header */}
+      <div className='mb-4 text-center'>
+        <h3 className='text-title-h5 text-text-strong-950'>{plan.name}</h3>
+        <p className='mt-1 text-paragraph-xs text-text-sub-600'>
           {plan.description}
         </p>
         
-        <div className='mt-4'>
+        <div className='mt-3'>
           {isAgency ? (
             <div>
-              <span className='text-title-h2 text-text-strong-950'>Custom</span>
-              <p className='text-paragraph-sm text-text-sub-600'>Contact us for pricing</p>
+              <span className='text-title-h3 text-text-strong-950'>Custom</span>
+              <p className='text-paragraph-xs text-text-sub-600'>Contact us for pricing</p>
             </div>
           ) : (
             <div>
-              <span className='text-title-h2 text-text-strong-950'>${plan.price}</span>
-              <span className='text-paragraph-md text-text-sub-600'>/month</span>
+              <span className='text-title-h3 text-text-strong-950'>${plan.price}</span>
+              <span className='text-paragraph-sm text-text-sub-600'>/month</span>
               {plan.priceAnchor && (
-                <p className='mt-1 text-paragraph-sm text-text-sub-400 line-through'>
+                <p className='mt-1 text-paragraph-xs text-text-sub-400 line-through'>
                   ${plan.priceAnchor}/month
                 </p>
               )}
@@ -80,23 +81,30 @@ function PricingCard({ plan }: PricingCardProps) {
         </div>
       </div>
 
-      <Divider.Root className='mb-6' />
+      <Divider.Root className='mb-4' />
 
+      {/* Features */}
       <div className='flex flex-1 flex-col'>
-        <ul className='space-y-3 mb-6'>
-          {plan.features.map((feature) => (
-            <li key={feature.name} className='flex items-start gap-3'>
-              <RiCheckLine className='mt-0.5 size-4 shrink-0 text-primary-500' />
-              <span className='text-paragraph-sm text-text-strong-950'>
+        <ul className='mb-4 space-y-2'>
+          {plan.features.slice(0, 5).map((feature) => (
+            <li key={feature.name} className='flex items-start gap-2'>
+              <RiCheckLine className='mt-0.5 size-3 shrink-0 text-primary-500' />
+              <span className='text-paragraph-xs text-text-strong-950 leading-relaxed'>
                 {feature.name}
               </span>
             </li>
           ))}
+          {plan.features.length > 5 && (
+            <li className='text-paragraph-xs text-text-sub-600 pl-5'>
+              +{plan.features.length - 5} more features
+            </li>
+          )}
         </ul>
 
+        {/* CTA Button */}
         <div className='mt-auto'>
           {isAgency ? (
-            <button className='w-full rounded-lg bg-primary-500 px-6 py-3 text-label-sm font-medium text-white transition-colors hover:bg-primary-600'>
+            <button className='w-full rounded-lg bg-primary-500 px-4 py-2.5 text-label-xs font-medium text-white transition-colors hover:bg-primary-600'>
               Contact Sales
             </button>
           ) : (
@@ -105,10 +113,10 @@ function PricingCard({ plan }: PricingCardProps) {
               mode='subscription'
             />
           )}
-          <p className='mt-2 text-center text-paragraph-xs text-text-sub-600'>
+          <p className='mt-1.5 text-center text-paragraph-xs text-text-sub-600'>
             {isAgency 
-              ? 'Get a custom quote for your organization'
-              : 'Cancel anytime through the billing portal'
+              ? 'Get a custom quote'
+              : 'Cancel anytime'
             }
           </p>
         </div>
