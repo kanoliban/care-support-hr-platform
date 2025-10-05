@@ -94,8 +94,8 @@ export default function SubscriptionStatus() {
         </p>
       </div>
 
-      {/* Current Plan Card - WIDER */}
-      <WidgetBox.Root className='ring-2 ring-primary-500 max-w-none'>
+      {/* Current Plan Card - DOUBLE WIDTH */}
+      <WidgetBox.Root className='ring-2 ring-primary-500 w-[200%] max-w-none'>
         <WidgetBox.Header>
           <div className='flex justify-between items-start w-full'>
             <div className='flex flex-col gap-1 flex-1'>
@@ -216,8 +216,8 @@ export default function SubscriptionStatus() {
         </div>
       </WidgetBox.Root>
 
-      {/* Additional Information - WIDER LAYOUT */}
-      <div className='p-6 rounded-lg bg-bg-soft-100 max-w-none'>
+      {/* Additional Information - DOUBLE WIDTH */}
+      <div className='p-6 rounded-lg bg-bg-soft-100 w-[200%] max-w-none'>
         <h4 className='text-label-sm font-medium mb-3'>Need Help?</h4>
         <p className='text-paragraph-sm text-text-sub-600 mb-4'>
           If you need to upgrade, downgrade, or have questions about your subscription, 
