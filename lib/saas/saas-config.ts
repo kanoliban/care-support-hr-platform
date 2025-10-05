@@ -86,24 +86,6 @@ const config = {
           { name: "Custom pricing available" },
         ],
       },
-      {
-        priceId:
-          process.env.NODE_ENV === "development"
-            ? "price_starter_plan_dev"
-            : "price_starter_plan_prod",
-        name: "Starter Plan",
-        description: "Perfect for individuals getting started with care coordination",
-        price: 9,
-        priceAnchor: null,
-        features: [
-          { name: "Up to 3 users" },
-          { name: "Basic scheduling" },
-          { name: "Care activity tracking" },
-          { name: "Email support" },
-          { name: "Mobile app access" },
-          { name: "Free trial included" },
-        ],
-      },
     ],
   },
   aws: {

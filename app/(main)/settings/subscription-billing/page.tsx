@@ -18,7 +18,7 @@ import PaymentMethods from './payment-methods';
 
 const allTabs = [
   {
-    label: 'Choose Plan',
+    label: 'Current Subscription',
     icon: RiBankCardLine,
     component: CurrentSubscription,
     permission: null, // Public access
@@ -46,7 +46,7 @@ const allTabs = [
 export default function SubscriptionBillingPage() {
   const [activeTab, setActiveTab] = React.useState<
     (typeof allTabs)[number]['label'] | (string & {})
-  >('Choose Plan');
+  >('Current Subscription');
 
   return (
     <>

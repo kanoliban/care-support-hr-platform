@@ -16,7 +16,7 @@ export default function WidgetSubscription() {
   }
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+    <div className='space-y-6'>
       {plans.map((plan, index) => (
         <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
           <WidgetBox.Header>
