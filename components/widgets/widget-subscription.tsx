@@ -25,7 +25,7 @@ export default function WidgetSubscription() {
                 <div className='flex items-center gap-2'>
                   <WidgetBox.HeaderIcon 
                     as={RiSparklingLine} 
-                    style={plan.isFeatured ? { color: '#3b82f6' } : {}} 
+                    style={plan.isFeatured ? { color: '#8b5cf6' } : {}} 
                   />
                   {plan.name}
                 </div>
