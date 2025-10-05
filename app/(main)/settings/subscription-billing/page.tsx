@@ -4,41 +4,45 @@ import * as React from 'react';
 import { RiCreditCard2Line, RiBillLine, RiShieldCheckLine, RiDownloadLine } from '@remixicon/react';
 
 import * as Button from '@/components/ui/button';
-import * as Card from '@/components/ui/card';
 import * as Badge from '@/components/ui/badge';
+import * as Divider from '@/components/ui/divider';
 import WidgetSubscription from '@/components/widgets/widget-subscription';
 
 export default function SubscriptionBillingPage() {
   return (
-    <div className='space-y-6'>
+    <div className='flex w-full flex-col gap-6'>
       {/* Current Subscription Status */}
-      <Card.Root>
-        <Card.Header>
-          <Card.Title className='flex items-center gap-2'>
+      <div className='space-y-4'>
+        <div>
+          <div className='flex items-center gap-2 text-label-md'>
             <RiCreditCard2Line className='size-5' />
             Current Subscription
-          </Card.Title>
-          <Card.Description>
+          </div>
+          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
             Manage your CareSupport subscription and billing preferences
-          </Card.Description>
-        </Card.Header>
-        <Card.Content>
-          <WidgetSubscription />
-        </Card.Content>
-      </Card.Root>
+          </p>
+        </div>
+
+        <Divider.Root variant='line-spacing' />
+
+        <WidgetSubscription />
+      </div>
 
       {/* Billing History */}
-      <Card.Root>
-        <Card.Header>
-          <Card.Title className='flex items-center gap-2'>
+      <div className='space-y-4'>
+        <div>
+          <div className='flex items-center gap-2 text-label-md'>
             <RiBillLine className='size-5' />
             Billing History
-          </Card.Title>
-          <Card.Description>
+          </div>
+          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
             View and download your past invoices and payment history
-          </Card.Description>
-        </Card.Header>
-        <Card.Content className='space-y-4'>
+          </p>
+        </div>
+
+        <Divider.Root variant='line-spacing' />
+
+        <div className='space-y-4'>
           <div className='flex items-center justify-between rounded-lg border border-stroke-soft-200 p-4'>
             <div className='space-y-1'>
               <div className='text-label-sm font-medium'>CareSupport Pro - Monthly</div>
@@ -86,21 +90,24 @@ export default function SubscriptionBillingPage() {
               </Button.Root>
             </div>
           </div>
-        </Card.Content>
-      </Card.Root>
+        </div>
+      </div>
 
       {/* Payment Methods */}
-      <Card.Root>
-        <Card.Header>
-          <Card.Title className='flex items-center gap-2'>
+      <div className='space-y-4'>
+        <div>
+          <div className='flex items-center gap-2 text-label-md'>
             <RiShieldCheckLine className='size-5' />
             Payment Methods
-          </Card.Title>
-          <Card.Description>
+          </div>
+          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
             Manage your payment methods and billing information
-          </Card.Description>
-        </Card.Header>
-        <Card.Content className='space-y-4'>
+          </p>
+        </div>
+
+        <Divider.Root variant='line-spacing' />
+
+        <div className='space-y-4'>
           <div className='flex items-center justify-between rounded-lg border border-stroke-soft-200 p-4'>
             <div className='flex items-center gap-3'>
               <div className='flex size-10 items-center justify-center rounded-lg bg-bg-weak-50'>
@@ -120,18 +127,21 @@ export default function SubscriptionBillingPage() {
               </Button.Root>
             </div>
           </div>
-        </Card.Content>
-      </Card.Root>
+        </div>
+      </div>
 
       {/* Billing Information */}
-      <Card.Root>
-        <Card.Header>
-          <Card.Title>Billing Information</Card.Title>
-          <Card.Description>
+      <div className='space-y-4'>
+        <div>
+          <div className='text-label-md'>Billing Information</div>
+          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
             Update your billing address and tax information
-          </Card.Description>
-        </Card.Header>
-        <Card.Content className='space-y-4'>
+          </p>
+        </div>
+
+        <Divider.Root variant='line-spacing' />
+
+        <div className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div className='space-y-2'>
               <label className='text-label-sm font-medium'>Billing Name</label>
@@ -153,8 +163,8 @@ export default function SubscriptionBillingPage() {
           <Button.Root variant='neutral' mode='stroke' size='small'>
             Update Billing Information
           </Button.Root>
-        </Card.Content>
-      </Card.Root>
+        </div>
+      </div>
     </div>
   );
 }
