@@ -19,22 +19,24 @@ export default function WidgetSubscription() {
       {plans.map((plan, index) => (
         <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
           <WidgetBox.Header>
-            <WidgetBox.HeaderIcon as={RiSparklingLine} />
-            {plan.name}
-            {plan.isFeatured && (
-              <span className='ml-2 rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
-                Popular
-              </span>
-            )}
+            <div className='flex flex-col gap-1'>
+              <div className='flex items-center gap-2'>
+                <WidgetBox.HeaderIcon as={RiSparklingLine} />
+                {plan.name}
+                {plan.isFeatured && (
+                  <span className='rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
+                    Popular
+                  </span>
+                )}
+              </div>
+              <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
+            </div>
           </WidgetBox.Header>
 
           <Divider.Root />
 
           <div className='flex flex-col gap-3'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
-              </div>
+            <div className='flex justify-end'>
               <div className='text-right'>
                 {plan.price ? (
                   <>
