@@ -115,7 +115,7 @@ export default function SubscriptionStatus({
                   <div className='flex flex-col gap-1 flex-1'>
                     <div className='flex items-center gap-2'>
                       <WidgetBox.HeaderIcon 
-                        as={RiCreditCardLine} 
+                        as={RiBankCardLine} 
                         style={plan.isFeatured ? { color: '#8b5cf6' } : {}} 
                       />
                       {plan.name}
@@ -298,7 +298,7 @@ export default function SubscriptionStatus({
                     <div className='flex flex-col gap-1 flex-1'>
                       <div className='flex items-center gap-2'>
                         <WidgetBox.HeaderIcon 
-                          as={RiCreditCardLine} 
+                          as={RiBankCardLine} 
                           style={upgradePlan.isFeatured ? { color: '#8b5cf6' } : {}} 
                         />
                         {upgradePlan.name}
