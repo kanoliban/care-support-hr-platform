@@ -7,6 +7,7 @@ import * as Button from '@/components/ui/button';
 import * as Badge from '@/components/ui/badge';
 import * as WidgetBox from '@/components/widget-box';
 import ButtonCheckout from '@/components/saas/ButtonCheckout';
+import WidgetSubscription from '@/components/widgets/widget-subscription';
 import saasConfig from '@/lib/saas/saas-config';
 
 export default function CurrentSubscription() {
@@ -29,9 +30,9 @@ export default function CurrentSubscription() {
   return (
     <div className='flex w-full flex-col gap-4'>
       <div>
-        <div className='text-label-md'>Subscription Status</div>
+        <div className='text-label-md'>Choose Plan</div>
         <p className='mt-1 text-paragraph-sm text-text-sub-600'>
-          View your current subscription details and manage your billing
+          Select a CareSupport plan that fits your needs and manage your subscription
         </p>
       </div>
 
@@ -109,77 +110,8 @@ export default function CurrentSubscription() {
         </div>
       </WidgetBox.Root>
 
-      {/* Available Plans */}
-      <div className='space-y-4'>
-        <h3 className='text-label-md text-text-strong-950'>Available Plans</h3>
-        <p className='text-paragraph-sm text-text-sub-600'>
-          Need different features? Choose from our available plans.
-        </p>
-        
-        <div className='space-y-3'>
-          {saasConfig.stripe.plans.map((plan) => (
-            <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
-              <WidgetBox.Header>
-                <div className='flex justify-between items-start w-full'>
-                  <div className='flex flex-col gap-1 flex-1'>
-                    <div className='flex items-center gap-2'>
-                      <WidgetBox.HeaderIcon 
-                        as={RiBankCardLine} 
-                        style={plan.isFeatured ? { color: '#8b5cf6' } : {}} 
-                      />
-                      {plan.name}
-                    </div>
-                    <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
-                  </div>
-                  <div className='text-right ml-4'>
-                    {plan.price ? (
-                      <>
-                        <span className='text-title-h4 text-text-strong-950'>${plan.price}</span>
-                        <p className='text-paragraph-xs text-text-sub-600'>per month</p>
-                      </>
-                    ) : (
-                      <span className='text-title-h4 text-text-strong-950'>Custom</span>
-                    )}
-                  </div>
-                </div>
-              </WidgetBox.Header>
-
-              <div className='flex flex-col gap-3'>
-                <ul className='space-y-2 rounded-xl bg-bg-soft-100 p-4 text-paragraph-sm text-text-strong-950'>
-                  {plan.features.slice(0, 3).map((feature) => (
-                    <li key={feature.name} className='flex items-center gap-2'>
-                      <RiCheckLine className='size-4 text-success-base' />
-                      {feature.name}
-                    </li>
-                  ))}
-                  {plan.features.length > 3 && (
-                    <li className='text-paragraph-xs text-text-sub-600'>
-                      +{plan.features.length - 3} more features
-                    </li>
-                  )}
-                </ul>
-
-                {plan.price ? (
-                  <ButtonCheckout
-                    priceId={plan.priceId}
-                    mode='subscription'
-                  />
-                ) : (
-                  <Button.Root
-                    variant="primary"
-                    mode="filled"
-                    size="medium"
-                    className="w-full justify-center gap-2"
-                    onClick={() => console.log('Contact Sales clicked')}
-                  >
-                    Contact Sales
-                  </Button.Root>
-                )}
-              </div>
-            </WidgetBox.Root>
-          ))}
-        </div>
-      </div>
+      {/* Subscription Plans */}
+      <WidgetSubscription />
     </div>
   );
 }

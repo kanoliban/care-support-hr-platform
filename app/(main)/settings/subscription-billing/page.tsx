@@ -13,9 +13,16 @@ import * as TabMenuVertical from '@/components/ui/tab-menu-vertical';
 
 import BillingHistory from './billing-history';
 import BillingInformation from './billing-information';
+import CurrentSubscription from './current-subscription';
 import PaymentMethods from './payment-methods';
 
 const allTabs = [
+  {
+    label: 'Choose Plan',
+    icon: RiBankCardLine,
+    component: CurrentSubscription,
+    permission: null, // Public access
+  },
   {
     label: 'Billing History',
     icon: RiBillLine,
@@ -39,7 +46,7 @@ const allTabs = [
 export default function SubscriptionBillingPage() {
   const [activeTab, setActiveTab] = React.useState<
     (typeof allTabs)[number]['label'] | (string & {})
-  >('Billing History');
+  >('Choose Plan');
 
   return (
     <>
