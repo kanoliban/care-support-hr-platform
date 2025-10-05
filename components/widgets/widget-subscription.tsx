@@ -3,6 +3,7 @@
 import { RiSparklingLine, RiStarSmileLine } from '@remixicon/react';
 
 import ButtonCheckout from '@/components/saas/ButtonCheckout';
+import * as Button from '@/components/ui/button';
 import * as Divider from '@/components/ui/divider';
 import * as WidgetBox from '@/components/widget-box';
 import saasConfig from '@/lib/saas/saas-config';
@@ -24,7 +25,7 @@ export default function WidgetSubscription() {
                 <div className='flex items-center gap-2'>
                   <WidgetBox.HeaderIcon 
                     as={RiSparklingLine} 
-                    className={plan.isFeatured ? '!text-primary-500' : ''} 
+                    className={plan.isFeatured ? 'text-primary-500' : ''} 
                   />
                   {plan.name}
                 </div>
@@ -68,9 +69,18 @@ export default function WidgetSubscription() {
               </>
             ) : (
               <>
-                <button className='w-full rounded-full bg-primary-500 px-6 py-3 text-white font-medium hover:bg-primary-600 active:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md'>
+                <Button.Root
+                  variant="primary"
+                  mode="filled"
+                  size="medium"
+                  className="w-full justify-center gap-2"
+                  onClick={() => {
+                    // TODO: Implement contact sales functionality
+                    console.log('Contact Sales clicked');
+                  }}
+                >
                   Contact Sales
-                </button>
+                </Button.Root>
                 <p className='text-center text-paragraph-xs text-text-sub-600'>
                   Custom pricing available for enterprise needs
                 </p>
