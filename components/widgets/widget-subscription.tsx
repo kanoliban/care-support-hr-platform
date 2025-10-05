@@ -15,9 +15,9 @@ export default function WidgetSubscription() {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='flex flex-col lg:flex-row gap-6'>
       {plans.map((plan, index) => (
-        <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
+        <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 flex-1 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
           <WidgetBox.Header>
             <WidgetBox.HeaderIcon as={RiSparklingLine} />
             {plan.name}
@@ -33,7 +33,6 @@ export default function WidgetSubscription() {
           <div className='flex flex-col gap-3'>
             <div className='flex items-center justify-between'>
               <div>
-                <p className='text-label-md text-text-strong-950'>{plan.name}</p>
                 <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
               </div>
               <div className='text-right'>
