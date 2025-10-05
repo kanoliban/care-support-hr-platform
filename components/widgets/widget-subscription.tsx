@@ -32,7 +32,7 @@ export default function WidgetSubscription() {
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`rounded-xl border p-6 ${
+            className={`flex flex-col rounded-xl border p-6 ${
               plan.isFeatured
                 ? 'border-primary-500 bg-primary-50 ring-1 ring-primary-500'
                 : 'border-stroke-soft-200 bg-bg-white-0'
@@ -40,7 +40,7 @@ export default function WidgetSubscription() {
           >
             {/* Plan Header */}
             <div className='mb-4'>
-              <div className='flex items-center justify-between'>
+              <div className='flex items-center justify-between mb-2'>
                 <h3 className='text-label-lg font-semibold text-text-strong-950'>
                   {plan.name}
                 </h3>
@@ -50,23 +50,23 @@ export default function WidgetSubscription() {
                   </span>
                 )}
               </div>
-              <p className='mt-1 text-paragraph-sm text-text-sub-600'>
+              <p className='text-paragraph-sm text-text-sub-600'>
                 {plan.description}
               </p>
             </div>
 
             {/* Pricing */}
-            <div className='mb-6'>
+            <div className='mb-4'>
               <div className='flex items-baseline gap-2'>
                 {plan.price !== null ? (
                   <>
-                    <span className='text-title-h3 font-bold text-text-strong-950'>
+                    <span className='text-title-h2 font-bold text-text-strong-950'>
                       ${plan.price}
                     </span>
                     <span className='text-paragraph-sm text-text-sub-600'>/month</span>
                   </>
                 ) : (
-                  <span className='text-title-h3 font-bold text-text-strong-950'>
+                  <span className='text-title-h2 font-bold text-text-strong-950'>
                     Custom
                   </span>
                 )}
@@ -78,17 +78,27 @@ export default function WidgetSubscription() {
               )}
             </div>
 
-            {/* Features */}
-            <ul className='mb-6 space-y-3'>
-              {plan.features.map((feature) => (
-                <li key={feature.name} className='flex items-start gap-3'>
-                  <RiCheckLine className='mt-0.5 size-4 shrink-0 text-primary-500' />
-                  <span className='text-paragraph-sm text-text-strong-950'>
-                    {feature.name}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {/* Key Features - Limited to 4 most important */}
+            <div className='mb-6 flex-1'>
+              <h4 className='text-label-sm font-medium text-text-strong-950 mb-3'>
+                Key Features:
+              </h4>
+              <ul className='space-y-2'>
+                {plan.features.slice(0, 4).map((feature) => (
+                  <li key={feature.name} className='flex items-start gap-2'>
+                    <RiCheckLine className='mt-0.5 size-3 shrink-0 text-primary-500' />
+                    <span className='text-paragraph-sm text-text-strong-950'>
+                      {feature.name}
+                    </span>
+                  </li>
+                ))}
+                {plan.features.length > 4 && (
+                  <li className='text-paragraph-xs text-text-sub-600 ml-5'>
+                    +{plan.features.length - 4} more features
+                  </li>
+                )}
+              </ul>
+            </div>
 
             {/* CTA Button */}
             <div className='mt-auto'>
