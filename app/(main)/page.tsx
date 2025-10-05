@@ -10,7 +10,6 @@ import WidgetNotes from '@/components/widgets/widget-notes';
 import WidgetSchedule from '@/components/widgets/widget-schedule';
 import WidgetStatusTracker from '@/components/widgets/widget-status-tracker';
 import WidgetTimeOff from '@/components/widgets/widget-time-off';
-import WidgetSubscription from '@/components/widgets/widget-subscription';
 import RealTimeToggle from '@/components/real-time-toggle';
 import CareEventDialog from '@/components/care-event-dialog';
 import { CareEventsProvider } from '@/hooks/useCareEvents';
@@ -73,7 +72,6 @@ export default function PageHome() {
           {/* Care Team & Status Widgets */}
           <WidgetStatusTracker />
           <WidgetNotes />
-          <WidgetSubscription />
         </div>
       </div>
       

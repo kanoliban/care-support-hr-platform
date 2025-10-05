@@ -30,6 +30,12 @@ const allItems = [
     role: null,
   },
   {
+    label: 'Subscription & Billing',
+    href: '/settings/subscription-billing',
+    permission: 'canManageOrganization', // Only org admins can manage billing
+    role: null,
+  },
+  {
     label: 'Notification Settings',
     href: '/settings/notification-settings',
     permission: null, // Public access (personal notifications)
