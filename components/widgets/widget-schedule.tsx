@@ -833,7 +833,7 @@ export default function WidgetSchedule({
   // }, [selectedDay]);
 
   return (
-    <WidgetBox.Root className="h-full flex flex-col" {...rest}>
+    <WidgetBox.Root className="h-full flex flex-col min-h-[600px]" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiCalendarLine} />
         Schedule
