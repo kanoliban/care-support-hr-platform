@@ -29,7 +29,7 @@ export default function WidgetSubscription() {
         <div className='flex items-center justify-between'>
           <div>
             <p className='text-label-md text-text-strong-950'>{featuredPlan.name}</p>
-            <p className='text-paragraph-sm text-text-sub-600'>{featuredPlan.description}</p>
+            <p className='text-paragraph-sm text-text-sub-600'>Perfect for your care coordination needs</p>
           </div>
           <div className='text-right'>
             <span className='text-title-h4 text-text-strong-950'>${featuredPlan.price}</span>
