@@ -85,7 +85,7 @@ export default function SubscriptionStatus() {
   };
 
   return (
-    <div className='flex w-full flex-col gap-6'>
+    <div className='flex w-full max-w-none flex-col gap-6'>
       {/* Header */}
       <div>
         <div className='text-label-md'>Subscription Status</div>
@@ -94,8 +94,8 @@ export default function SubscriptionStatus() {
         </p>
       </div>
 
-      {/* Current Plan Card */}
-      <WidgetBox.Root className='ring-2 ring-primary-500'>
+      {/* Current Plan Card - WIDER */}
+      <WidgetBox.Root className='ring-2 ring-primary-500 max-w-none'>
         <WidgetBox.Header>
           <div className='flex justify-between items-start w-full'>
             <div className='flex flex-col gap-1 flex-1'>
@@ -118,60 +118,48 @@ export default function SubscriptionStatus() {
           </div>
         </WidgetBox.Header>
 
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
-          {/* Left Column - Billing Info & Features */}
-          <div className='lg:col-span-2 space-y-4'>
-            {/* Billing Information */}
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div className='flex items-center gap-3 p-3 rounded-lg bg-bg-soft-200'>
-                <RiCalendarLine className='size-5 text-primary-500' />
-                <div>
-                  <p className='text-paragraph-xs text-text-sub-600'>Next Billing Date</p>
-                  <p className='text-label-sm font-medium'>{mockSubscriptionData.nextBillingDate}</p>
-                </div>
-              </div>
-              <div className='flex items-center gap-3 p-3 rounded-lg bg-bg-soft-200'>
-                <RiBankCardLine className='size-5 text-primary-500' />
-                <div>
-                  <p className='text-paragraph-xs text-text-sub-600'>Next Billing Amount</p>
-                  <p className='text-label-sm font-medium'>${mockSubscriptionData.nextBillingAmount}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Plan Features */}
+        {/* Billing Information - WIDER HORIZONTAL LAYOUT */}
+        <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+          <div className='flex items-center gap-3 p-4 rounded-lg bg-bg-soft-200'>
+            <RiCalendarLine className='size-6 text-primary-500 flex-shrink-0' />
             <div>
-              <h4 className='text-label-sm font-medium mb-3'>Plan Features</h4>
-              <ul className='space-y-2'>
-                {mockSubscriptionData.plan.features.map((feature, index) => (
-                  <li key={index} className='flex items-center gap-2 text-paragraph-sm'>
-                    <RiCheckLine className='size-4 text-green-500 flex-shrink-0' />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+              <p className='text-paragraph-xs text-text-sub-600'>Next Billing Date</p>
+              <p className='text-label-sm font-medium'>{mockSubscriptionData.nextBillingDate}</p>
             </div>
           </div>
-
-          {/* Right Column - Usage Statistics */}
-          <div className='space-y-4'>
-            <div className='p-4 rounded-lg bg-bg-soft-100'>
-              <h4 className='text-label-sm font-medium mb-3'>Usage Statistics</h4>
-              <div className='space-y-3'>
-                <div className='flex items-center justify-between'>
-                  <span className='text-paragraph-sm text-text-sub-600'>Families Managed</span>
-                  <span className='text-label-sm font-medium'>{mockSubscriptionData.usage.familiesManaged}</span>
-                </div>
-                <div className='flex items-center justify-between'>
-                  <span className='text-paragraph-sm text-text-sub-600'>Team Members</span>
-                  <span className='text-label-sm font-medium'>{mockSubscriptionData.usage.teamMembers}</span>
-                </div>
-                <div className='flex items-center justify-between'>
-                  <span className='text-paragraph-sm text-text-sub-600'>Care Events</span>
-                  <span className='text-label-sm font-medium'>{mockSubscriptionData.usage.totalCareEvents}</span>
-                </div>
-              </div>
+          <div className='flex items-center gap-3 p-4 rounded-lg bg-bg-soft-200'>
+            <RiBankCardLine className='size-6 text-primary-500 flex-shrink-0' />
+            <div>
+              <p className='text-paragraph-xs text-text-sub-600'>Next Billing Amount</p>
+              <p className='text-label-sm font-medium'>${mockSubscriptionData.nextBillingAmount}</p>
             </div>
+          </div>
+          <div className='flex items-center gap-3 p-4 rounded-lg bg-bg-soft-200'>
+            <RiSparklingLine className='size-6 text-primary-500 flex-shrink-0' />
+            <div>
+              <p className='text-paragraph-xs text-text-sub-600'>Families Managed</p>
+              <p className='text-label-sm font-medium'>{mockSubscriptionData.usage.familiesManaged}</p>
+            </div>
+          </div>
+          <div className='flex items-center gap-3 p-4 rounded-lg bg-bg-soft-200'>
+            <RiCheckLine className='size-6 text-primary-500 flex-shrink-0' />
+            <div>
+              <p className='text-paragraph-xs text-text-sub-600'>Team Members</p>
+              <p className='text-label-sm font-medium'>{mockSubscriptionData.usage.teamMembers}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Plan Features - WIDER LAYOUT */}
+        <div>
+          <h4 className='text-label-sm font-medium mb-4'>Plan Features</h4>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
+            {mockSubscriptionData.plan.features.map((feature, index) => (
+              <div key={index} className='flex items-center gap-2 text-paragraph-sm'>
+                <RiCheckLine className='size-4 text-green-500 flex-shrink-0' />
+                <span>{feature}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -208,38 +196,38 @@ export default function SubscriptionStatus() {
           </Button.Root>
         </div>
 
-        {/* Billing History Summary */}
-        <div className='p-4 rounded-lg bg-bg-soft-100'>
-          <h4 className='text-label-sm font-medium mb-2'>Billing History</h4>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-center'>
-            <div>
-              <p className='text-title-h5 text-text-strong-950'>{mockSubscriptionData.billingHistory.totalInvoices}</p>
+        {/* Billing History Summary - WIDER LAYOUT */}
+        <div className='p-6 rounded-lg bg-bg-soft-100'>
+          <h4 className='text-label-sm font-medium mb-4'>Billing History</h4>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6 text-center'>
+            <div className='p-4 rounded-lg bg-bg-white-0'>
+              <p className='text-title-h4 text-text-strong-950'>{mockSubscriptionData.billingHistory.totalInvoices}</p>
               <p className='text-paragraph-xs text-text-sub-600'>Total Invoices</p>
             </div>
-            <div>
-              <p className='text-title-h5 text-text-strong-950'>{mockSubscriptionData.billingHistory.lastPayment}</p>
+            <div className='p-4 rounded-lg bg-bg-white-0'>
+              <p className='text-title-h4 text-text-strong-950'>{mockSubscriptionData.billingHistory.lastPayment}</p>
               <p className='text-paragraph-xs text-text-sub-600'>Last Payment</p>
             </div>
-            <div>
-              <p className='text-title-h5 text-text-strong-950'>${mockSubscriptionData.billingHistory.lastAmount}</p>
+            <div className='p-4 rounded-lg bg-bg-white-0'>
+              <p className='text-title-h4 text-text-strong-950'>${mockSubscriptionData.billingHistory.lastAmount}</p>
               <p className='text-paragraph-xs text-text-sub-600'>Last Amount</p>
             </div>
           </div>
         </div>
       </WidgetBox.Root>
 
-      {/* Additional Information */}
-      <div className='p-4 rounded-lg bg-bg-soft-100'>
-        <h4 className='text-label-sm font-medium mb-2'>Need Help?</h4>
-        <p className='text-paragraph-sm text-text-sub-600 mb-3'>
+      {/* Additional Information - WIDER LAYOUT */}
+      <div className='p-6 rounded-lg bg-bg-soft-100 max-w-none'>
+        <h4 className='text-label-sm font-medium mb-3'>Need Help?</h4>
+        <p className='text-paragraph-sm text-text-sub-600 mb-4'>
           If you need to upgrade, downgrade, or have questions about your subscription, 
           you can manage everything through the Stripe Customer Portal or contact our support team.
         </p>
-        <div className='flex flex-col sm:flex-row gap-2'>
-          <Button.Root variant='neutral' mode='stroke' size='small'>
+        <div className='flex flex-col sm:flex-row gap-3'>
+          <Button.Root variant='neutral' mode='stroke' size='small' className='flex-1'>
             Contact Support
           </Button.Root>
-          <Button.Root variant='neutral' mode='stroke' size='small'>
+          <Button.Root variant='neutral' mode='stroke' size='small' className='flex-1'>
             View Billing History
           </Button.Root>
         </div>
