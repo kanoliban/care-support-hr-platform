@@ -22,13 +22,11 @@ export default function WidgetSubscription() {
             <div className='flex justify-between items-start w-full'>
               <div className='flex flex-col gap-1 flex-1'>
                 <div className='flex items-center gap-2'>
-                  <WidgetBox.HeaderIcon as={RiSparklingLine} />
+                  <WidgetBox.HeaderIcon 
+                    as={RiSparklingLine} 
+                    className={plan.isFeatured ? 'text-primary-500' : ''} 
+                  />
                   {plan.name}
-                  {plan.isFeatured && (
-                    <span className='ml-2 rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
-                      Popular
-                    </span>
-                  )}
                 </div>
                 <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
               </div>
@@ -69,14 +67,14 @@ export default function WidgetSubscription() {
                 </p>
               </>
             ) : (
-              <div className='text-center'>
+              <>
                 <button className='w-full rounded-lg bg-primary-500 px-6 py-3 text-white font-medium hover:bg-primary-600 active:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md'>
                   Contact Sales
                 </button>
-                <p className='mt-2 text-paragraph-xs text-text-sub-600'>
+                <p className='text-center text-paragraph-xs text-text-sub-600'>
                   Custom pricing available for enterprise needs
                 </p>
-              </div>
+              </>
             )}
           </div>
         </WidgetBox.Root>
