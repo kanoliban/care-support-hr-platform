@@ -119,32 +119,39 @@ export default function SubscriptionStatus() {
           </div>
         </WidgetBox.Header>
 
-        <div className='space-y-4'>
+        <div className='space-y-6'>
           {/* Billing Information */}
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='flex items-center gap-3 p-3 rounded-lg bg-bg-soft-200'>
-              <RiCalendarLine className='size-5 text-primary-500' />
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+            <div className='flex items-center gap-4 p-4 rounded-lg bg-bg-soft-200'>
+              <RiCalendarLine className='size-6 text-primary-500' />
               <div>
-                <p className='text-paragraph-xs text-text-sub-600'>Next Billing Date</p>
-                <p className='text-label-sm font-medium'>{mockSubscriptionData.nextBillingDate}</p>
+                <p className='text-paragraph-sm text-text-sub-600'>Next Billing Date</p>
+                <p className='text-label-md font-medium'>{mockSubscriptionData.nextBillingDate}</p>
               </div>
             </div>
-            <div className='flex items-center gap-3 p-3 rounded-lg bg-bg-soft-200'>
-              <RiBankCardLine className='size-5 text-primary-500' />
+            <div className='flex items-center gap-4 p-4 rounded-lg bg-bg-soft-200'>
+              <RiBankCardLine className='size-6 text-primary-500' />
               <div>
-                <p className='text-paragraph-xs text-text-sub-600'>Next Billing Amount</p>
-                <p className='text-label-sm font-medium'>${mockSubscriptionData.nextBillingAmount}</p>
+                <p className='text-paragraph-sm text-text-sub-600'>Next Billing Amount</p>
+                <p className='text-label-md font-medium'>${mockSubscriptionData.nextBillingAmount}</p>
+              </div>
+            </div>
+            <div className='flex items-center gap-4 p-4 rounded-lg bg-bg-soft-200'>
+              <RiSparklingLine className='size-6 text-primary-500' />
+              <div>
+                <p className='text-paragraph-sm text-text-sub-600'>Plan Status</p>
+                <p className='text-label-md font-medium'>{getStatusBadge(mockSubscriptionData.status)}</p>
               </div>
             </div>
           </div>
 
           {/* Plan Features */}
           <div>
-            <h4 className='text-label-sm font-medium mb-3'>Plan Features</h4>
-            <ul className='space-y-2 rounded-xl bg-bg-soft-100 p-4 text-paragraph-sm text-text-strong-950'>
+            <h4 className='text-label-md font-medium mb-4'>Plan Features</h4>
+            <ul className='space-y-3 rounded-xl bg-bg-soft-100 p-6 text-paragraph-sm text-text-strong-950'>
               {mockSubscriptionData.plan.features.map((feature, index) => (
-                <li key={index} className='flex items-center gap-2'>
-                  <RiCheckLine className='size-4 text-primary-500' />
+                <li key={index} className='flex items-center gap-3'>
+                  <RiCheckLine className='size-5 text-primary-500' />
                   {feature}
                 </li>
               ))}
@@ -153,22 +160,22 @@ export default function SubscriptionStatus() {
 
           {/* Usage Statistics */}
           <div>
-            <h4 className='text-label-sm font-medium mb-3'>Usage Statistics</h4>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div className='p-3 rounded-lg border border-stroke-soft-200'>
-                <p className='text-paragraph-xs text-text-sub-600'>Families Managed</p>
-                <p className='text-title-h5 text-text-strong-950'>
+            <h4 className='text-label-md font-medium mb-4'>Usage Statistics</h4>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+              <div className='p-5 rounded-lg border border-stroke-soft-200 bg-bg-white-0'>
+                <p className='text-paragraph-sm text-text-sub-600 mb-2'>Families Managed</p>
+                <p className='text-title-h4 text-text-strong-950'>
                   {mockSubscriptionData.usage.familiesManaged}
-                  <span className='text-paragraph-sm text-text-sub-600 ml-1'>
+                  <span className='text-paragraph-md text-text-sub-600 ml-2'>
                     / {mockSubscriptionData.usage.maxFamilies}
                   </span>
                 </p>
               </div>
-              <div className='p-3 rounded-lg border border-stroke-soft-200'>
-                <p className='text-paragraph-xs text-text-sub-600'>Team Members</p>
-                <p className='text-title-h5 text-text-strong-950'>
+              <div className='p-5 rounded-lg border border-stroke-soft-200 bg-bg-white-0'>
+                <p className='text-paragraph-sm text-text-sub-600 mb-2'>Team Members</p>
+                <p className='text-title-h4 text-text-strong-950'>
                   {mockSubscriptionData.usage.teamMembers}
-                  <span className='text-paragraph-sm text-text-sub-600 ml-1'>
+                  <span className='text-paragraph-md text-text-sub-600 ml-2'>
                     / {mockSubscriptionData.usage.maxTeamMembers}
                   </span>
                 </p>
@@ -177,23 +184,23 @@ export default function SubscriptionStatus() {
           </div>
 
           {/* Action Buttons */}
-          <div className='flex flex-col sm:flex-row gap-3'>
+          <div className='flex flex-col lg:flex-row gap-4 pt-2'>
             <Button.Root
               variant='primary'
               mode='filled'
-              size='medium'
-              className='flex-1 justify-center gap-2'
+              size='large'
+              className='flex-1 justify-center gap-3 py-3'
               onClick={handleManageSubscription}
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <span className='inline-flex size-4 animate-spin rounded-full border-[2px] border-primary-base/40 border-t-transparent' />
+                  <span className='inline-flex size-5 animate-spin rounded-full border-[2px] border-primary-base/40 border-t-transparent' />
                   Loading...
                 </>
               ) : (
                 <>
-                  <RiBankCardLine className='size-4' />
+                  <RiBankCardLine className='size-5' />
                   Manage Subscription
                 </>
               )}
@@ -201,29 +208,29 @@ export default function SubscriptionStatus() {
             <Button.Root
               variant='neutral'
               mode='stroke'
-              size='medium'
-              className='flex-1 justify-center gap-2'
+              size='large'
+              className='flex-1 justify-center gap-3 py-3'
             >
-              <RiSparklingLine className='size-4' />
+              <RiSparklingLine className='size-5' />
               View All Plans
             </Button.Root>
           </div>
 
           {/* Billing History Summary */}
-          <div className='p-4 rounded-lg bg-bg-soft-100'>
-            <h4 className='text-label-sm font-medium mb-2'>Billing History</h4>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-center'>
-              <div>
-                <p className='text-title-h5 text-text-strong-950'>{mockSubscriptionData.billingHistory.totalInvoices}</p>
-                <p className='text-paragraph-xs text-text-sub-600'>Total Invoices</p>
+          <div className='p-6 rounded-lg bg-bg-soft-100'>
+            <h4 className='text-label-md font-medium mb-4'>Billing History</h4>
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 text-center'>
+              <div className='p-4 rounded-lg bg-bg-white-0'>
+                <p className='text-title-h4 text-text-strong-950'>{mockSubscriptionData.billingHistory.totalInvoices}</p>
+                <p className='text-paragraph-sm text-text-sub-600 mt-1'>Total Invoices</p>
               </div>
-              <div>
-                <p className='text-title-h5 text-text-strong-950'>{mockSubscriptionData.billingHistory.lastPayment}</p>
-                <p className='text-paragraph-xs text-text-sub-600'>Last Payment</p>
+              <div className='p-4 rounded-lg bg-bg-white-0'>
+                <p className='text-title-h4 text-text-strong-950'>{mockSubscriptionData.billingHistory.lastPayment}</p>
+                <p className='text-paragraph-sm text-text-sub-600 mt-1'>Last Payment</p>
               </div>
-              <div>
-                <p className='text-title-h5 text-text-strong-950'>${mockSubscriptionData.billingHistory.lastAmount}</p>
-                <p className='text-paragraph-xs text-text-sub-600'>Last Amount</p>
+              <div className='p-4 rounded-lg bg-bg-white-0'>
+                <p className='text-title-h4 text-text-strong-950'>${mockSubscriptionData.billingHistory.lastAmount}</p>
+                <p className='text-paragraph-sm text-text-sub-600 mt-1'>Last Amount</p>
               </div>
             </div>
           </div>
@@ -231,17 +238,17 @@ export default function SubscriptionStatus() {
       </WidgetBox.Root>
 
       {/* Additional Information */}
-      <div className='p-4 rounded-lg bg-bg-soft-100'>
-        <h4 className='text-label-sm font-medium mb-2'>Need Help?</h4>
-        <p className='text-paragraph-sm text-text-sub-600 mb-3'>
+      <div className='p-6 rounded-lg bg-bg-soft-100'>
+        <h4 className='text-label-md font-medium mb-4'>Need Help?</h4>
+        <p className='text-paragraph-md text-text-sub-600 mb-6'>
           If you need to upgrade, downgrade, or have questions about your subscription, 
           you can manage everything through the Stripe Customer Portal or contact our support team.
         </p>
-        <div className='flex flex-col sm:flex-row gap-2'>
-          <Button.Root variant='neutral' mode='stroke' size='small'>
+        <div className='flex flex-col lg:flex-row gap-4'>
+          <Button.Root variant='neutral' mode='stroke' size='medium' className='flex-1 justify-center'>
             Contact Support
           </Button.Root>
-          <Button.Root variant='neutral' mode='stroke' size='small'>
+          <Button.Root variant='neutral' mode='stroke' size='medium' className='flex-1 justify-center'>
             View Billing History
           </Button.Root>
         </div>
