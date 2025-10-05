@@ -16,7 +16,7 @@ export default function WidgetSubscription() {
   }
 
   return (
-    <div className='grid grid-cols-[repeat(auto-fill,minmax(344px,1fr))] gap-6'>
+    <div className='grid grid-cols-2 gap-6'>
       {plans.map((plan, index) => (
         <WidgetBox.Root key={plan.name} className={`${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
           <WidgetBox.Header>
