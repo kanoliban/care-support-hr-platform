@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { RiCheckLine, RiCalendarLine, RiCreditCardLine, RiRefreshLine } from '@remixicon/react';
+import { RiCheckLine, RiCalendarLine, RiBankCardLine, RiRefreshLine } from '@remixicon/react';
 
 import * as Button from '@/components/ui/button';
 import * as Badge from '@/components/ui/badge';
@@ -84,7 +84,7 @@ export default function SubscriptionStatus({
         <WidgetBox.Root className='border-dashed border-2 border-stroke-soft-200'>
           <WidgetBox.Header>
             <div className='flex items-center gap-2'>
-              <WidgetBox.HeaderIcon as={RiCreditCardLine} />
+              <WidgetBox.HeaderIcon as={RiBankCardLine} />
               No Active Subscription
             </div>
           </WidgetBox.Header>
@@ -242,7 +242,7 @@ export default function SubscriptionStatus({
                 </div>
               </div>
               <div className='flex items-center gap-2'>
-                <RiCreditCardLine className='size-4 text-text-sub-600' />
+                <RiBankCardLine className='size-4 text-text-sub-600' />
                 <div>
                   <p className='text-paragraph-xs text-text-sub-600'>Billing Cycle</p>
                   <p className='text-label-sm font-medium capitalize'>{billingCycle}</p>
@@ -268,7 +268,7 @@ export default function SubscriptionStatus({
                 </>
               ) : (
                 <>
-                  <RiCreditCardLine className='size-4' />
+                  <RiBankCardLine className='size-4' />
                   Manage Subscription
                 </>
               )}
