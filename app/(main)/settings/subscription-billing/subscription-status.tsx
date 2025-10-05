@@ -118,8 +118,8 @@ export default function SubscriptionStatus() {
           </div>
         </WidgetBox.Header>
 
-        {/* Billing Information - WIDER HORIZONTAL LAYOUT */}
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+        {/* Billing Information - CLEAN 2x2 GRID */}
+        <div className='grid grid-cols-2 gap-4'>
           <div className='flex items-center gap-3 p-4 rounded-lg bg-bg-soft-200'>
             <RiCalendarLine className='size-6 text-primary-500 flex-shrink-0' />
             <div>
@@ -150,10 +150,10 @@ export default function SubscriptionStatus() {
           </div>
         </div>
 
-        {/* Plan Features - WIDER LAYOUT */}
+        {/* Plan Features - CLEAN 2 COLUMN LAYOUT */}
         <div>
           <h4 className='text-label-sm font-medium mb-4'>Plan Features</h4>
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
+          <div className='grid grid-cols-2 gap-3'>
             {mockSubscriptionData.plan.features.map((feature, index) => (
               <div key={index} className='flex items-center gap-2 text-paragraph-sm'>
                 <RiCheckLine className='size-4 text-green-500 flex-shrink-0' />
@@ -196,10 +196,10 @@ export default function SubscriptionStatus() {
           </Button.Root>
         </div>
 
-        {/* Billing History Summary - WIDER LAYOUT */}
+        {/* Billing History Summary - CLEAN 3 COLUMN LAYOUT */}
         <div className='p-6 rounded-lg bg-bg-soft-100'>
           <h4 className='text-label-sm font-medium mb-4'>Billing History</h4>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6 text-center'>
+          <div className='grid grid-cols-3 gap-4 text-center'>
             <div className='p-4 rounded-lg bg-bg-white-0'>
               <p className='text-title-h4 text-text-strong-950'>{mockSubscriptionData.billingHistory.totalInvoices}</p>
               <p className='text-paragraph-xs text-text-sub-600'>Total Invoices</p>
