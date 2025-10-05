@@ -1,170 +1,112 @@
 'use client';
 
 import * as React from 'react';
-import { RiBankCardLine, RiBillLine, RiShieldCheckLine, RiDownloadLine } from '@remixicon/react';
+import {
+  RiArrowRightSLine,
+  RiBankCardLine,
+  RiBillLine,
+  RiShieldCheckLine,
+} from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
-import * as Badge from '@/components/ui/badge';
-import * as Divider from '@/components/ui/divider';
-import WidgetSubscription from '@/components/widgets/widget-subscription';
+import * as TabMenuHorizontal from '@/components/ui/tab-menu-horizontal';
+import * as TabMenuVertical from '@/components/ui/tab-menu-vertical';
+
+import BillingHistory from './billing-history';
+import BillingInformation from './billing-information';
+import CurrentSubscription from './current-subscription';
+import PaymentMethods from './payment-methods';
+
+const allTabs = [
+  {
+    label: 'Current Subscription',
+    icon: RiBankCardLine,
+    component: CurrentSubscription,
+    permission: null, // Public access
+  },
+  {
+    label: 'Billing History',
+    icon: RiBillLine,
+    component: BillingHistory,
+    permission: null, // Public access
+  },
+  {
+    label: 'Payment Methods',
+    icon: RiShieldCheckLine,
+    component: PaymentMethods,
+    permission: null, // Public access
+  },
+  {
+    label: 'Billing Information',
+    icon: RiBankCardLine,
+    component: BillingInformation,
+    permission: null, // Public access
+  },
+] as const;
 
 export default function SubscriptionBillingPage() {
+  const [activeTab, setActiveTab] = React.useState<
+    (typeof allTabs)[number]['label'] | (string & {})
+  >('Current Subscription');
+
   return (
-    <div className='flex w-full flex-col gap-6'>
-      {/* Current Subscription Status */}
-      <div className='space-y-4'>
-        <div>
-          <div className='flex items-center gap-2 text-label-md'>
-            <RiBankCardLine className='size-5' />
-            Current Subscription
-          </div>
-          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
-            Manage your CareSupport subscription and billing preferences
-          </p>
+    <>
+      {/* mobile */}
+      <TabMenuHorizontal.Root
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className='md:hidden'
+      >
+        <TabMenuHorizontal.List wrapperClassName='-mx-4 mb-6' className='px-4'>
+          {allTabs.map(({ label, icon: Icon }) => (
+            <TabMenuHorizontal.Trigger key={label} value={label}>
+              <TabMenuHorizontal.Icon as={Icon} />
+              {label}
+            </TabMenuHorizontal.Trigger>
+          ))}
+        </TabMenuHorizontal.List>
+
+        {allTabs.map(({ label, component: Component }) => (
+          <TabMenuHorizontal.Content
+            key={label}
+            value={label}
+            className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-4'
+          >
+            <Component />
+          </TabMenuHorizontal.Content>
+        ))}
+      </TabMenuHorizontal.Root>
+
+      {/* desktop */}
+      <TabMenuVertical.Root
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className='hidden grid-cols-[auto,1fr] items-start gap-8 md:grid xl:grid-cols-[1fr_minmax(0,352px)_1fr]'
+      >
+        <div className='w-[258px] shrink-0 rounded-2xl bg-bg-white-0 p-2.5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
+          <h4 className='mb-2 px-2 py-1 text-subheading-xs uppercase text-text-soft-400'>
+            select menu
+          </h4>
+          <TabMenuVertical.List>
+            {allTabs.map(({ label, icon: Icon }) => (
+              <TabMenuVertical.Trigger key={label} value={label}>
+                <TabMenuVertical.Icon as={Icon} />
+                {label}
+                <TabMenuVertical.ArrowIcon as={RiArrowRightSLine} />
+              </TabMenuVertical.Trigger>
+            ))}
+          </TabMenuVertical.List>
         </div>
 
-        <Divider.Root variant='line-spacing' />
-
-        <WidgetSubscription />
-      </div>
-
-      {/* Billing History */}
-      <div className='space-y-4'>
-        <div>
-          <div className='flex items-center gap-2 text-label-md'>
-            <RiBillLine className='size-5' />
-            Billing History
-          </div>
-          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
-            View and download your past invoices and payment history
-          </p>
-        </div>
-
-        <Divider.Root variant='line-spacing' />
-
-        <div className='space-y-4'>
-          <div className='flex items-center justify-between rounded-lg border border-stroke-soft-200 p-4'>
-            <div className='space-y-1'>
-              <div className='text-label-sm font-medium'>CareSupport Pro - Monthly</div>
-              <div className='text-paragraph-xs text-text-sub-600'>January 15, 2024</div>
-            </div>
-            <div className='flex items-center gap-3'>
-              <Badge.Root variant='light' color='blue' size='medium'>
-                Paid
-              </Badge.Root>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                <Button.Icon as={RiDownloadLine} />
-                Download
-              </Button.Root>
-            </div>
-          </div>
-          
-          <div className='flex items-center justify-between rounded-lg border border-stroke-soft-200 p-4'>
-            <div className='space-y-1'>
-              <div className='text-label-sm font-medium'>CareSupport Pro - Monthly</div>
-              <div className='text-paragraph-xs text-text-sub-600'>December 15, 2023</div>
-            </div>
-            <div className='flex items-center gap-3'>
-              <Badge.Root variant='light' color='blue' size='medium'>
-                Paid
-              </Badge.Root>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                <Button.Icon as={RiDownloadLine} />
-                Download
-              </Button.Root>
-            </div>
-          </div>
-
-          <div className='flex items-center justify-between rounded-lg border border-stroke-soft-200 p-4'>
-            <div className='space-y-1'>
-              <div className='text-label-sm font-medium'>CareSupport Pro - Monthly</div>
-              <div className='text-paragraph-xs text-text-sub-600'>November 15, 2023</div>
-            </div>
-            <div className='flex items-center gap-3'>
-              <Badge.Root variant='light' color='blue' size='medium'>
-                Paid
-              </Badge.Root>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                <Button.Icon as={RiDownloadLine} />
-                Download
-              </Button.Root>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Payment Methods */}
-      <div className='space-y-4'>
-        <div>
-          <div className='flex items-center gap-2 text-label-md'>
-            <RiShieldCheckLine className='size-5' />
-            Payment Methods
-          </div>
-          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
-            Manage your payment methods and billing information
-          </p>
-        </div>
-
-        <Divider.Root variant='line-spacing' />
-
-        <div className='space-y-4'>
-          <div className='flex items-center justify-between rounded-lg border border-stroke-soft-200 p-4'>
-            <div className='flex items-center gap-3'>
-              <div className='flex size-10 items-center justify-center rounded-lg bg-bg-weak-50'>
-                <RiBankCardLine className='size-5 text-text-sub-600' />
-              </div>
-              <div className='space-y-1'>
-                <div className='text-label-sm font-medium'>•••• •••• •••• 4242</div>
-                <div className='text-paragraph-xs text-text-sub-600'>Expires 12/25</div>
-              </div>
-            </div>
-            <div className='flex items-center gap-2'>
-              <Badge.Root variant='light' color='blue' size='medium'>
-                Default
-              </Badge.Root>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                Edit
-              </Button.Root>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Billing Information */}
-      <div className='space-y-4'>
-        <div>
-          <div className='text-label-md'>Billing Information</div>
-          <p className='mt-1 text-paragraph-sm text-text-sub-600'>
-            Update your billing address and tax information
-          </p>
-        </div>
-
-        <Divider.Root variant='line-spacing' />
-
-        <div className='space-y-4'>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div className='space-y-2'>
-              <label className='text-label-sm font-medium'>Billing Name</label>
-              <div className='text-paragraph-sm text-text-sub-600'>CareSupport Organization</div>
-            </div>
-            <div className='space-y-2'>
-              <label className='text-label-sm font-medium'>Email</label>
-              <div className='text-paragraph-sm text-text-sub-600'>billing@caresupport.org</div>
-            </div>
-            <div className='space-y-2 md:col-span-2'>
-              <label className='text-label-sm font-medium'>Billing Address</label>
-              <div className='text-paragraph-sm text-text-sub-600'>
-                123 Care Street<br />
-                Minneapolis, MN 55401<br />
-                United States
-              </div>
-            </div>
-          </div>
-          <Button.Root variant='neutral' mode='stroke' size='small'>
-            Update Billing Information
-          </Button.Root>
-        </div>
-      </div>
-    </div>
+        {allTabs.map(({ label, component: Component }) => (
+          <TabMenuVertical.Content
+            key={label}
+            value={label}
+            className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-4'
+          >
+            <Component />
+          </TabMenuVertical.Content>
+        ))}
+      </TabMenuVertical.Root>
+    </>
   );
 }
