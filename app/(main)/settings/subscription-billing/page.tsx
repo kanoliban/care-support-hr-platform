@@ -16,7 +16,7 @@ import BillingHistory from './billing-history';
 import BillingInformation from './billing-information';
 import CurrentSubscription from './current-subscription';
 import PaymentMethods from './payment-methods';
-import SubscriptionStatus from './subscription-status';
+// import SubscriptionStatus from './subscription-status';
 
 const allTabs = [
   {
@@ -25,12 +25,12 @@ const allTabs = [
     component: CurrentSubscription,
     permission: null, // Public access
   },
-  {
-    label: 'Subscription Status',
-    icon: RiSparklingLine,
-    component: SubscriptionStatus,
-    permission: null, // Public access
-  },
+  // {
+  //   label: 'Subscription Status',
+  //   icon: RiSparklingLine,
+  //   component: SubscriptionStatus,
+  //   permission: null, // Public access
+  // },
   {
     label: 'Billing History',
     icon: RiBillLine,
