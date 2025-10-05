@@ -833,7 +833,7 @@ export default function WidgetSchedule({
   // }, [selectedDay]);
 
   return (
-    <WidgetBox.Root className="h-full flex flex-col min-h-[600px]" {...rest}>
+    <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiCalendarLine} />
         Schedule
@@ -847,11 +847,9 @@ export default function WidgetSchedule({
         </Button.Root>
       </WidgetBox.Header>
 
-      <div className='flex-shrink-0'>
-        <DayPicker value={selectedDay} onDayChange={setSelectedDay} />
-      </div>
+      <DayPicker value={selectedDay} onDayChange={setSelectedDay} />
 
-      <div className='flex-shrink-0 py-4'>
+      <div className='py-4'>
         <Input.Root size='medium'>
           <Input.Wrapper>
             <Input.Icon as={RiSearch2Line} />
@@ -866,8 +864,8 @@ export default function WidgetSchedule({
         </Input.Root>
       </div>
 
-      <TabMenuHorizontal.Root defaultValue='meetings' className='flex-1 flex flex-col'>
-        <TabMenuHorizontal.List wrapperClassName='-mx-4 flex-shrink-0' className='gap-3 px-4'>
+      <TabMenuHorizontal.Root defaultValue='meetings'>
+        <TabMenuHorizontal.List wrapperClassName='-mx-4' className='gap-3 px-4'>
           <TabMenuHorizontal.Trigger className='flex-1 px-2' value='meetings'>
             <TabMenuHorizontal.Icon as={RiDiscussLine} />
             Care Shifts
@@ -883,22 +881,24 @@ export default function WidgetSchedule({
         </TabMenuHorizontal.List>
         <TabMenuHorizontal.Content
           value='meetings'
-          className='flex-1 flex flex-col data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-left-5'
+          className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-left-5'
         >
           {emptyState ? (
-            <div className='flex-1 flex flex-col items-center justify-center gap-5 p-5'>
-              <IllustrationEmptyScheduleMeetings className='size-[108px]' />
-              <div className='text-center text-paragraph-sm text-text-soft-400'>
-                No care shifts scheduled yet.
-                <br /> Please check back later.
+            <div className='pt-4'>
+              <div className='flex h-[460px] flex-col items-center justify-center gap-5 p-5'>
+                <IllustrationEmptyScheduleMeetings className='size-[108px]' />
+                <div className='text-center text-paragraph-sm text-text-soft-400'>
+                  No care shifts scheduled yet.
+                  <br /> Please check back later.
+                </div>
+                <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+                  <Button.Icon as={RiAddLine} />
+                  Request
+                </Button.Root>
               </div>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                <Button.Icon as={RiAddLine} />
-                Request
-              </Button.Root>
             </div>
           ) : (
-            <div className='flex-1 overflow-y-auto pt-4' style={{
+            <div className='h-[480px] overflow-y-auto pt-4' style={{
               scrollbarWidth: 'thin',
               scrollbarColor: '#d1d5db #f3f4f6'
             }}>
@@ -917,22 +917,24 @@ export default function WidgetSchedule({
         </TabMenuHorizontal.Content>
         <TabMenuHorizontal.Content
           value='events'
-          className='flex-1 flex flex-col data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-left-5'
+          className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-left-5'
         >
           {emptyState ? (
-            <div className='flex-1 flex flex-col items-center justify-center gap-5 p-5'>
-              <IllustrationEmptyScheduleEvents className='size-[108px]' />
-              <div className='text-center text-paragraph-sm text-text-soft-400'>
-                No appointments scheduled yet.
-                <br /> Please check back later.
+            <div className='pt-4'>
+              <div className='flex h-[460px] flex-col items-center justify-center gap-5 p-5'>
+                <IllustrationEmptyScheduleEvents className='size-[108px]' />
+                <div className='text-center text-paragraph-sm text-text-soft-400'>
+                  No appointments scheduled yet.
+                  <br /> Please check back later.
+                </div>
+                <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+                  <Button.Icon as={RiAddLine} />
+                  Request
+                </Button.Root>
               </div>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                <Button.Icon as={RiAddLine} />
-                Request
-              </Button.Root>
             </div>
           ) : (
-            <div className='flex-1 overflow-y-auto pt-4' style={{
+            <div className='h-[480px] overflow-y-auto pt-4' style={{
               scrollbarWidth: 'thin',
               scrollbarColor: '#d1d5db #f3f4f6'
             }}>
@@ -951,22 +953,24 @@ export default function WidgetSchedule({
         </TabMenuHorizontal.Content>
         <TabMenuHorizontal.Content
           value='holidays'
-          className='flex-1 flex flex-col data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-left-5'
+          className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-left-5'
         >
           {emptyState ? (
-            <div className='flex-1 flex flex-col items-center justify-center gap-5 p-5'>
-              <IllustrationEmptyScheduleHoliday className='size-[108px]' />
-              <div className='text-center text-paragraph-sm text-text-soft-400'>
-                No blocked dates scheduled yet.
-                <br /> Please check back later.
+            <div className='pt-4'>
+              <div className='flex h-[460px] flex-col items-center justify-center gap-5 p-5'>
+                <IllustrationEmptyScheduleHoliday className='size-[108px]' />
+                <div className='text-center text-paragraph-sm text-text-soft-400'>
+                  No blocked dates scheduled yet.
+                  <br /> Please check back later.
+                </div>
+                <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+                  <Button.Icon as={RiAddLine} />
+                  Request
+                </Button.Root>
               </div>
-              <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-                <Button.Icon as={RiAddLine} />
-                Request
-              </Button.Root>
             </div>
           ) : (
-            <div className='flex-1 overflow-y-auto pt-4' style={{
+            <div className='h-[480px] overflow-y-auto pt-4' style={{
               scrollbarWidth: 'thin',
               scrollbarColor: '#d1d5db #f3f4f6'
             }}>
