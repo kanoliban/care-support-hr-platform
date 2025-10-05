@@ -1,18 +1,18 @@
 'use client';
 
-import WidgetSubscription from '@/components/widgets/widget-subscription';
+import PricingPlansGrid from '@/components/widgets/pricing-plans-grid';
 
 export default function CurrentSubscription() {
   return (
-    <div className='flex w-full flex-col gap-4'>
+    <div className='flex w-full flex-col gap-6'>
       <div>
-        <div className='text-label-md'>Current Subscription</div>
+        <div className='text-label-md'>Subscription Plans</div>
         <p className='mt-1 text-paragraph-sm text-text-sub-600'>
-          Manage your CareSupport subscription and billing preferences
+          Choose the perfect plan for your care coordination needs
         </p>
       </div>
 
-      <WidgetSubscription />
+      <PricingPlansGrid />
     </div>
   );
 }
