@@ -15,9 +15,9 @@ export default function WidgetSubscription() {
   }
 
   return (
-    <div className='flex flex-col lg:flex-row gap-6'>
+    <div className='flex gap-6 overflow-x-auto pb-4'>
       {plans.map((plan, index) => (
-        <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 flex-1 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
+        <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 min-w-[320px] flex-shrink-0 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
           <WidgetBox.Header>
             <WidgetBox.HeaderIcon as={RiSparklingLine} />
             {plan.name}
