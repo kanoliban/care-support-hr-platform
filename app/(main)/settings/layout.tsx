@@ -36,12 +36,6 @@ const allItems = [
     role: null,
   },
   {
-    label: 'Subscription Status',
-    href: '/settings/subscription-status',
-    permission: null, // Public access - all users can view their subscription status
-    role: null,
-  },
-  {
     label: 'Notification Settings',
     href: '/settings/notification-settings',
     permission: null, // Public access (personal notifications)

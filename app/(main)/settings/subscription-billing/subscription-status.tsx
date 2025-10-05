@@ -40,7 +40,7 @@ const mockSubscriptionData = {
   },
 };
 
-export default function SubscriptionStatusPage() {
+export default function SubscriptionStatus() {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleManageSubscription = async () => {

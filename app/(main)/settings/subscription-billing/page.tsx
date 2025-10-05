@@ -6,6 +6,7 @@ import {
   RiBankCardLine,
   RiBillLine,
   RiShieldCheckLine,
+  RiSparklingLine,
 } from '@remixicon/react';
 
 import * as TabMenuHorizontal from '@/components/ui/tab-menu-horizontal';
@@ -15,12 +16,19 @@ import BillingHistory from './billing-history';
 import BillingInformation from './billing-information';
 import CurrentSubscription from './current-subscription';
 import PaymentMethods from './payment-methods';
+import SubscriptionStatus from './subscription-status';
 
 const allTabs = [
   {
     label: 'Current Subscription',
     icon: RiBankCardLine,
     component: CurrentSubscription,
+    permission: null, // Public access
+  },
+  {
+    label: 'Subscription Status',
+    icon: RiSparklingLine,
+    component: SubscriptionStatus,
     permission: null, // Public access
   },
   {
