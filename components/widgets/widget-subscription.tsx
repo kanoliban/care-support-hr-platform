@@ -19,25 +19,20 @@ export default function WidgetSubscription() {
       {plans.map((plan, index) => (
         <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
           <WidgetBox.Header>
-            <div className='flex flex-col gap-1'>
-              <div className='flex items-center gap-2'>
-                <WidgetBox.HeaderIcon as={RiSparklingLine} />
-                {plan.name}
-                {plan.isFeatured && (
-                  <span className='rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
-                    Popular
-                  </span>
-                )}
+            <div className='flex justify-between items-start w-full'>
+              <div className='flex flex-col gap-1 flex-1'>
+                <div className='flex items-center gap-2'>
+                  <WidgetBox.HeaderIcon as={RiSparklingLine} />
+                  {plan.name}
+                  {plan.isFeatured && (
+                    <span className='rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
+                      Popular
+                    </span>
+                  )}
+                </div>
+                <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
               </div>
-              <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
-            </div>
-          </WidgetBox.Header>
-
-          <Divider.Root />
-
-          <div className='flex flex-col gap-3'>
-            <div className='flex justify-end'>
-              <div className='text-right'>
+              <div className='text-right ml-4'>
                 {plan.price ? (
                   <>
                     <span className='text-title-h4 text-text-strong-950'>${plan.price}</span>
@@ -48,6 +43,11 @@ export default function WidgetSubscription() {
                 )}
               </div>
             </div>
+          </WidgetBox.Header>
+
+          <Divider.Root />
+
+          <div className='flex flex-col gap-3'>
 
             <ul className='space-y-2 rounded-xl bg-bg-soft-100 p-4 text-paragraph-sm text-text-strong-950'>
               {plan.features.map((feature) => (
