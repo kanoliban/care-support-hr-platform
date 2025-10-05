@@ -10,6 +10,7 @@ import WidgetNotes from '@/components/widgets/widget-notes';
 import WidgetSchedule from '@/components/widgets/widget-schedule';
 import WidgetStatusTracker from '@/components/widgets/widget-status-tracker';
 import WidgetTimeOff from '@/components/widgets/widget-time-off';
+import WidgetSubscription from '@/components/widgets/widget-subscription';
 import RealTimeToggle from '@/components/real-time-toggle';
 import CareEventDialog from '@/components/care-event-dialog';
 import { CareEventsProvider } from '@/hooks/useCareEvents';
@@ -63,15 +64,28 @@ export default function PageHome() {
       </Header>
 
       <div className='flex flex-col gap-6 px-4 pb-6 lg:px-8 lg:pt-1'>
-        <div className='grid grid-cols-[repeat(auto-fill,minmax(344px,1fr))] items-stretch justify-center gap-6 animate-float'>
-          {/* Core Care Coordination Widgets */}
-          <WidgetTimeOff />
-          <WidgetCurrentProject />
-          <WidgetSchedule className='row-span-2' />
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 animate-float'>
+          {/* Left Column */}
+          <div className='space-y-6'>
+            <WidgetTimeOff />
+            <WidgetStatusTracker />
+          </div>
           
-          {/* Care Team & Status Widgets */}
-          <WidgetStatusTracker />
-          <WidgetNotes />
+          {/* Middle Column */}
+          <div className='space-y-6'>
+            <WidgetCurrentProject />
+            <WidgetNotes />
+          </div>
+          
+          {/* Right Column - Schedule extends to match tallest card */}
+          <div className='flex flex-col'>
+            <WidgetSchedule className='flex-1' />
+          </div>
+          
+          {/* Bottom Row - Subscription spans full width on smaller screens */}
+          <div className='lg:col-span-3'>
+            <WidgetSubscription />
+          </div>
         </div>
       </div>
       

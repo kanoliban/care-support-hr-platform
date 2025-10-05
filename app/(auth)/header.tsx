@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import * as Button from '@/components/ui/button';
 
@@ -52,15 +53,34 @@ function DynamicContent({ pathname }: { pathname: string }) {
 
 export default function AuthHeader() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Dev mode bypass - click logo to go to command center
+  const handleLogoClick = (e: React.MouseEvent) => {
+    // Check if we're in development mode
+    if (process.env.NODE_ENV === 'development') {
+      e.preventDefault();
+      // Navigate to main page with dev mode parameter
+      router.push('/?dev=true');
+    }
+  };
 
   return (
     <div className='mx-auto flex w-full items-center justify-between gap-6 pb-3.5 pt-2.5 lg:py-0'>
-      <Link href='/' className='shrink-0 flex items-center gap-3'>
+      <Link 
+        href='/' 
+        className='shrink-0 flex items-center gap-3'
+        onClick={handleLogoClick}
+        title={process.env.NODE_ENV === 'development' ? 'Dev Mode: Click to bypass auth' : ''}
+      >
         <div className='flex size-10 items-center justify-center rounded-full bg-purple-600'>
           <span className='text-sm font-semibold text-white'>CS</span>
         </div>
         <span className='text-lg font-semibold text-text-strong-950'>
           CareSupport
+          {process.env.NODE_ENV === 'development' && (
+            <span className='ml-2 text-xs text-purple-600'>[DEV]</span>
+          )}
         </span>
       </Link>
       <div className='flex items-center gap-3'>

@@ -7,6 +7,7 @@ import { Inter as FontSans } from 'next/font/google';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { ThemeProvider } from 'next-themes';
 
+import ClientLayout from '@/components/saas/LayoutClient';
 import { Providers } from '@/app/providers';
 
 const fontInter = FontSans({
@@ -35,17 +36,19 @@ export default function RootLayout({
       className={cn(fontInter.className, 'bg-bg-white-0 antialiased')}
     >
       <body className='bg-bg-white-0'>
-        <Providers>
-          <ThemeProvider attribute='class'>
-            <TooltipProvider
-              delayDuration={100}
-              skipDelayDuration={300}
-              disableHoverableContent
-            >
-              {children}
-            </TooltipProvider>
-          </ThemeProvider>
-        </Providers>
+        <ClientLayout>
+          <Providers>
+            <ThemeProvider attribute='class'>
+              <TooltipProvider
+                delayDuration={100}
+                skipDelayDuration={300}
+                disableHoverableContent
+              >
+                {children}
+              </TooltipProvider>
+            </ThemeProvider>
+          </Providers>
+        </ClientLayout>
       </body>
     </html>
   );

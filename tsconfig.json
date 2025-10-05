@@ -19,6 +19,9 @@
     ],
     "paths": {
       "@/*": ["./*"],
+      "@/lib/saas/*": ["lib/saas/*"],
+      "@/models/saas/*": ["models/saas/*"],
+      "@/components/saas/*": ["components/saas/*"],
       "~/*": ["./public/*"]
     }
   },

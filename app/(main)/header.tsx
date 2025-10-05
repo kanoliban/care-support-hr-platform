@@ -3,6 +3,7 @@
 import { cnExt } from '@/utils/cn';
 import NotificationButton from '@/components/notification-button';
 import { SearchMenuButton } from '@/components/search';
+import ButtonAccount from '@/components/saas/ButtonAccount';
 
 export default function Header({
   children,
@@ -40,6 +41,7 @@ export default function Header({
       <div className={cnExt('flex items-center gap-3', contentClassName)}>
         <SearchMenuButton className='hidden lg:flex' />
         <NotificationButton className='hidden lg:flex' />
+        <ButtonAccount />
 
         {children}
       </div>
