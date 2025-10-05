@@ -25,7 +25,7 @@ export default function WidgetSubscription() {
                   <WidgetBox.HeaderIcon as={RiSparklingLine} />
                   {plan.name}
                   {plan.isFeatured && (
-                    <span className='rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
+                    <span className='ml-2 rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
                       Popular
                     </span>
                   )}
@@ -70,7 +70,7 @@ export default function WidgetSubscription() {
               </>
             ) : (
               <div className='text-center'>
-                <button className='rounded-lg bg-primary-500 px-6 py-3 text-white font-medium hover:bg-primary-600 transition-colors'>
+                <button className='w-full rounded-lg bg-primary-500 px-6 py-3 text-white font-medium hover:bg-primary-600 active:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md'>
                   Contact Sales
                 </button>
                 <p className='mt-2 text-paragraph-xs text-text-sub-600'>
