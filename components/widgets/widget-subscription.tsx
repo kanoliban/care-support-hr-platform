@@ -7,53 +7,79 @@ import * as Divider from '@/components/ui/divider';
 import * as WidgetBox from '@/components/widget-box';
 import saasConfig from '@/lib/saas/saas-config';
 
-const featuredPlan =
-  saasConfig.stripe.plans.find((plan) => plan.isFeatured) ??
-  saasConfig.stripe.plans[0];
-
 export default function WidgetSubscription() {
-  if (!featuredPlan) {
+  const plans = saasConfig.stripe.plans;
+
+  if (!plans || plans.length === 0) {
     return null;
   }
 
   return (
-    <WidgetBox.Root className='flex flex-col gap-4'>
-      <WidgetBox.Header>
-        <WidgetBox.HeaderIcon as={RiSparklingLine} />
-        Subscription & Billing
-      </WidgetBox.Header>
+    <div className='space-y-6'>
+      {plans.map((plan, index) => (
+        <WidgetBox.Root key={plan.name} className={`flex flex-col gap-4 ${plan.isFeatured ? 'ring-2 ring-primary-500' : ''}`}>
+          <WidgetBox.Header>
+            <WidgetBox.HeaderIcon as={RiSparklingLine} />
+            {plan.name}
+            {plan.isFeatured && (
+              <span className='ml-2 rounded-full bg-primary-500 px-2 py-1 text-xs font-medium text-white'>
+                Popular
+              </span>
+            )}
+          </WidgetBox.Header>
 
-      <Divider.Root />
+          <Divider.Root />
 
-      <div className='flex flex-col gap-3'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <p className='text-label-md text-text-strong-950'>{featuredPlan.name}</p>
-            <p className='text-paragraph-sm text-text-sub-600'>Perfect for your care coordination needs</p>
+          <div className='flex flex-col gap-3'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-label-md text-text-strong-950'>{plan.name}</p>
+                <p className='text-paragraph-sm text-text-sub-600'>{plan.description}</p>
+              </div>
+              <div className='text-right'>
+                {plan.price ? (
+                  <>
+                    <span className='text-title-h4 text-text-strong-950'>${plan.price}</span>
+                    <p className='text-paragraph-xs text-text-sub-600'>per month</p>
+                  </>
+                ) : (
+                  <span className='text-title-h4 text-text-strong-950'>Custom</span>
+                )}
+              </div>
+            </div>
+
+            <ul className='space-y-2 rounded-xl bg-bg-soft-100 p-4 text-paragraph-sm text-text-strong-950'>
+              {plan.features.map((feature) => (
+                <li key={feature.name} className='flex items-center gap-2'>
+                  <RiStarSmileLine className='size-4 text-primary-500' />
+                  {feature.name}
+                </li>
+              ))}
+            </ul>
+
+            {plan.price ? (
+              <>
+                <ButtonCheckout
+                  priceId={plan.priceId}
+                  mode='subscription'
+                />
+                <p className='text-center text-paragraph-xs text-text-sub-600'>
+                  Your card will be charged via Stripe. Cancel anytime through the billing portal.
+                </p>
+              </>
+            ) : (
+              <div className='text-center'>
+                <button className='rounded-lg bg-primary-500 px-6 py-3 text-white font-medium hover:bg-primary-600 transition-colors'>
+                  Contact Sales
+                </button>
+                <p className='mt-2 text-paragraph-xs text-text-sub-600'>
+                  Custom pricing available for enterprise needs
+                </p>
+              </div>
+            )}
           </div>
-          <div className='text-right'>
-            <span className='text-title-h4 text-text-strong-950'>${featuredPlan.price}</span>
-            <p className='text-paragraph-xs text-text-sub-600'>per month</p>
-          </div>
-        </div>
-
-        <ul className='space-y-2 rounded-xl bg-bg-soft-100 p-4 text-paragraph-sm text-text-strong-950'>
-          {featuredPlan.features.map((feature) => (
-            <li key={feature.name} className='flex items-center gap-2'>
-              <RiStarSmileLine className='size-4 text-primary-500' />
-              {feature.name}
-            </li>
-          ))}
-        </ul>
-
-        <ButtonCheckout
-          priceId={featuredPlan.priceId}
-          mode='subscription'
-        />
-        <p className='text-center text-paragraph-xs text-text-sub-600'>
-          Your card will be charged via Stripe. Cancel anytime through the billing portal.
-        </p>
-      </div>
-    </WidgetBox.Root>
+        </WidgetBox.Root>
+      ))}
+    </div>
   );
 }
