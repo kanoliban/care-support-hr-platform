@@ -76,7 +76,7 @@ export default function PageHome() {
           
           {/* Middle Column: Care Team Status, Care Activities */}
           <div className='flex flex-col gap-6'>
-            <div className='h-80 mt-[calc(80px+24px)]'>
+            <div className='h-80'>
               <WidgetStatusTracker />
             </div>
             <div className='h-80 mt-[calc(80px+24px)]'>
