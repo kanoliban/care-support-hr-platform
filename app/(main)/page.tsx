@@ -63,15 +63,23 @@ export default function PageHome() {
       </Header>
 
       <div className='flex flex-col gap-6 px-4 pb-6 lg:px-8 lg:pt-1'>
-        <div className='grid grid-cols-[repeat(auto-fill,minmax(344px,1fr))] items-stretch justify-center gap-6 animate-float'>
-          {/* Core Care Coordination Widgets */}
-          <WidgetTimeOff />
-          <WidgetCurrentProject />
-          <WidgetSchedule />
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 animate-float'>
+          {/* Left Column: 2 cards stacked */}
+          <div className='flex flex-col gap-6'>
+            <WidgetTimeOff />
+            <WidgetCurrentProject />
+          </div>
           
-          {/* Care Team & Status Widgets */}
-          <WidgetStatusTracker />
-          <WidgetNotes />
+          {/* Middle Column: 2 cards stacked */}
+          <div className='flex flex-col gap-6'>
+            <WidgetStatusTracker />
+            <WidgetNotes />
+          </div>
+          
+          {/* Right Column: Schedule */}
+          <div className='flex flex-col'>
+            <WidgetSchedule />
+          </div>
         </div>
       </div>
       
