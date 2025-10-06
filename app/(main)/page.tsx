@@ -86,7 +86,7 @@ export default function PageHome() {
           
           {/* Right Column: Schedule */}
           <div className='flex flex-col'>
-            <div className='h-[calc(160px+24px)]'>
+            <div className='h-[calc(320px+24px+120px)]'>
               <WidgetSchedule />
             </div>
           </div>

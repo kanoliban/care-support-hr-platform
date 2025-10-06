@@ -917,7 +917,7 @@ export default function WidgetSchedule({
               </div>
             </div>
           ) : (
-            <div className='h-[480px] overflow-y-auto pt-4' style={{
+            <div className='h-[600px] overflow-y-auto pt-4' style={{
               scrollbarWidth: 'thin',
               scrollbarColor: '#d1d5db #f3f4f6'
             }}>
