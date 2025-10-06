@@ -756,6 +756,25 @@ export default function WidgetSchedule({
                 color: 'yellow',
               },
             ],
+          },
+          {
+            id: '4',
+            title: 'Dementia Evening Care - Marta Snow',
+            date: '6:00 PM - 10:00 PM',
+            people: [
+              {
+                alt: 'Marta Snow',
+                image: '/images/avatar/illustration/emma.png',
+                color: 'blue',
+              },
+            ],
+            platform: 'Evening Care',
+            badges: [
+              {
+                label: 'Family',
+                color: 'green',
+              },
+            ],
           }
         ],
         events: [

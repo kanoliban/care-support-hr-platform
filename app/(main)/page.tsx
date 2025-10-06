@@ -84,18 +84,9 @@ export default function PageHome() {
             </div>
           </div>
           
-          {/* Right Column: 4 Schedule Cards */}
-          <div className='flex flex-col gap-6'>
-            <div className='h-80'>
-              <WidgetSchedule />
-            </div>
-            <div className='h-80'>
-              <WidgetSchedule />
-            </div>
-            <div className='h-80'>
-              <WidgetSchedule />
-            </div>
-            <div className='h-80'>
+          {/* Right Column: Schedule */}
+          <div className='flex flex-col'>
+            <div className='h-[calc(160px+24px)]'>
               <WidgetSchedule />
             </div>
           </div>
