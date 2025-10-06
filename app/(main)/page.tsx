@@ -64,13 +64,13 @@ export default function PageHome() {
 
       <div className='flex flex-col gap-6 px-4 pb-6 lg:px-8 lg:pt-1'>
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 animate-float'>
-          {/* Left Column: 2 cards stacked */}
+          {/* Left Column: Coverage Gaps, Current Shift */}
           <div className='flex flex-col gap-6'>
             <WidgetTimeOff />
             <WidgetCurrentProject />
           </div>
           
-          {/* Middle Column: 2 cards stacked */}
+          {/* Middle Column: Care Team Status, Care Activities */}
           <div className='flex flex-col gap-6'>
             <WidgetStatusTracker />
             <WidgetNotes />
