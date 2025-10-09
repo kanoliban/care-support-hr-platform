@@ -1,12 +1,12 @@
 <p align="center">
     <img src="./logo.svg" height="96">
-  <h3 align="center">Care Support HR Platform</h3>
+  <h3 align="center">CareSupport Platform</h3>
   <p align="center">Comprehensive care team coordination and management system</p>
 </p>
 
 ## Introduction
 
-Care Support HR Platform is a modern Next.js application designed for coordinating care teams and managing care responsibilities. Built with TypeScript, Tailwind CSS, and a comprehensive component library, it provides a robust solution for care coordination, team management, scheduling, and seamless onboarding experiences.
+CareSupport Platform is a modern Next.js application designed for coordinating care teams and managing care responsibilities. Built with TypeScript, Tailwind CSS, and a comprehensive component library, it provides a robust solution for care coordination, team management, scheduling, and seamless onboarding experiences.
 
 ## ✨ Key Features
 
