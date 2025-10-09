@@ -69,7 +69,7 @@ export default function PageHome() {
             <div className='h-80'>
               <WidgetTimeOff />
             </div>
-            <div className='h-80 mt-[80px]'>
+            <div className='h-80 mt-[96px]'>
               <WidgetCurrentProject />
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function PageHome() {
             <div className='h-80'>
               <WidgetStatusTracker />
             </div>
-            <div className='h-80 mt-[80px]'>
+            <div className='h-80 mt-[96px]'>
               <WidgetNotes />
             </div>
           </div>
