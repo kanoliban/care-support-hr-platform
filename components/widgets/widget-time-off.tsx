@@ -17,10 +17,13 @@ import { GaugeChart } from '@/components/chart-gauge';
 import IllustrationEmptyTimeOff from '@/components/empty-state-illustrations/time-off';
 import * as WidgetBox from '@/components/widget-box';
 import { useTimeOffRequests, useInteractiveActions, useSelectedItems } from '@/lib/careContext';
+import { useSimplePermissions } from '@/lib/simple-permission-context';
 
 export default function WidgetTimeOff({
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const { currentProfile } = useSimplePermissions();
+  
   // Get interactive data and actions with error handling
   let timeOffRequests: any[] = [];
   let selectItem: any, deselectItem: any, updateCoverageGap: any;
