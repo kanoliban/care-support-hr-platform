@@ -105,8 +105,8 @@ export default function WidgetTimeOff({
         scrollbarColor: '#d1d5db #f3f4f6'
       }}>
         <div className='space-y-4'>
-          {/* Always show 3 slots to maintain consistent card height */}
-          {Array.from({ length: 3 }, (_, index) => {
+          {/* Always show 2 slots to maintain consistent card height */}
+          {Array.from({ length: 2 }, (_, index) => {
           const gap = timeOffRequests[index];
           
           if (!gap) {
@@ -119,7 +119,7 @@ export default function WidgetTimeOff({
                   <div className='flex flex-1 items-center gap-0.5 text-paragraph-sm text-text-disabled-300'>
                     No coverage gap
                     <span className='text-paragraph-xs text-text-disabled-200'>
-                      (slot {index + 1} of 3)
+                      (slot {index + 1} of 2)
                     </span>
                   </div>
                   <div className='flex items-center gap-2'>
