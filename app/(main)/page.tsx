@@ -63,23 +63,23 @@ export default function PageHome() {
       </Header>
 
       <div className='flex flex-col gap-6 px-4 pb-6 lg:px-8 lg:pt-1'>
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 animate-float items-stretch'>
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 animate-float items-start'>
           {/* Left Column: Coverage Gaps, Current Shift */}
           <div className='flex flex-col gap-6'>
             <div className='h-80'>
               <WidgetTimeOff />
             </div>
-            <div className='h-80 mt-[calc(80px+24px)]'>
+            <div className='h-80'>
               <WidgetCurrentProject />
             </div>
           </div>
           
           {/* Middle Column: Care Team Status, Care Activities */}
           <div className='flex flex-col gap-6'>
-            <div className='h-80 mt-8'>
+            <div className='h-80'>
               <WidgetStatusTracker />
             </div>
-            <div className='h-80 mt-[calc(80px+24px)]'>
+            <div className='h-80'>
               <WidgetNotes />
             </div>
           </div>

@@ -97,9 +97,13 @@ export default function WidgetTimeOff({
         </div>
       </div>
 
-      <div className='space-y-4'>
-        {/* Always show 3 slots to maintain consistent card height */}
-        {Array.from({ length: 3 }, (_, index) => {
+      <div className='h-[calc(100%-120px)] overflow-y-auto' style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#d1d5db #f3f4f6'
+      }}>
+        <div className='space-y-4'>
+          {/* Always show 3 slots to maintain consistent card height */}
+          {Array.from({ length: 3 }, (_, index) => {
           const gap = timeOffRequests[index];
           
           if (!gap) {
@@ -203,6 +207,7 @@ export default function WidgetTimeOff({
             </React.Fragment>
           );
         })}
+        </div>
       </div>
     </WidgetBox.Root>
   );

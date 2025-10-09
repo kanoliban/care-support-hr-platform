@@ -126,8 +126,12 @@ export default function WidgetStatusTracker({
 
       <Divider.Root />
 
-      <div className='space-y-4 pb-1 pt-4'>
-        <div className='space-y-2.5'>
+      <div className='h-[calc(100%-120px)] overflow-y-auto' style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#d1d5db #f3f4f6'
+      }}>
+        <div className='space-y-4 pb-1 pt-4'>
+          <div className='space-y-2.5'>
           <p className='text-paragraph-xs text-text-sub-600'>On Duty</p>
           <div className='space-y-4'>
             {teamStatus.onDuty.map((member, index) => (
@@ -180,6 +184,7 @@ export default function WidgetStatusTracker({
                 </Badge.Root>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </div>

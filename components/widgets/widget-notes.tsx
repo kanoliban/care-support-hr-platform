@@ -101,8 +101,12 @@ export default function WidgetNotes({
 
       <Divider.Root />
 
-      <div className='space-y-3 pt-4'>
-        <NoteItem
+      <div className='h-[calc(100%-120px)] overflow-y-auto' style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#d1d5db #f3f4f6'
+      }}>
+        <div className='space-y-3 pt-4'>
+          <NoteItem
           title='Medication Reminder - Morning'
           description='Rob needs to take blood pressure medication with breakfast at 8 AM daily.'
           date={new Date('08/03/2024')}
@@ -135,6 +139,7 @@ export default function WidgetNotes({
             { label: 'Therapy', color: 'purple' },
           ]}
         />
+        </div>
       </div>
     </WidgetBox.Root>
   );

@@ -246,8 +246,12 @@ export default function WidgetCurrentProject({
 
       <Divider.Root />
 
-      <div className='space-y-3.5 pb-1.5 pt-4'>
-        {isEditing ? (
+      <div className='h-[calc(100%-120px)] overflow-y-auto' style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#d1d5db #f3f4f6'
+      }}>
+        <div className='space-y-3.5 pb-1.5 pt-4'>
+          {isEditing ? (
           /* Edit Mode */
           <>
             {/* Caregiver Edit */}
@@ -502,6 +506,7 @@ export default function WidgetCurrentProject({
             </div>
           </>
         )}
+        </div>
       </div>
     </WidgetBox.Root>
   );
